@@ -1,0 +1,51 @@
+/**
+ * Version 1.0 - 2010.07.29 - Initial version
+ * Version 4.0 - 2013.12.22 - Updated to AntlrV4 & AntlrXTree
+ * Version 4.1 - 2014.01.05 
+ */
+xvisitor grammar Outline;
+
+options {
+	superClass = OutlineAdaptor ;
+	parserClass = XVisitorParser ;
+}
+
+@header {
+	package net.certiv.xvisitordt.core.parser.gen;
+
+	import net.certiv.xvisitordt.core.parser.OutlineAdaptor;
+}
+
+outline
+	: grammarSpec
+	| optionsBlock
+	| optionStatement
+	| atAction
+	| parserRuleBlock
+	| lexerRuleBlock
+	;
+
+grammarSpec			: /grammarSpec
+							{ grammarModule(); }
+					;
+
+optionsBlock		: //optionsSpec			
+							{ onEntry: begOptionsBlock(); } 	
+							{ onExit:  endBlock(); }	
+					;
+
+optionStatement		: //optionsSpec/option
+							{ processOptionStatement(); }	
+					;
+
+atAction			: /grammarSpec/action
+							{ processAtAction(); }
+					;
+
+mainRule			: //xmain
+							{ processMainRule(); }
+					;
+
+xpathRule			: //xpath
+							{ processXPathRule(); }
+					;

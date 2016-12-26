@@ -1,0 +1,31 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: XVisitor Core
+Bundle-SymbolicName: net.certiv.xvisitordt.core;singleton:=true
+Bundle-Version: 4.3.1.qualifier
+Bundle-Activator: net.certiv.xvisitordt.core.XVisitorCore
+Require-Bundle: net.certiv.dsl.core;bundle-version="0.5.6",
+ net.certiv.dsl.lib;bundle-version="0.5.6",
+ net.certiv.dsl.ui;bundle-version="0.5.6",
+ org.eclipse.ui;bundle-version="3.106.0",
+ org.eclipse.ui.editors;bundle-version="3.8.200",
+ org.eclipse.ui.ide;bundle-version="3.10.1",
+ org.eclipse.core.resources;bundle-version="3.9.0",
+ org.eclipse.core.runtime;bundle-version="3.10.0",
+ org.eclipse.jdt.core;bundle-version="3.10.0",
+ org.eclipse.jdt.core.manipulation;bundle-version="1.5.0",
+ org.eclipse.jdt.ui;bundle-version="3.10.1",
+ org.eclipse.text;bundle-version="3.5.300"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ClassPath: .
+Eclipse-RegisterBuddy: net.certiv.dsl.lib
+Bundle-Vendor: Certiv Analytics
+Export-Package: net.certiv.xvisitordt.core,
+ net.certiv.xvisitordt.core.builder,
+ net.certiv.xvisitordt.core.formatter,
+ net.certiv.xvisitordt.core.parser,
+ net.certiv.xvisitordt.core.parser.gen,
+ net.certiv.xvisitordt.core.preferences,
+ net.certiv.xvisitordt.core.util
+Import-Package: org.apache.commons.io;version="2.2.0"

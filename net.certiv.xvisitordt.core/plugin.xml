@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            base-type="org.eclipse.core.runtime.text"
+            describer="net.certiv.xvisitordt.core.ContentDescriber"
+            file-extensions="xv"
+            id="net.certiv.xvisitordt.core.contentType"
+            name="XVisitor Content Type"
+            priority="normal">
+      </content-type>
+   </extension>
+   <extension
+         id="nature"
+         name="XVisitor Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="net.certiv.xvisitordt.core.XVisitorNature">
+         </run>
+      </runtime>
+      <builder
+            id="net.certiv.xvisitordt.core.builder">
+      </builder>
+   </extension>
+   <extension
+         id="net.certiv.xvisitordt.core.builder"
+         name="XVisitor Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            callOnEmptyDelta="true"
+            hasNature="true">
+         <run
+               class="net.certiv.xvisitordt.core.builder.XVisitorBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="problem"
+         name="XVisitor Problem"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="externalLocation">
+      </attribute>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="net.certiv.xvisitordt.core.preferences.PrefsInitializer">
+      </initializer>
+   </extension>
+   
+</plugin>
