@@ -9,11 +9,11 @@
 	<parent>
 		<groupId>net.certiv</groupId>
 		<artifactId>net.certiv.xvisitordt</artifactId>
-		<version>4.3.1-SNAPSHOT</version>
+		<version>4.7.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>net.certiv.xvisitordt.ui</artifactId>
-	<name>net.certiv.xvisitordt :: xv.ui</name>
+	<name>net.certiv.xvisitordt :: ui</name>
 	<url>www.certiv.net</url>
 	<description>XVisitorDT UI</description>
 	<organization>

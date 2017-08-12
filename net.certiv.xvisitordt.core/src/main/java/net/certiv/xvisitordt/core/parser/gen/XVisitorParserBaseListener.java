@@ -1,11 +1,8 @@
-// Generated from D:/DevFiles/Eclipse/Dsl/xvisitordt/net.certiv.xvisitordt.core/src/main/java/net/certiv/xvisitordt/core/parser/XVisitorParser.g4 by ANTLR 4.5.3
+// Generated from D:/DevFiles/EclipseOxy/net.certiv.xvisitordt.core/src/main/java/net/certiv/xvisitordt/core/parser/XVisitorParser.g4 by ANTLR 4.5.3
 
 	package net.certiv.xvisitordt.core.parser.gen;
 
-	import net.certiv.xvisitordt.core.parser.ParserAdaptor;
-
-
-import org.antlr.v4.runtime.ParserRuleContext;
+	import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 

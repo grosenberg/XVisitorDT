@@ -1,22 +1,16 @@
 package net.certiv.xvisitordt.core.util;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-import net.certiv.dsl.core.util.CoreUtil;
-import net.certiv.dsl.core.util.Log;
-import net.certiv.dsl.ui.editor.DslEditor;
-
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.part.FileEditorInput;
+
+import net.certiv.dsl.core.util.CoreUtil;
+import net.certiv.dsl.ui.editor.DslEditor;
 
 public class GrammarUtil {
 
@@ -55,18 +49,21 @@ public class GrammarUtil {
 	}
 
 	// /**
-	// * Determines the folder that will contain the class binary compiled from the generated files
+	// * Determines the folder that will contain the class binary compiled from the
+	// generated files
 	// * corresponding to the grammar present in the currently active editor. <br/>
 	// * TODO: this really needs to be refactored!! Look at #determineFQName
 	// *
 	// * @param editor current active editor containing a grammar file
 	// * @param className grammar lexer or parser class name without extension
-	// * @return array containing: folder that contains the generated lexer or parser class binary
+	// * @return array containing: folder that contains the generated lexer or
+	// parser class binary
 	// and
 	// * the package name of the file found
 	// * @throws CoreException
 	// */
-	// public static String[] determineOutputClassPath(IEditorPart editor, String className)
+	// public static String[] determineOutputClassPath(IEditorPart editor, String
+	// className)
 	// throws CoreException {
 	//
 	// IFile file = getInputFile(editor);
@@ -79,9 +76,11 @@ public class GrammarUtil {
 	// }
 	//
 	// String absOutputPath = CoreUtil.determineBuildFolder(file);
-	// String wsLocation = org.eclipse.core.runtime.Platform.getLocation().toString();
+	// String wsLocation =
+	// org.eclipse.core.runtime.Platform.getLocation().toString();
 	// String pjLocation = project.getName();
-	// String relOutputPath = absOutputPath.substring(wsLocation.length() + 1 + pjLocation.length()
+	// String relOutputPath = absOutputPath.substring(wsLocation.length() + 1 +
+	// pjLocation.length()
 	// + 1);
 	// if (!relOutputPath.endsWith("/")) relOutputPath += "/";
 	//
@@ -94,7 +93,8 @@ public class GrammarUtil {
 	// IResource res = jProj.getProject().findMember(member);
 	// if (res == null) {
 	// String message = "Find failed [member=" + member + "]";
-	// IStatus status = new Status(IStatus.ERROR, AntlrCorePlugin.PLUGIN_ID, IStatus.OK, message,
+	// IStatus status = new Status(IStatus.ERROR, AntlrCorePlugin.PLUGIN_ID,
+	// IStatus.OK, message,
 	// null);
 	// throw new CoreException(status);
 	// }
@@ -116,14 +116,16 @@ public class GrammarUtil {
 	// }
 	// }
 	// }
-	// if (packageName.endsWith("/")) packageName = packageName.substring(0, packageName.length() -
+	// if (packageName.endsWith("/")) packageName = packageName.substring(0,
+	// packageName.length() -
 	// 1);
 	// packageName = packageName.replace('/', '.');
 	// return new String[] { outputClassPath, packageName };
 	// }
 
 	// /**
-	// * Determine the build folder for a given a resource representing a grammar file. <br />
+	// * Determine the build folder for a given a resource representing a grammar
+	// file. <br />
 	// * TODO: why use toPortableString?
 	// *
 	// * @param resource typically the grammar IFile
@@ -145,7 +147,8 @@ public class GrammarUtil {
 	// }
 	// } else if (choice.equals(PrefsKey.BUILDER_USE_RELATIVE)) {
 	// String relPath = Prefs.getString(PrefsKey.BUILDER_REL_PATH, project);
-	// outputPath = resource.getParent().getLocation().append(relPath).toPortableString();
+	// outputPath =
+	// resource.getParent().getLocation().append(relPath).toPortableString();
 	// } else if (choice.equals(PrefsKey.BUILDER_USE_ABSOLUTE)) {
 	// String absPath = Prefs.getString(PrefsKey.BUILDER_ABS_PATH, project);
 	// if (absPath != null && absPath.length() != 0) {
@@ -155,45 +158,49 @@ public class GrammarUtil {
 	// return outputPath;
 	// }
 
-	/**
-	 * Determines the fully qualified class name for a string containing a simple class name. Searches the given project
-	 * for the matching file. Returns a string array containing the corresponding output folder and fully qualified
-	 * class name.
-	 * 
-	 * @deprecated use CoreUtil
-	 * @param project
-	 *            project to search
-	 * @param name
-	 *            simple class name to search for
-	 * @return an array containing the output folder and fully qualified class name
-	 */
-	public static String determineFQName(IProject project, String name) {
-		if (name == null) return null;
+	// /**
+	// * Determines the fully qualified class name for a string containing a simple
+	// class name. Searches the given project
+	// * for the matching file. Returns a string array containing the corresponding
+	// output folder and fully qualified
+	// * class name.
+	// *
+	// * @deprecated use CoreUtil
+	// * @param project
+	// * project to search
+	// * @param name
+	// * simple class name to search for
+	// * @return an array containing the output folder and fully qualified class
+	// name
+	// */
+	// public static String determineFQName(IProject project, String name) {
+	// if (name == null) return null;
+	//
+	// ArrayList<IResource> results = CoreUtil.findResource(project, name, "java");
+	// if (results.size() == 1) {
+	// IResource resource = results.get(0);
+	// IClasspathEntry cpe = CoreUtil.determineSrcClassPath(project, resource);
+	// if (cpe != null) {
+	// int cpeCount = cpe.getPath().segmentCount();
+	// IPath fullPath = resource.getFullPath().removeFirstSegments(cpeCount);
+	// String fqName = fullPath.toString();
+	// int end = fqName.lastIndexOf('.');
+	// fqName = fqName.substring(0, end).replaceAll("/", ".");
+	// return fqName;
+	// }
+	// } else {
+	// if (results.size() == 0) {
+	// Log.error("CoreUtil", "Failed to find resource [name=" + name + "]");
+	// } else {
+	// Log.error("CoreUtil", "Ambiguous resources " + results.toString());
+	// }
+	// }
+	// return null;
+	// }
 
-		ArrayList<IResource> results = CoreUtil.findResource(project, name, "java");
-		if (results.size() == 1) {
-			IResource resource = results.get(0);
-			IClasspathEntry cpe = CoreUtil.determineSrcClassPath(project, resource);
-			if (cpe != null) {
-				int cpeCount = cpe.getPath().segmentCount();
-				IPath fullPath = resource.getFullPath().removeFirstSegments(cpeCount);
-				String fqName = fullPath.toString();
-				int end = fqName.lastIndexOf('.');
-				fqName = fqName.substring(0, end).replaceAll("/", ".");
-				return fqName;
-			}
-		} else {
-			if (results.size() == 0) {
-				Log.error("CoreUtil", "Failed to find resource [name=" + name + "]");
-			} else {
-				Log.error("CoreUtil", "Ambiguous resources " + results.toString());
-			}
-		}
-		return null;
-	}
-
 	/**
-	 * Determine the value assigned to the ASTLabelType key in the options block of a grammar.
+	 * Determine the value assigned to the ASTLabelType key in the options block of
+	 * a grammar.
 	 * 
 	 * @param gFile
 	 *            the grammar file

@@ -2,7 +2,7 @@ package net.certiv.xvisitordt.core.parser;
 
 import java.util.Collection;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -13,13 +13,13 @@ import net.certiv.dsl.core.parser.DslParseErrorListener;
 import net.certiv.dsl.core.parser.DslSourceParser;
 import net.certiv.dsl.core.util.Log;
 import net.certiv.dsl.core.util.Log.LogLevel;
+import net.certiv.dsl.core.util.Strings;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.core.parser.gen.OutlineProcessor;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorLexer;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.ActionContext;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.GrammarSpecContext;
-import net.certiv.dsl.core.util.Strings;
 
 public class XVisitorSourceParser extends DslSourceParser {
 
@@ -36,15 +36,15 @@ public class XVisitorSourceParser extends DslSourceParser {
 	}
 
 	/**
-	 * Builds a ParseTree for the given content representing the source of a corresponding module
-	 * (file).
+	 * Builds a ParseTree for the given content representing the source of a
+	 * corresponding module
 	 */
 	@Override
-	public ParseTree parse(String name, char[] content, DslParseErrorListener errListener)
+	public ParseTree parse(String name, String content, DslParseErrorListener errListener)
 			throws RecognitionException, Exception {
 		Log.debug(this, "Parse [name=" + name + "]");
 
-		input = new ANTLRInputStream(content, content.length);
+		input = CharStreams.fromString(content);
 		XVisitorLexer lexer = new XVisitorLexer(input);
 
 		// lexer.setLexerHelper(new LexerHelper());
@@ -62,7 +62,8 @@ public class XVisitorSourceParser extends DslSourceParser {
 	}
 
 	/**
-	 * Build the internal minimal model used as the structure basis for the outline view, etc.
+	 * Build the internal minimal model used as the structure basis for the outline
+	 * view, etc.
 	 */
 	@Override
 	public void buildModel() {
@@ -78,8 +79,8 @@ public class XVisitorSourceParser extends DslSourceParser {
 	}
 
 	/**
-	 * Tree pattern matcher used to identify the code elements that may be signficant in CodeAssist
-	 * operations
+	 * Tree pattern matcher used to identify the code elements that may be
+	 * signficant in CodeAssist operations
 	 */
 	@Override
 	public void buildCodeAssist() {

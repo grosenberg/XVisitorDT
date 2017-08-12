@@ -19,7 +19,7 @@ public class XVisitorHyperlinkDetector extends DslElementHyperlinkDetector {
 	public IDslElement[] selectOpenableElements(IDslElement[] elements) {
 		List<IDslElement> s = new ArrayList<>();
 		for (IDslElement e : elements) {
-			if (e.getElementKind() != IDslElement.MODULE_DECLARATION) {
+			if (e.getKind() != IDslElement.MODULE) {
 				s.add(e);
 			}
 		}

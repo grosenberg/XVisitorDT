@@ -5,8 +5,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
 import net.certiv.dsl.core.builder.DslBuilder;
-import net.certiv.dsl.core.parser.util.ParserUtil;
 import net.certiv.dsl.core.util.CoreUtil;
+import net.certiv.dsl.core.util.Parsers;
 import net.certiv.xvisitordt.core.parser.XVisitorSourceParser;
 
 public abstract class XVisitorBuilderBase extends DslBuilder {
@@ -37,7 +37,7 @@ public abstract class XVisitorBuilderBase extends DslBuilder {
 	}
 
 	protected String resolvePackageName(IResource resource) {
-		XVisitorSourceParser parser = (XVisitorSourceParser) ParserUtil.getSourceParser(getDslCore(), (IFile) resource);
+		XVisitorSourceParser parser = (XVisitorSourceParser) Parsers.getSourceParser(getDslCore(), (IFile) resource);
 		return parser.resolvePackageName();
 	}
 }

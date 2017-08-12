@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2010-2015 Gerald Rosenberg & others. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the standard 3-clause BSD License. A
- * copy of the License is provided with this distribution in the License.txt file.
+ * Copyright (c) 2010-2015 Gerald Rosenberg & others. All rights reserved. 
+ * This program and the accompanying materials are made available under the 
+ * terms of the standard 3-clause BSD License. A copy of the License is 
+ * provided with this distribution in the License.txt file.
  *******************************************************************************/
 package net.certiv.xvisitordt.core.parser;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.misc.Interval;
@@ -26,17 +26,16 @@ public abstract class LexerAdaptor extends Lexer {
 	}
 
 	/**
-	 * Predicate qualifier for default mode line comments - necessary to distinguish from the 'any'
-	 * separator
+	 * Predicate qualifier for default mode line comments - necessary to distinguish
+	 * from the 'any' separator
 	 * 
 	 * @return true if line comment allowed
 	 */
 	protected boolean lcPrefix() {
-		ANTLRInputStream ais = (ANTLRInputStream) _input;
-		int offset = ais.index();
+		int offset = _input.index();
 		boolean ws = false;
 		for (int dot = -1; dot > -offset; dot--) {
-			char c = (char) ais.LA(dot);
+			char c = (char) _input.LA(dot);
 			switch (c) {
 				case '\t':
 				case '\r':
@@ -53,16 +52,15 @@ public abstract class LexerAdaptor extends Lexer {
 	}
 
 	/**
-	 * Predicate qualifier for default mode block comments - necessary to distinguish from the '/*'
-	 * separator & wildcard combination
+	 * Predicate qualifier for default mode block comments - necessary to
+	 * distinguish from the '/*' separator & wildcard combination
 	 * 
 	 * @return true if block comment allowed
 	 */
 	protected boolean bcSuffix() {
-		ANTLRInputStream ais = (ANTLRInputStream) _input;
-		int offset = ais.index();
+		int offset = _input.index();
 		Interval i = new Interval(offset, offset + 2);
-		String la = ais.getText(i);
+		String la = _input.getText(i);
 		if (la.equals("/*/")) return false;
 		return true;
 	}

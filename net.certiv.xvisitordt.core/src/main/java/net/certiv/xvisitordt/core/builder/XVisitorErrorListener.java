@@ -3,9 +3,9 @@ package net.certiv.xvisitordt.core.builder;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import net.certiv.antlr.xvisitor.IToolListener;
-import net.certiv.antlr.xvisitor.Messages;
-import net.certiv.antlr.xvisitor.Messages.ToolMessage;
+import net.certiv.antlr.xvisitor.tool.IToolListener;
+import net.certiv.antlr.xvisitor.tool.Messages;
+import net.certiv.antlr.xvisitor.tool.Messages.ToolMessage;
 
 public class XVisitorErrorListener implements IToolListener {
 

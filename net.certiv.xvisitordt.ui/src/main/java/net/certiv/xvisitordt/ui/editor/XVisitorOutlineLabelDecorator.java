@@ -21,7 +21,7 @@ public class XVisitorOutlineLabelDecorator extends OutlineLabelDecorator {
 
 	public String decorateText(String text) {
 		switch (getElementKind()) {
-			case IDslElement.MODULE_DECLARATION:
+			case IDslElement.MODULE:
 				if (hasData()) {
 					ModelData data = (ModelData) getData();
 					return data.key;
@@ -56,7 +56,7 @@ public class XVisitorOutlineLabelDecorator extends OutlineLabelDecorator {
 		ImageDescriptor baseImage = createBaseImageDescriptor(image);
 		int type = 0;
 		switch (getElementKind()) {
-			case IDslElement.MODULE_DECLARATION:
+			case IDslElement.MODULE:
 				baseImage = getImageProvider().DESC_OBJ_MODULE;
 				type = 1;
 				break;

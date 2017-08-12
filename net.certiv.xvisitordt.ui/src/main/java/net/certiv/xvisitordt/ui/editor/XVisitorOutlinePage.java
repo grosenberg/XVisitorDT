@@ -33,7 +33,7 @@ public class XVisitorOutlinePage extends DslOutlinePage {
 	@Override
 	public void registerSpecialToolbarActions(IActionBars actionBars) {
 		IToolBarManager toolBarManager = actionBars.getToolBarManager();
-		DslFilterActionGroup fMemberFilterActionGroup = new DslFilterActionGroup(outlineViewer, store);
+		DslFilterActionGroup fMemberFilterActionGroup = new DslFilterActionGroup(viewer, store);
 		String title, helpContext;
 		ArrayList<DslFilterAction> actions = new ArrayList<DslFilterAction>(4);
 

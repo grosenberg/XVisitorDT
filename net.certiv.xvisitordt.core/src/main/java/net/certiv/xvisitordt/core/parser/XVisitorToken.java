@@ -7,7 +7,6 @@ import org.antlr.v4.runtime.misc.Pair;
 
 import net.certiv.xvisitordt.core.parser.gen.XVisitorLexer;
 
-@SuppressWarnings("serial")
 public class XVisitorToken extends CommonToken {
 
 	private int _mode;

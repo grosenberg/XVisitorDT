@@ -1,6 +1,6 @@
 package net.certiv.xvisitordt.core.formatter;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -41,10 +41,10 @@ public class XVisitorSourceFormatter extends DslCodeFormatter {
 	}
 
 	@Override
-	public ParseTree parse(String name, char[] content, DslParseErrorListener errListener) throws RecognitionException {
+	public ParseTree parse(String name, String content, DslParseErrorListener errListener) throws RecognitionException {
 		Log.debug(this, "Parse [name=" + name + "]");
 
-		input = new ANTLRInputStream(content, content.length);
+		input = CharStreams.fromString(content);
 		XVisitorLexer lexer = new XVisitorLexer(input);
 
 		// lexer.setLexerHelper(new LexerHelper());
