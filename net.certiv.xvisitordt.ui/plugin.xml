@@ -165,20 +165,6 @@
    </extension>
 
    <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="*">
-         <view
-               id="net.certiv.xvisitordt.ui.astview"
-               ratio="0.5"
-               relationship="right"
-               relative="org.eclipse.ui.views.TaskList"
-               visible="false">
-         </view>
-      </perspectiveExtension>
-   </extension>
-
-   <extension
          point="org.eclipse.ui.preferencePages">
       <page
             category="net.certiv.certivtools.prefs.TopLevelPage"
@@ -633,5 +619,14 @@
          </menu>
       </menuContribution>
     </extension>
+   <extension
+         point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
+      <hyperlinkDetector
+            class="net.certiv.xvisitordt.ui.editor.XVisitorHyperlinkDetector"
+            id="net.certiv.xvisitordt.ui.editor.XVisitorHyperlinkDetector"
+            name="XVisitorHyperlinkDetector"
+            targetId="net.certiv.dsl.ui.codeUnit">
+      </hyperlinkDetector>
+   </extension>
     
 </plugin>

@@ -69,7 +69,7 @@ public class XVisitorSourceFormatter extends DslCodeFormatter {
 		// walkers to format relevant elements of the ParseTree
 		// first pass: build indentation structure
 		// try {
-		// IndentProcessor indenter = new IndentProcessor(parseTree);
+		// IndentProcessor indenter = new IndentProcessor(tree);
 		// indenter.setHelper(this);
 		// indenter.findAll();
 		// // dumpSpans();
@@ -78,7 +78,7 @@ public class XVisitorSourceFormatter extends DslCodeFormatter {
 		// }
 		// // second pass: format
 		// try {
-		// FormatProcessor formatter = new FormatProcessor(parseTree);
+		// FormatProcessor formatter = new FormatProcessor(tree);
 		// formatter.setHelper(this);
 		// formatter.findAll();
 		// } catch (Exception e) {

@@ -1,4 +1,4 @@
-// Generated from D:/DevFiles/EclipseOxy/net.certiv.xvisitordt.core/src/main/java/net/certiv/xvisitordt/core/parser/XVisitorParser.g4 by ANTLR 4.5.3
+// Generated from D:/DevFiles/Eclipse/Dsl Editors/net.certiv.xvisitordt/net.certiv.xvisitordt.core/src/main/java/net/certiv/xvisitordt/core/parser/XVisitorParser.g4 by ANTLR 4.7
 
 	package net.certiv.xvisitordt.core.parser.gen;
 
@@ -25,7 +25,7 @@ import net.certiv.xvisitordt.core.parser.ParserAdaptor;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class XVisitorParser extends ParserAdaptor {
-	static { RuntimeMetaData.checkVersion("4.5.3", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.7", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -165,6 +165,7 @@ public class XVisitorParser extends ParserAdaptor {
 			setState(29);
 			match(SEMI);
 			setState(31);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==OPTIONS) {
 				{
@@ -330,6 +331,7 @@ public class XVisitorParser extends ParserAdaptor {
 			setState(56);
 			match(OPT_ID);
 			setState(65);
+			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case OPT_ASSIGN:
 				{
@@ -412,7 +414,10 @@ public class XVisitorParser extends ParserAdaptor {
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << OPT_ID) | (1L << OPT_LITERAL) | (1L << OPT_STAR) | (1L << OPT_INT))) != 0)) ) {
 			_errHandler.recoverInline(this);
-			} else {
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
 				consume();
 			}
 			}
@@ -542,6 +547,7 @@ public class XVisitorParser extends ParserAdaptor {
 				_la = _input.LA(1);
 			}
 			setState(86);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==LBRACE) {
 				{
@@ -754,6 +760,7 @@ public class XVisitorParser extends ParserAdaptor {
 			setState(108);
 			match(LBRACE);
 			setState(110);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==ONENTRY || _la==ONEXIT) {
 				{
@@ -761,7 +768,10 @@ public class XVisitorParser extends ParserAdaptor {
 				_la = _input.LA(1);
 				if ( !(_la==ONENTRY || _la==ONEXIT) ) {
 				_errHandler.recoverInline(this);
-				} else {
+				}
+				else {
+					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+					_errHandler.reportMatch(this);
 					consume();
 				}
 				}
@@ -773,6 +783,7 @@ public class XVisitorParser extends ParserAdaptor {
 			do {
 				{
 				setState(114);
+				_errHandler.sync(this);
 				switch (_input.LA(1)) {
 				case TEXT:
 					{
@@ -949,10 +960,14 @@ public class XVisitorParser extends ParserAdaptor {
 			_la = _input.LA(1);
 			if ( !(_la==ANY || _la==SEP) ) {
 			_errHandler.recoverInline(this);
-			} else {
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
 				consume();
 			}
 			setState(129);
+			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==NOT) {
 				{
@@ -1008,7 +1023,10 @@ public class XVisitorParser extends ParserAdaptor {
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STAR) | (1L << ID) | (1L << LITERAL))) != 0)) ) {
 			_errHandler.recoverInline(this);
-			} else {
+			}
+			else {
+				if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+				_errHandler.reportMatch(this);
 				consume();
 			}
 			}
@@ -1025,7 +1043,7 @@ public class XVisitorParser extends ParserAdaptor {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3)\u0088\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3)\u0088\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\3\2\3\2\3\2\3\2\3\2\5\2\"\n\2\3\2\7\2%\n"+
 		"\2\f\2\16\2(\13\2\3\2\3\2\6\2,\n\2\r\2\16\2-\3\2\3\2\3\3\3\3\3\3\6\3\65"+
@@ -1035,9 +1053,9 @@ public class XVisitorParser extends ParserAdaptor {
 		"\3\b\3\b\3\t\3\t\3\t\6\tk\n\t\r\t\16\tl\3\n\3\n\5\nq\n\n\3\n\3\n\6\nu"+
 		"\n\n\r\n\16\nv\3\n\3\n\3\13\6\13|\n\13\r\13\16\13}\3\f\3\f\3\r\3\r\5\r"+
 		"\u0084\n\r\3\16\3\16\3\16\2\2\17\2\4\6\b\n\f\16\20\22\24\26\30\32\2\6"+
-		"\4\2\37 $%\3\2\'(\3\2\23\24\4\2\21\21\30\31\u0089\2\34\3\2\2\2\4\61\3"+
-		"\2\2\2\6:\3\2\2\2\bG\3\2\2\2\nI\3\2\2\2\fM\3\2\2\2\16\\\3\2\2\2\20j\3"+
-		"\2\2\2\22n\3\2\2\2\24{\3\2\2\2\26\177\3\2\2\2\30\u0081\3\2\2\2\32\u0085"+
+		"\4\2\37 $%\3\2\'(\3\2\23\24\4\2\21\21\30\31\2\u0089\2\34\3\2\2\2\4\61"+
+		"\3\2\2\2\6:\3\2\2\2\bG\3\2\2\2\nI\3\2\2\2\fM\3\2\2\2\16\\\3\2\2\2\20j"+
+		"\3\2\2\2\22n\3\2\2\2\24{\3\2\2\2\26\177\3\2\2\2\30\u0081\3\2\2\2\32\u0085"+
 		"\3\2\2\2\34\35\7\13\2\2\35\36\7\n\2\2\36\37\7\30\2\2\37!\7\16\2\2 \"\5"+
 		"\4\3\2! \3\2\2\2!\"\3\2\2\2\"&\3\2\2\2#%\5\n\6\2$#\3\2\2\2%(\3\2\2\2&"+
 		"$\3\2\2\2&\'\3\2\2\2\')\3\2\2\2(&\3\2\2\2)+\5\f\7\2*,\5\16\b\2+*\3\2\2"+

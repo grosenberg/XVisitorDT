@@ -1,13 +1,15 @@
 //
-// Generated from D:/DevFiles/Eclipse/Dsl/xvisitordt/net.certiv.xvisitordt.core/src/main/java/net/certiv/xvisitordt/core/parser/Outline.xv
+// Generated from D:\DevFiles\Eclipse\Dsl Editors\net.certiv.xvisitordt\net.certiv.xvisitordt.core\src\main\java\net\certiv\xvisitordt\core\parser\Outline.xv
 // by XVisitor 4.5.3
 //
 package net.certiv.xvisitordt.core.parser.gen;
 
-	import org.antlr.v4.runtime.tree.ParseTree;
+	import net.certiv.xvisitordt.core.parser.OutlineAdaptor;
 
+import java.util.List;
+import org.antlr.v4.runtime.tree.ParseTree;
+import net.certiv.antlr.runtime.xvisitor.Processor;
 import net.certiv.antlr.runtime.xvisitor.xpath.EType;
-import net.certiv.xvisitordt.core.parser.OutlineAdaptor;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class OutlineVisitor extends OutlineAdaptor {

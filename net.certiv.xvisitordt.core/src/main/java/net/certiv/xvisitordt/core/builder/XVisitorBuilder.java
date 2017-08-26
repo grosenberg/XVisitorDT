@@ -1,7 +1,6 @@
 package net.certiv.xvisitordt.core.builder;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -76,14 +75,12 @@ public class XVisitorBuilder extends XVisitorBuilderBase {
 	public IStatus buildSourceModules(IProgressMonitor monitor, int ticks, List<IFile> srcModules)
 			throws CoreException {
 
-		if (!builderEnabled()) return null;
+		if (!builderEnabled() || srcModules.isEmpty()) return null;
 
 		try {
 			monitor.beginTask(CoreUtil.EMPTY_STRING, WORK_BUILD);
-
-			Log.debug(this, String.format("%s invoked on %s", this.getClass().getName(), srcModules));
 			file = CoreUtil.getActiveDslFile(getDslCore().getDslFileExtensions());
-			filepath = file.getFullPath();
+			filepath = file != null ? file.getFullPath() : null;
 			projpath = getProject().getFullPath();
 
 			for (IFile module : srcModules) {
@@ -92,7 +89,7 @@ public class XVisitorBuilder extends XVisitorBuilderBase {
 				if (restrictToActiveProjectPath() && !modpath.equals(filepath)) continue;
 				if (excludeIgnoredPaths(module)) continue;
 
-				Log.info(this, "Building " + buildDescription(module));
+				// Log.info(this, "Building " + buildDescription(module));
 				clearMarkers(module);
 				try {
 					compileGrammar(module, CoreUtil.subMonitorFor(monitor, WORK_BUILD));
@@ -403,14 +400,14 @@ public class XVisitorBuilder extends XVisitorBuilderBase {
 		return cuList.toArray(new ICompilationUnit[cuList.size()]);
 	}
 
-	private String buildDescription(IFile file) {
-		String projName = "";
-		String fileName = "";
-		if (file != null) {
-			projName = file.getProject().getName() + ", ";
-			fileName = file.getName() + ", ";
-		}
-		String name = projName + fileName;
-		return "[" + name + "time=" + new Date(System.currentTimeMillis()) + "]";
-	}
+	// private String buildDescription(IFile file) {
+	// String projName = "";
+	// String fileName = "";
+	// if (file != null) {
+	// projName = file.getProject().getName() + ", ";
+	// fileName = file.getName() + ", ";
+	// }
+	// String name = projName + fileName;
+	// return "[" + name + "time=" + new Date(System.currentTimeMillis()) + "]";
+	// }
 }

@@ -15,7 +15,8 @@ import net.certiv.dsl.core.util.Log;
 import net.certiv.dsl.core.util.Log.LogLevel;
 import net.certiv.dsl.core.util.Strings;
 import net.certiv.xvisitordt.core.XVisitorCore;
-import net.certiv.xvisitordt.core.parser.gen.OutlineProcessor;
+import net.certiv.xvisitordt.core.parser.gen.CodeAssistVisitor;
+import net.certiv.xvisitordt.core.parser.gen.OutlineVisitor;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorLexer;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.ActionContext;
@@ -36,8 +37,7 @@ public class XVisitorSourceParser extends DslSourceParser {
 	}
 
 	/**
-	 * Builds a ParseTree for the given content representing the source of a
-	 * corresponding module
+	 * Builds a ParseTree for the given content representing the source of a corresponding module
 	 */
 	@Override
 	public ParseTree parse(String name, String content, DslParseErrorListener errListener)
@@ -62,33 +62,33 @@ public class XVisitorSourceParser extends DslSourceParser {
 	}
 
 	/**
-	 * Build the internal minimal model used as the structure basis for the outline
-	 * view, etc.
+	 * Build the internal minimal model used as the structure basis for the outline view, etc.
 	 */
 	@Override
 	public void buildModel() {
-		Log.debug(this, "Model [root=" + (parseTree != null ? "not null" : "null") + "]");
+		Log.debug(this, "Model [root=" + (tree != null ? "not null" : "null") + "]");
 
 		try {
-			OutlineProcessor oProcessor = new OutlineProcessor(parseTree);
-			oProcessor.setHelper(this);
-			oProcessor.findAll();
+			OutlineVisitor visitor = new OutlineVisitor(tree);
+			visitor.setHelper(this);
+			visitor.findAll();
 		} catch (IllegalArgumentException e) {
 			Log.error(this, "Model - Outline processing error", e);
 		}
 	}
 
 	/**
-	 * Tree pattern matcher used to identify the code elements that may be
-	 * signficant in CodeAssist operations
+	 * Tree pattern matcher used to identify the code elements that may be signficant in CodeAssist
+	 * operations
 	 */
 	@Override
 	public void buildCodeAssist() {
-		Log.debug(this, "CodeAssist [root=" + (parseTree != null ? "not null" : "null") + "]");
+		Log.debug(this, "CodeAssist [root=" + (tree != null ? "not null" : "null") + "]");
 
 		try {
-			Collection<ParseTree> ruleNames = XPath.findAll(parseTree, "//ID", parser);
-			codeAssist(ruleNames);
+			CodeAssistVisitor walker = new CodeAssistVisitor(tree);
+			walker.setHelper(this);
+			walker.findAll();
 		} catch (Exception e) {
 			Log.error(this, "CodeAssist - Tree walk error", e);
 		}
@@ -109,7 +109,7 @@ public class XVisitorSourceParser extends DslSourceParser {
 	private void extractPackage() {
 
 		try {
-			Collection<ParseTree> actions = XPath.findAll(parseTree, "/grammarSpec/action", parser);
+			Collection<ParseTree> actions = XPath.findAll(tree, "/grammarSpec/action", parser);
 			for (ParseTree action : actions) {
 				ActionContext ctx = (ActionContext) action;
 				if (ctx.ID().getText().equals("header")) {

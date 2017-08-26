@@ -1,6 +1,6 @@
 package net.certiv.xvisitordt.ui.templates;
 
-import net.certiv.dsl.core.model.ITranslationUnit;
+import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.ui.templates.DslTemplateContext;
 import net.certiv.dsl.ui.templates.DslTemplateContextType;
 
@@ -30,7 +30,7 @@ public class XVisitorTemplateContextType extends DslTemplateContextType {
 
 	@Override
 	public DslTemplateContext createContext(IDocument document, int completionPosition, int length,
-			ITranslationUnit sourceModule) {
+			ICodeUnit sourceModule) {
 
 		return new XVisitorTemplateContext(this, document, completionPosition, length, sourceModule);
 	}

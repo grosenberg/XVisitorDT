@@ -5,7 +5,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import net.certiv.antlr.runtime.xvisitor.Processor;
-import net.certiv.dsl.core.parser.IModelConstruction;
+import net.certiv.dsl.core.parser.IModelAssembly;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.ActionContext;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.GrammarSpecContext;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.OptionContext;
@@ -16,7 +16,7 @@ import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.XpathContext;
 /** Implementing functions for the outline tree walker. */
 public abstract class OutlineAdaptor extends Processor {
 
-	private IModelConstruction helper;
+	private IModelAssembly helper;
 
 	private String gTypeName;
 	private ParserRuleContext rootNode;
@@ -25,7 +25,7 @@ public abstract class OutlineAdaptor extends Processor {
 		super(tree);
 	}
 
-	public void setHelper(IModelConstruction helper) {
+	public void setHelper(IModelAssembly helper) {
 		this.helper = helper;
 	}
 

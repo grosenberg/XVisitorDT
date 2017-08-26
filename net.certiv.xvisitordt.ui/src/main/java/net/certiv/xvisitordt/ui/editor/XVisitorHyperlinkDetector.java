@@ -3,26 +3,32 @@ package net.certiv.xvisitordt.ui.editor;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.ui.texteditor.ITextEditor;
-
+import net.certiv.dsl.core.model.DslModelManager;
 import net.certiv.dsl.core.model.IDslElement;
-import net.certiv.dsl.ui.editor.hyperlink.DslElementHyperlinkDetector;
+import net.certiv.dsl.core.model.IStatement;
+import net.certiv.dsl.ui.editor.hyperlink.DslHyperlinkDetector;
+import net.certiv.xvisitordt.core.XVisitorCore;
 
-public class XVisitorHyperlinkDetector extends DslElementHyperlinkDetector {
+public class XVisitorHyperlinkDetector extends DslHyperlinkDetector {
 
-	public XVisitorHyperlinkDetector(ITextEditor editor) {
-		super(editor);
+	public XVisitorHyperlinkDetector() {
+		super();
 	}
 
 	/** Filter/modify the elements for display on the popup */
 	@Override
-	public IDslElement[] selectOpenableElements(IDslElement[] elements) {
-		List<IDslElement> s = new ArrayList<>();
-		for (IDslElement e : elements) {
-			if (e.getKind() != IDslElement.MODULE) {
-				s.add(e);
+	public IStatement[] selectOpenableElements(IStatement[] elements) {
+		List<IStatement> stmts = new ArrayList<>();
+		for (IStatement elem : elements) {
+			if (elem.getKind() != IDslElement.MODULE) {
+				stmts.add(elem);
 			}
 		}
-		return s.toArray(new IDslElement[0]);
+		return stmts.toArray(new IStatement[stmts.size()]);
+	}
+
+	@Override
+	public DslModelManager getModelMgr() {
+		return XVisitorCore.getDefault().getModelManager();
 	}
 }

@@ -4,8 +4,6 @@ import org.eclipse.swt.graphics.RGB;
 
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.preferences.DslPrefsInit;
-import net.certiv.dsl.core.util.Log;
-import net.certiv.dsl.core.util.Log.LogLevel;
 import net.certiv.xvisitordt.core.XVisitorCore;
 
 /**
@@ -15,7 +13,6 @@ public class PrefsInitializer extends DslPrefsInit {
 
 	public PrefsInitializer() {
 		super();
-		Log.defLevel(LogLevel.Debug);
 	}
 
 	@Override
@@ -25,7 +22,6 @@ public class PrefsInitializer extends DslPrefsInit {
 
 	@Override
 	public void initializeDefaultPreferences() {
-		Log.debug(this, "Initializing XVisitor preferences");
 		super.initializeDefaultPreferences();
 
 		setRGB(PrefsKey.EDITOR_ACTION_COLOR, new RGB(70, 150, 170));

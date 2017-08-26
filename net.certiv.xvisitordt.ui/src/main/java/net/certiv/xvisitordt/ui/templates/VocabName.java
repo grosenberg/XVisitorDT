@@ -1,6 +1,6 @@
 package net.certiv.xvisitordt.ui.templates;
 
-import net.certiv.dsl.core.model.ITranslationUnit;
+import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.ui.templates.DslTemplateContext;
 
 import org.eclipse.jface.text.templates.TemplateContext;
@@ -21,10 +21,10 @@ public class VocabName extends TemplateVariableResolver {
 
 	@Override
 	protected String resolve(TemplateContext context) {
-		ITranslationUnit tu = ((DslTemplateContext) context).getSourceModule();
+		ICodeUnit cu = ((DslTemplateContext) context).getSourceModule();
 		String vocabName = null;
-		if (tu != null) {
-			vocabName = tu.getElementName();
+		if (cu != null) {
+			vocabName = cu.getElementName();
 			if (vocabName != null && vocabName.lastIndexOf('.') > 0) {
 				vocabName = vocabName.substring(0, vocabName.lastIndexOf('.'));
 			}

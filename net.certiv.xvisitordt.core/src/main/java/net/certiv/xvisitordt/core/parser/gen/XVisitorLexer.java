@@ -1,23 +1,21 @@
-// Generated from D:/DevFiles/EclipseOxy/net.certiv.xvisitordt.core/src/main/java/net/certiv/xvisitordt/core/parser/XVisitorLexer.g4 by ANTLR 4.5.3
+// Generated from D:/DevFiles/Eclipse/Dsl Editors/net.certiv.xvisitordt/net.certiv.xvisitordt.core/src/main/java/net/certiv/xvisitordt/core/parser/XVisitorLexer.g4 by ANTLR 4.7
 
 	package net.certiv.xvisitordt.core.parser.gen;
 
-	import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.RuleContext;
-import org.antlr.v4.runtime.RuntimeMetaData;
-import org.antlr.v4.runtime.Vocabulary;
-import org.antlr.v4.runtime.VocabularyImpl;
-import org.antlr.v4.runtime.atn.ATN;
-import org.antlr.v4.runtime.atn.ATNDeserializer;
-import org.antlr.v4.runtime.atn.LexerATNSimulator;
-import org.antlr.v4.runtime.atn.PredictionContextCache;
-import org.antlr.v4.runtime.dfa.DFA;
+	import net.certiv.xvisitordt.core.parser.LexerAdaptor;
 
-import net.certiv.xvisitordt.core.parser.LexerAdaptor;
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.atn.*;
+import org.antlr.v4.runtime.dfa.DFA;
+import org.antlr.v4.runtime.misc.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class XVisitorLexer extends LexerAdaptor {
-	static { RuntimeMetaData.checkVersion("4.5.3", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.7", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -29,8 +27,12 @@ public class XVisitorLexer extends LexerAdaptor {
 		LITERAL=23, HORZ_WS=24, VERT_WS=25, ERRCHAR=26, OPT_LBRACE=27, OPT_RBRACE=28, 
 		OPT_ID=29, OPT_LITERAL=30, OPT_DOT=31, OPT_ASSIGN=32, OPT_SEMI=33, OPT_STAR=34, 
 		OPT_INT=35, ABLOCK_RBRACE=36, ONENTRY=37, ONEXIT=38, REFERENCE=39;
-	public static final int Options = 1;
-	public static final int ActionBlock = 2;
+	public static final int
+		Options=1, ActionBlock=2;
+	public static String[] channelNames = {
+		"DEFAULT_TOKEN_CHANNEL", "HIDDEN"
+	};
+
 	public static String[] modeNames = {
 		"DEFAULT_MODE", "Options", "ActionBlock"
 	};
@@ -110,6 +112,9 @@ public class XVisitorLexer extends LexerAdaptor {
 	public String getSerializedATN() { return _serializedATN; }
 
 	@Override
+	public String[] getChannelNames() { return channelNames; }
+
+	@Override
 	public String[] getModeNames() { return modeNames; }
 
 	@Override
@@ -132,7 +137,7 @@ public class XVisitorLexer extends LexerAdaptor {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\2)\u021c\b\1\b\1\b"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\2)\u021c\b\1\b\1\b"+
 		"\1\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n"+
 		"\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21"+
 		"\4\22\t\22\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30"+
@@ -175,8 +180,8 @@ public class XVisitorLexer extends LexerAdaptor {
 		"\5\2\13\13\17\17\"\"\4\2\f\f\16\16\3\2\f\f\7\2\62;aa\u00b9\u00b9\u0302"+
 		"\u0371\u2041\u2042\17\2C\\c|\u00c2\u00d8\u00da\u00f8\u00fa\u0301\u0372"+
 		"\u037f\u0381\u2001\u200e\u200f\u2072\u2191\u2c02\u2ff1\u3003\ud801\uf902"+
-		"\ufdd1\ufdf2\uffff\4\2))^^\4\2$$^^\3\2\62;\5\2\62;CHch\u021d\2\5\3\2\2"+
-		"\2\2\7\3\2\2\2\2\t\3\2\2\2\2\13\3\2\2\2\2\r\3\2\2\2\2\17\3\2\2\2\2\21"+
+		"\ufdd1\ufdf2\uffff\4\2))^^\4\2$$^^\3\2\62;\5\2\62;CHch\2\u021d\2\5\3\2"+
+		"\2\2\2\7\3\2\2\2\2\t\3\2\2\2\2\13\3\2\2\2\2\r\3\2\2\2\2\17\3\2\2\2\2\21"+
 		"\3\2\2\2\2\23\3\2\2\2\2\25\3\2\2\2\2\27\3\2\2\2\2\31\3\2\2\2\2\33\3\2"+
 		"\2\2\2\35\3\2\2\2\2\37\3\2\2\2\2!\3\2\2\2\2#\3\2\2\2\2%\3\2\2\2\2\'\3"+
 		"\2\2\2\2)\3\2\2\2\2+\3\2\2\2\2-\3\2\2\2\2/\3\2\2\2\2\61\3\2\2\2\2\63\3"+
