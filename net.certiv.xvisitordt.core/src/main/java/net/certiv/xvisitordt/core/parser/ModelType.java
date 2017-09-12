@@ -1,20 +1,14 @@
 package net.certiv.xvisitordt.core.parser;
 
 public enum ModelType {
-
-	DocComment,
-	BlockComment,
-	LineComment,
 	GrammarType,
 	Options,
 	Option,
-	Tokens,
-	Token,
-	Import,
 	AtAction,
-	ParserRule,
-	LexerRule,
+	GroupRule,
+	PathRule,
 	ActionBlock,
 	Block,
-	BlockEnd;
+	Key,
+	Value;
 }

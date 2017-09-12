@@ -23,28 +23,22 @@ options {
 grammarSpec
     :   XVISITOR GRAMMAR ID SEMI 
     	optionsSpec?
-    	action*
-    	xmain
+    	action?
+    	xmain+
     	xpath+
     	EOF
     ;
 
 optionsSpec
-	:	OPTIONS OPT_LBRACE option+ OPT_RBRACE
+	:	OPTIONS LBRACE option* RBRACE
 	;
 
 option
-    :   OPT_ID 
-    	( OPT_ASSIGN optionValue
-    	| ( OPT_DOT OPT_ID )+
-    	) OPT_SEMI
+    :   ID ASSIGN optionValue SEMI
  	;
  	
 optionValue
-    :   OPT_ID
-    |   OPT_LITERAL
-    |   OPT_INT
-    |	OPT_STAR
+    :   ID ( DOT ID )*
     ;
 
 action

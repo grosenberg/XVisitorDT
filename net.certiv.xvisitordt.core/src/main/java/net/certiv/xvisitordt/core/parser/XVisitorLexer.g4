@@ -9,21 +9,23 @@
 
 lexer grammar XVisitorLexer;
 
-options {
-	superClass = LexerAdaptor ;
-}
-
-tokens {
-	TEXT,
-	RBRACE
-}
-
-
 @header {
 	package net.certiv.xvisitordt.core.parser.gen;
 
 	import net.certiv.xvisitordt.core.parser.LexerAdaptor;
 }
+
+options {
+	superClass = LexerAdaptor ;
+}
+
+tokens {
+	INT,
+	RBRACE,
+	TEXT
+}
+
+
 
 // ---------------------------------------------------------------------------------
 // default mode
@@ -54,11 +56,11 @@ LINE_COMMENT
 //
 
 OPTIONS
-	: 'options' -> pushMode(Options)
+	:	'options'	-> pushMode(Options)
 	;
 
 LBRACE
-	:	LBrace -> pushMode(ActionBlock)
+	:	LBrace		-> pushMode(ActionBlock)
 	;
 
 
@@ -116,24 +118,24 @@ ERRCHAR
 // ---------------------------------------------------------------------------------
 mode Options;
 
-	OPT_LBRACE	: LBrace					;
-	OPT_RBRACE	: RBrace	-> popMode		;
-
-	OPT_ID		: NameStartChar NameChar*			;
-	OPT_LITERAL	: DblQuoteLiteral | SglQuoteLiteral	;
-
-	OPT_DOT		: Dot		;
-	OPT_ASSIGN	: Assign	;
-	OPT_SEMI	: Semi		;
-	OPT_STAR	: Star		;
-	OPT_INT		: Int		;
-
 	OPT_DOC_COMMENT		:	DocComment 		-> type(BLOCK_COMMENT), channel(HIDDEN)		;
 	OPT_BLOCK_COMMENT	:	BlockComment 	-> type(BLOCK_COMMENT), channel(HIDDEN)		;
 	OPT_LINE_COMMENT	:	LineComment 	-> type(LINE_COMMENT), channel(HIDDEN)		;
 
-	OPT_HORZ_WS			:	Hws+ 			-> type(HORZ_WS), channel(HIDDEN)		;
-	OPT_VERT_WS			:	Vws+ 			-> type(VERT_WS), channel(HIDDEN)		;
+	OPT_LBRACE			: LBrace			-> type(LBRACE)				;
+	OPT_RBRACE			: RBrace			-> type(RBRACE), popMode	;
+
+	OPT_ID				: Id				-> type(ID)					;
+	OPT_DOT				: Dot				-> type(DOT)				;
+	OPT_ASSIGN			: Assign			-> type(ASSIGN)				;
+	OPT_SEMI			: Semi				-> type(SEMI)				;
+	OPT_STAR			: Star				-> type(STAR)				;
+	OPT_INT				: Int				-> type(INT)				;
+
+	OPT_LITERAL			: Literal			-> type(LITERAL)			;
+
+	OPT_HORZ_WS			: Hws+ 				-> type(HORZ_WS), channel(HIDDEN)		;
+	OPT_VERT_WS			: Vws+ 				-> type(VERT_WS), channel(HIDDEN)		;
 
 
 // ---------------------------------------------------------------------------------
@@ -185,6 +187,8 @@ fragment DocComment		: '/**' .*? '*/' ;
 fragment BlockComment	: '/#' .*? '#/' ;
 fragment LineComment	: '#' ~'\n'* ( '\n' Hws* '#' ~'\n'* )*	;
 
+fragment Id	: NameStartChar NameChar*	;
+
 fragment
 NameChar
 	:   NameStartChar
@@ -210,6 +214,8 @@ NameStartChar
 	|   '\uFDF0'..'\uFFFD'
 	; 	// ignores | ['\u10000-'\uEFFFF] ;
 
+
+fragment Literal			: DblQuoteLiteral | SglQuoteLiteral ;
 
 fragment SglQuoteLiteral	:	'\'' ( EscSeq | ~['\\] )* '\''	;
 fragment DblQuoteLiteral	:	'"'  ( EscSeq | ~["\\] )* '"'	;

@@ -2,6 +2,7 @@ package net.certiv.xvisitordt.ui.editor;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
@@ -11,6 +12,7 @@ import net.certiv.dsl.core.preferences.DslPrefsKey;
 import net.certiv.dsl.core.util.Log;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.DslEditor;
+import net.certiv.dsl.ui.text.DslWordFinder;
 import net.certiv.dsl.ui.text.folding.IFoldingStructureProvider;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.ui.XVisitorUI;
@@ -25,12 +27,13 @@ public class XVisitorEditor extends DslEditor {
 	private static final String[] EDITOR_KEY_SCOPE = new String[] { "net.certiv.xvisitordt.ui.xvisitorEditorScope" };
 	private static final String MARK_OCCURRENCES_ANNOTATION_TYPE = "net.certiv.xvisitordt.ui.occurrences";
 
-	private DefaultCharacterPairMatcher pairMatcher = null;
-	private IFoldingStructureProvider foldingProvider = null;
+	private DefaultCharacterPairMatcher pairMatcher;
+	private IFoldingStructureProvider foldingProvider;
+	private DslWordFinder finder;
 
 	public XVisitorEditor() {
 		super();
-		// has to be init'd on construction
+		// must init on construction
 		pairMatcher = new DefaultCharacterPairMatcher(XVisitorTextTools.PAIRS, Partitions.XVISITOR_PARTITIONING);
 	}
 
@@ -40,6 +43,7 @@ public class XVisitorEditor extends DslEditor {
 		Log.debug(this, "XVisitor editor started");
 		setEditorContextMenuId(EDITOR_CONTEXT);
 		setRulerContextMenuId(RULER_CONTEXT);
+		finder = new DslWordFinder();
 	}
 
 	@Override
@@ -67,6 +71,11 @@ public class XVisitorEditor extends DslEditor {
 	@Override
 	public char[] getBrackets() {
 		return XVisitorTextTools.PAIRS;
+	}
+
+	@Override
+	protected IRegion findWord(IDocument doc, int offset) {
+		return finder.findWord(doc, offset);
 	}
 
 	@Override

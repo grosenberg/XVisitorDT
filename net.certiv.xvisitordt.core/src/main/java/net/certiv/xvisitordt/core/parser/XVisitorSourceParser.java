@@ -16,7 +16,7 @@ import net.certiv.dsl.core.util.Log.LogLevel;
 import net.certiv.dsl.core.util.Strings;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.core.parser.gen.CodeAssistVisitor;
-import net.certiv.xvisitordt.core.parser.gen.OutlineVisitor;
+import net.certiv.xvisitordt.core.parser.gen.StructureVisitor;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorLexer;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.ActionContext;
@@ -28,7 +28,7 @@ public class XVisitorSourceParser extends DslSourceParser {
 
 	public XVisitorSourceParser() {
 		super();
-		Log.setLevel(this, LogLevel.Debug);
+		Log.setLevel(this, LogLevel.Info);
 	}
 
 	@Override
@@ -61,16 +61,12 @@ public class XVisitorSourceParser extends DslSourceParser {
 		return parseTree;
 	}
 
-	/**
-	 * Build the internal minimal model used as the structure basis for the outline view, etc.
-	 */
+	/** Make the internal element structure. */
 	@Override
-	public void buildModel() {
-		Log.debug(this, "Model [root=" + (tree != null ? "not null" : "null") + "]");
-
+	public void buildStructure() {
 		try {
-			OutlineVisitor visitor = new OutlineVisitor(tree);
-			visitor.setHelper(this);
+			StructureVisitor visitor = new StructureVisitor(tree);
+			visitor.setMaker(this);
 			visitor.findAll();
 		} catch (IllegalArgumentException e) {
 			Log.error(this, "Model - Outline processing error", e);
@@ -83,8 +79,6 @@ public class XVisitorSourceParser extends DslSourceParser {
 	 */
 	@Override
 	public void buildCodeAssist() {
-		Log.debug(this, "CodeAssist [root=" + (tree != null ? "not null" : "null") + "]");
-
 		try {
 			CodeAssistVisitor walker = new CodeAssistVisitor(tree);
 			walker.setHelper(this);

@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-public class ModelData {
+import net.certiv.dsl.core.model.util.IDescriptionData;
+
+public class ModelData implements IDescriptionData {
 
 	// overlay type
 	public static final int COMBINED = 1 << 0;
@@ -73,8 +75,8 @@ public class ModelData {
 		this.rhs = rhs;
 	}
 
-	public ModelData(ModelType type, ParseTree rootNode, ParseTree name,
-			List<ParseTree> listName, List<ParseTree> listRet) {
+	public ModelData(ModelType type, ParseTree rootNode, ParseTree name, List<ParseTree> listName,
+			List<ParseTree> listRet) {
 		this.type = type;
 		this.rootNode = rootNode;
 		this.name = name;

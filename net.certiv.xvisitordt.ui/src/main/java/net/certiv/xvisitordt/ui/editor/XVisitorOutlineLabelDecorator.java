@@ -33,8 +33,6 @@ public class XVisitorOutlineLabelDecorator extends OutlineLabelDecorator {
 					switch (data.type) {
 						case Option:
 							return data.key + " = " + data.value.getText();
-						case Token:
-							return data.key;
 						case AtAction:
 							if (!data.key.isEmpty()) {
 								return data.key + "::" + data.value.getText();
@@ -45,7 +43,8 @@ public class XVisitorOutlineLabelDecorator extends OutlineLabelDecorator {
 					}
 				}
 				return text;
-			case IDslElement.BLOCK:
+			case IDslElement.BEG_BLOCK:
+			case IDslElement.END_BLOCK:
 				return text;
 		}
 		return text;
@@ -74,35 +73,13 @@ public class XVisitorOutlineLabelDecorator extends OutlineLabelDecorator {
 							baseImage = getImageProvider().DESC_OBJ_ENUM;
 							type = 4;
 							break;
-						case Tokens:
-							baseImage = getImageProvider().DESC_OBJ_PACKAGE;
-							type = 5;
-							break;
-						case Token:
-							baseImage = getImageProvider().DESC_OBJ_MESSAGE;
-							type = 6;
-							break;
-						case LexerRule:
+						case PathRule:
 							baseImage = getImageProvider().DESC_OBJ_LEXER;
 							type = 8;
-							if (addOverlay(data.decoration & ModelData.FRAGMENT)) {
-								baseImage = createOverlayImageDescriptor(baseImage,
-										getImageProvider().DESC_OVR_FRAGMENT, TOP_RIGHT);
-								type = 9;
-							}
 							break;
-						case ParserRule:
+						case GroupRule:
 							baseImage = getImageProvider().DESC_OBJ_PARSER;
 							type = 10;
-							if (addOverlay(data.decoration & ModelData.PROTECTED)) {
-								baseImage = createOverlayImageDescriptor(baseImage,
-										getImageProvider().DESC_OVR_PROTECTED, TOP_RIGHT);
-								type = 11;
-							} else if (addOverlay(data.decoration & ModelData.PRIVATE)) {
-								baseImage = createOverlayImageDescriptor(baseImage, getImageProvider().DESC_OVR_PRIVATE,
-										TOP_RIGHT);
-								type = 12;
-							}
 							break;
 						case AtAction:
 							baseImage = getImageProvider().DESC_OBJ_ACTION;
@@ -115,7 +92,8 @@ public class XVisitorOutlineLabelDecorator extends OutlineLabelDecorator {
 					}
 				}
 				break;
-			case IDslElement.BLOCK:
+			case IDslElement.BEG_BLOCK:
+			case IDslElement.END_BLOCK:
 				baseImage = getImageProvider().DESC_OBJ_BLOCK;
 				type = 14;
 				break;
