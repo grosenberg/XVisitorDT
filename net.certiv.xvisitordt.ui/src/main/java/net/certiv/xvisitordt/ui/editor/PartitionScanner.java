@@ -11,8 +11,8 @@ import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 
-import net.certiv.dsl.ui.text.AbstractRuleBasedPartitionScanner;
-import net.certiv.dsl.ui.text.rules.BalancedBraceRule;
+import net.certiv.dsl.ui.editor.text.AbstractRuleBasedPartitionScanner;
+import net.certiv.dsl.ui.editor.text.rules.BalancedBraceRule;
 
 public class PartitionScanner extends AbstractRuleBasedPartitionScanner {
 

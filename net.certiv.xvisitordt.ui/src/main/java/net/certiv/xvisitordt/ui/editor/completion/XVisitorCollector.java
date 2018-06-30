@@ -11,12 +11,12 @@ import net.certiv.dsl.core.model.DslModelException;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.model.IStatement;
 import net.certiv.dsl.ui.DslUI;
-import net.certiv.dsl.ui.text.completion.CompletionLabelProvider;
-import net.certiv.dsl.ui.text.completion.DslCollector;
-import net.certiv.dsl.ui.text.completion.DslCompletionProposal;
+import net.certiv.dsl.ui.editor.text.completion.CompletionLabelProvider;
+import net.certiv.dsl.ui.editor.text.completion.DslCollector;
+import net.certiv.dsl.ui.editor.text.completion.DslCompletionProposal;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.ui.XVisitorUI;
-import net.certiv.xvisitordt.ui.editor.text.ScannerKeyWord;
+import net.certiv.xvisitordt.ui.editor.text.ScannerDefault;
 
 public class XVisitorCollector extends DslCollector {
 
@@ -78,7 +78,7 @@ public class XVisitorCollector extends DslCollector {
 		}
 
 		// 2) handle keywords: exists as a static list
-		for (String word : ScannerKeyWord.KEYWORDS) {
+		for (String word : ScannerDefault.KEYWORDS) {
 			CompletionProposal proposal = CompletionProposal.create(CompletionProposal.KEYWORD, offset);
 			char[] name = word.toCharArray();
 			proposal.setName(name);

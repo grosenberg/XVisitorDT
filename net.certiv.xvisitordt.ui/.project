@@ -3,6 +3,10 @@
 	<name>net.certiv.xvisitordt.ui</name>
 	<comment></comment>
 	<projects>
+		<project>net.certiv.dsl.core</project>
+		<project>net.certiv.dsl.lib</project>
+		<project>net.certiv.dsl.ui</project>
+		<project>net.certiv.xvisitordt.core</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

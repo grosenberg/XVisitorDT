@@ -1,5 +1,8 @@
 package net.certiv.xvisitordt.core.builder;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -23,9 +27,9 @@ import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.ToolFactory;
 import org.eclipse.jdt.core.formatter.CodeFormatter;
+import org.eclipse.jdt.core.manipulation.OrganizeImportsOperation;
+import org.eclipse.jdt.core.manipulation.OrganizeImportsOperation.IChooseImportQuery;
 import org.eclipse.jdt.core.search.TypeNameMatch;
-import org.eclipse.jdt.internal.corext.codemanipulation.OrganizeImportsOperation;
-import org.eclipse.jdt.internal.corext.codemanipulation.OrganizeImportsOperation.IChooseImportQuery;
 import org.eclipse.jdt.internal.formatter.DefaultCodeFormatter;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -36,18 +40,16 @@ import net.certiv.antlr.xvisitor.tool.Messages;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.core.util.Log;
+import net.certiv.dsl.core.util.loader.DynamicLoader;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.core.preferences.PrefsKey;
 
 @SuppressWarnings("restriction")
 public class XVisitorBuilder extends XVisitorBuilderBase {
 
-	// private static final IStatus F_STATUS = new Status(IStatus.CANCEL,
-	// XVisitorCore.PLUGIN_ID,
-	// "XVisitor build failed.");
-	// private Job buildJob;
-
 	private static final int WORK_BUILD = 100;
+	private static final IStatus F_STATUS = new Status(IStatus.CANCEL, XVisitorCore.PLUGIN_ID,
+			"XVisitor build failed.");
 
 	public static final String BUILDER_ID = "net.certiv.xvisitordt.core.builder";
 	public static final String MARKER_TYPE = "net.certiv.xvisitordt.core.problemMarker";
@@ -117,125 +119,86 @@ public class XVisitorBuilder extends XVisitorBuilderBase {
 	private void compileGrammar(IResource resource, IProgressMonitor monitor) {
 		if (resource != null && resource instanceof IFile && (resource.getName().endsWith(".xv"))) {
 			IFile file = (IFile) resource;
-
+			URL[] urls;
 			try {
-				String srcFile = file.getLocation().toPortableString();
-				String outputDirectory = determineBuildFolder(file).toString();
-				List<String> srcFiles = new ArrayList<>();
-				srcFiles.add(srcFile);
-
-				Log.info(this, "Build  [" + srcFile + "]");
-				Log.info(this, "Output [" + outputDirectory + "]");
-				monitor.worked(1);
-
-				XVisitorErrorListener toolErrs = new XVisitorErrorListener();
-
-				Tool tool = new Tool();
-				tool.removeListeners();
-				tool.addListener(toolErrs);
-				tool.setLevel("warn");
-				tool.setLibDirectory(outputDirectory);
-				tool.setOutputDirectory(outputDirectory);
-				tool.setGrammarFiles(srcFiles);
-				monitor.worked(1);
-
-				try {
-					tool.genModel();
-					monitor.worked(1);
-				} catch (Exception | Error e) {
-					Log.error(this, "XVisitor build failed: " + e.getMessage());
-					Log.error(this, " - Src Files: " + srcFiles);
-					Log.error(this, " - Out Dir  : " + outputDirectory);
-				}
-
-				publishErrors(resource, toolErrs);
-				postCompileCleanup(file, monitor);
-				monitor.worked(1);
-			} catch (Exception | Error e) {
-				Log.error(this, "Build failed.", e);
+				urls = DynamicLoader.getURLs(file.getProject());
+				Log.info(this, DynamicLoader.dumpURLs(urls));
+			} catch (MalformedURLException e) {
+				Log.error(this, e.getMessage());
+				return;
 			}
+
+			String srcFile = file.getLocation().toString();
+			String outputDirectory = determineBuildFolder(file).toString();
+			Log.info(this, "Build [" + srcFile + "]");
+			Log.info(this, "Output [" + outputDirectory + "]");
+
+			List<String> srcFiles = new ArrayList<>();
+			srcFiles.add(srcFile);
+			monitor.worked(1);
+			Job buildJob = new Job("XVisitor Builder") {
+
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+
+					// install a target specific project classloader
+					Thread thread = Thread.currentThread();
+					ClassLoader parent = thread.getContextClassLoader();
+
+					try {
+						DynamicLoader loader = DynamicLoader.create(urls, parent);
+						thread.setContextClassLoader(loader);
+					} catch (Exception e) {
+						Log.info(this, "Failed to construct classloader; restoring.");
+						thread.setContextClassLoader(parent);
+						return F_STATUS;
+					}
+
+					XVisitorErrorListener toolErrs = new XVisitorErrorListener();
+
+					Tool tool = new Tool();
+					tool.removeListeners();
+					tool.addListener(toolErrs);
+					tool.setLevel("warn");
+					tool.setLibDirectory(outputDirectory);
+					tool.setOutputDirectory(outputDirectory);
+					tool.setGrammarFiles(srcFiles);
+					monitor.worked(1);
+
+					boolean ok = true;
+					try {
+						tool.genModel();
+						monitor.worked(1);
+					} catch (Exception | Error e) {
+						ok = false;
+						Log.error(this, "XVisitor build failed: " + e.getMessage());
+						Log.error(this, " - Src Files: " + srcFiles);
+						Log.error(this, " - Lib Dir : " + outputDirectory);
+						Log.error(this, " - Out Dir : " + outputDirectory);
+
+						URLClassLoader urlLoader = (URLClassLoader) thread.getContextClassLoader();
+						for (URL url : urlLoader.getURLs()) {
+							Log.error(this, " - Classpath: " + url.getPath());
+						}
+					} finally {
+						thread.setContextClassLoader(parent);
+					}
+
+					publishErrors(resource, toolErrs);
+					postCompileCleanup(file, monitor);
+					monitor.worked(1);
+
+					if (!ok) return F_STATUS;
+					return Status.OK_STATUS;
+				}
+			};
+
+			// finalize and schedule job
+			buildJob.setPriority(Job.SHORT);
+			buildJob.setSystem(true);
+			buildJob.schedule();
 		}
 	}
-
-	// private void compileGrammar(IResource resource, IProgressMonitor monitor) {
-	// if (resource != null && resource instanceof IFile &&
-	// (resource.getName().endsWith(".xv"))) {
-	// IFile file = (IFile) resource;
-	//
-	// String srcFile = file.getLocation().toPortableString();
-	// String outputDirectory = determineBuildFolder(file).toString();
-	// Log.info(this, "Build [" + srcFile + "]");
-	// Log.info(this, "Output [" + outputDirectory + "]");
-	//
-	// XVisitorErrorListener toolErrs = new XVisitorErrorListener();
-	//
-	// List<String> srcFiles = new ArrayList<>();
-	// srcFiles.add(srcFile);
-	//
-	// monitor.worked(1);
-	//
-	// buildJob = new Job("XVisitor Builder") {
-	//
-	// @Override
-	// protected IStatus run(IProgressMonitor monitor) {
-	//
-	// // install a target specific project classloader
-	// Thread thread = Thread.currentThread();
-	// ClassLoader threadLoader = thread.getContextClassLoader();
-	// IProject project = file.getProject();
-	//
-	// try {
-	// ClassLoader projectLoader = ClassUtil.buildClassLoader(project);
-	// thread.setContextClassLoader(projectLoader);
-	// } catch (MalformedURLException e) {
-	// Log.info(this, "Failed to construct classloader; restoring.");
-	// thread.setContextClassLoader(threadLoader);
-	// return F_STATUS;
-	// }
-	//
-	// Tool tool = new Tool();
-	// tool.removeListeners();
-	// tool.addListener(toolErrs);
-	// tool.setLevel("warn");
-	// tool.setLibDirectory(outputDirectory);
-	// tool.setOutputDirectory(outputDirectory);
-	// tool.setGrammarFiles(srcFiles);
-	// monitor.worked(1);
-	//
-	// boolean ok = true;
-	// try {
-	// tool.genModel();
-	// monitor.worked(1);
-	// } catch (Exception | Error e) {
-	// ok = false;
-	// Log.error(this, "XVisitor build failed: " + e.getMessage());
-	// Log.error(this, " - Src Files: " + srcFiles);
-	// Log.error(this, " - Lib Dir : " + outputDirectory);
-	// Log.error(this, " - Out Dir : " + outputDirectory);
-	//
-	// URLClassLoader urlLoader = (URLClassLoader) thread.getContextClassLoader();
-	// for (URL url : urlLoader.getURLs()) {
-	// Log.error(this, " - Classpath: " + url.getPath());
-	// }
-	// } finally {
-	// Log.info(this, "Restoring classloader after generate.");
-	// thread.setContextClassLoader(threadLoader);
-	// }
-	//
-	// publishErrors(resource, toolErrs);
-	// postCompileCleanup(file, monitor);
-	// monitor.worked(1);
-	//
-	// if (!ok) return F_STATUS;
-	// return Status.OK_STATUS;
-	// }
-	// };
-	//
-	// // finalize and schedule job
-	// buildJob.setPriority(Job.SHORT);buildJob.setSystem(true);buildJob.schedule();
-	//
-	// }
-	// }
 
 	private void publishErrors(IResource resource, XVisitorErrorListener toolErrs) {
 		if (toolErrs.hasErrors()) {
@@ -277,7 +240,6 @@ public class XVisitorBuilder extends XVisitorBuilderBase {
 	// ///////////////////////////////////////////////////////////////////////////////
 
 	private void doBuilderRefresh(IFile file, boolean markDerived, IProgressMonitor monitor) {
-		Log.info(this, "Refreshing...");
 		IContainer folder = getBuildFolder(file);
 		try {
 			if (folder != null) {
@@ -314,6 +276,7 @@ public class XVisitorBuilder extends XVisitorBuilderBase {
 			Log.error(this, "Failed to refresh");
 		}
 		monitor.worked(1);
+		Log.info(this, "Workspace refreshed");
 	}
 
 	private void doBuilderFormat(IFile file, IProgressMonitor monitor) {
@@ -352,6 +315,7 @@ public class XVisitorBuilder extends XVisitorBuilderBase {
 		IContainer folder = getBuildFolder(file);
 		IChooseImportQuery query = new IChooseImportQuery() {
 
+			@Override
 			public TypeNameMatch[] chooseImports(TypeNameMatch[][] openChoices, ISourceRange[] ranges) {
 				return null;
 			}
@@ -381,7 +345,7 @@ public class XVisitorBuilder extends XVisitorBuilderBase {
 	}
 
 	private ICompilationUnit[] getCompilationUnits(IResource resource, IContainer folder) {
-		ArrayList<ICompilationUnit> cuList = new ArrayList<ICompilationUnit>();
+		ArrayList<ICompilationUnit> cuList = new ArrayList<>();
 		IResource[] children = null;
 		try {
 			children = folder.members();
@@ -399,6 +363,51 @@ public class XVisitorBuilder extends XVisitorBuilderBase {
 		}
 		return cuList.toArray(new ICompilationUnit[cuList.size()]);
 	}
+
+	// =====================================================================
+
+	// private void compileGrammar(IResource resource, IProgressMonitor monitor) {
+	// if (resource != null && resource instanceof IFile && (resource.getName().endsWith(".xv"))) {
+	// IFile file = (IFile) resource;
+	//
+	// try {
+	// String srcFile = file.getLocation().toString();
+	// String outputDirectory = determineBuildFolder(file).toString();
+	// List<String> srcFiles = new ArrayList<>();
+	// srcFiles.add(srcFile);
+	//
+	// Log.info(this, "Build [" + srcFile + "]");
+	// Log.info(this, "Output [" + outputDirectory + "]");
+	// monitor.worked(1);
+	//
+	// XVisitorErrorListener toolErrs = new XVisitorErrorListener();
+	//
+	// Tool tool = new Tool();
+	// tool.removeListeners();
+	// tool.addListener(toolErrs);
+	// tool.setLevel("warn");
+	// tool.setLibDirectory(outputDirectory);
+	// tool.setOutputDirectory(outputDirectory);
+	// tool.setGrammarFiles(srcFiles);
+	// monitor.worked(1);
+	//
+	// try {
+	// tool.genModel();
+	// monitor.worked(1);
+	// } catch (Exception | Error e) {
+	// Log.error(this, "XVisitor build failed: " + e.getMessage());
+	// Log.error(this, " - Src Files: " + srcFiles);
+	// Log.error(this, " - Out Dir : " + outputDirectory);
+	// }
+	//
+	// publishErrors(resource, toolErrs);
+	// postCompileCleanup(file, monitor);
+	// monitor.worked(1);
+	// } catch (Exception | Error e) {
+	// Log.error(this, "Build failed.", e);
+	// }
+	// }
+	// }
 
 	// private String buildDescription(IFile file) {
 	// String projName = "";

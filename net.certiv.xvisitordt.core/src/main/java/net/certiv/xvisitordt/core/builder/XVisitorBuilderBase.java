@@ -5,10 +5,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
 import net.certiv.dsl.core.builder.DslBuilder;
-import net.certiv.dsl.core.model.DslModelException;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.util.CoreUtil;
-import net.certiv.xvisitordt.core.parser.XVisitorSourceParser;
 
 public abstract class XVisitorBuilderBase extends DslBuilder {
 
@@ -37,13 +35,8 @@ public abstract class XVisitorBuilderBase extends DslBuilder {
 		return workingPath;
 	}
 
-	protected String resolvePackageName(IResource resource) {
+	public String resolvePackageName(IResource resource) {
 		ICodeUnit unit = getDslCore().getModelManager().create((IFile) resource);
-		try {
-			XVisitorSourceParser parser = (XVisitorSourceParser) unit.getSourceParser();
-			return parser.resolvePackageName();
-		} catch (DslModelException e) {
-			return null;
-		}
+		return unit.resolveParserPackageName();
 	}
 }

@@ -76,10 +76,5 @@ public class PrefsInitializer extends DslPrefsInit {
 
 		setString(PrefsKey.INDENT_AT, PrefsKey.BEFORE);
 		setString(PrefsKey.LIST_ID, PrefsKey.AFTER);
-
-		setBool(PrefsKey.FORMATTER_COMMENT_HEADER_ENABLE, false);
-		setBool(PrefsKey.FORMATTER_COMMENT_FORMAT, false);
-		setBool(PrefsKey.FORMATTER_INDENT_COMMENT_MULTILINE, false);
-		setBool(PrefsKey.FORMATTER_INDENT_COMMENT_SINGLELINE, false);
 	}
 }

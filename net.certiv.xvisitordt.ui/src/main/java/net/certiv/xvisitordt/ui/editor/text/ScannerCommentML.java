@@ -9,12 +9,12 @@ import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
-import net.certiv.dsl.ui.text.AbstractBufferedRuleBasedScanner;
+import net.certiv.dsl.ui.editor.text.AbstractBufferedRuleBasedScanner;
 import net.certiv.xvisitordt.core.preferences.PrefsKey;
 
 public class ScannerCommentML extends AbstractBufferedRuleBasedScanner {
 
-	private String[] fgTokenProperties;
+	private String[] tokenProperties;
 
 	public ScannerCommentML(IDslPrefsManager store) {
 		super(store);
@@ -23,10 +23,10 @@ public class ScannerCommentML extends AbstractBufferedRuleBasedScanner {
 
 	@Override
 	protected String[] getTokenProperties() {
-		if (fgTokenProperties == null) {
-			fgTokenProperties = new String[] { bind(PrefsKey.EDITOR_COMMENT_ML_COLOR) };
+		if (tokenProperties == null) {
+			tokenProperties = new String[] { bind(PrefsKey.EDITOR_COMMENT_ML_COLOR) };
 		}
-		return fgTokenProperties;
+		return tokenProperties;
 	}
 
 	@Override

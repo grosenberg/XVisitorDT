@@ -14,7 +14,7 @@ import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.ActionContext;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.GrammarSpecContext;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.OptionContext;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.OptionsSpecContext;
-import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.XmainContext;
+import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.XgroupContext;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.XpathContext;
 
 /** Implementing functions for the outline tree walker. */
@@ -59,8 +59,8 @@ public abstract class StructureAdaptor extends Processor {
 		maker.statement(ctx, ctx.ID(), data);
 	}
 
-	public void processMainRule() {
-		XmainContext ctx = (XmainContext) lastPathNode();
+	public void processGroupRule() {
+		XgroupContext ctx = (XgroupContext) lastPathNode();
 		TerminalNode id = ctx.ID().get(0);
 		ModelData data = new ModelData(ModelType.GroupRule, ctx, id.getText());
 		maker.statement(ctx, id, data);

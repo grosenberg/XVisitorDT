@@ -20,7 +20,7 @@ structure
 	| optionsBlock
 	| optionStatement
 	| action
-	| mainRule
+	| groupRule
 	| pathRule
 	;
 
@@ -41,8 +41,8 @@ action				: /grammarSpec/action
 							{ processAction(); }
 					;
 
-mainRule			: //xmain
-							{ processMainRule(); }
+groupRule			: //xgroup
+							{ processGroupRule(); }
 					;
 
 pathRule			: //xpath

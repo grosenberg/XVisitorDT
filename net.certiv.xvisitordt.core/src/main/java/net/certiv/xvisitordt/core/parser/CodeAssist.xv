@@ -21,15 +21,15 @@ options {
 }
 
 codeAssist
-	: xmain
+	: xgroup
 	| xpath
 	;
 
-xmain
-	: //xmain//$ID	{ helper.addCodeAssistElement($ID); }
+xgroup
+	: //xgroup//ID	{ helper.addCodeAssistElement($ID); }
 	;
 
 xpath
-	: //xpath//$ID	{ helper.addCodeAssistElement($ID); }
+	: //xpath//ID	{ helper.addCodeAssistElement($ID); }
 	;
 

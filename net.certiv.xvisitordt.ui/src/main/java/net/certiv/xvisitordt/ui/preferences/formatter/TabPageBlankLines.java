@@ -31,7 +31,7 @@ public class TabPageBlankLines extends FormatterModifyTabPage {
 
 	@Override
 	protected URL getPreviewContent() {
-		return getClass().getResource("BlankLinesPreview.g4"); //$NON-NLS-1$
+		return getClass().getResource("PreviewBlankLines.g4"); //$NON-NLS-1$
 	}
 
 	@Override

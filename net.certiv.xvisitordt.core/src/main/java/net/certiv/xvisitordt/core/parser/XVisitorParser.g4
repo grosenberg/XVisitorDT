@@ -1,30 +1,25 @@
 /*******************************************************************************
- * Copyright (c) 2010-2015 Gerald Rosenberg & others. All rights reserved.
+ * Copyright (c) 2010-2017 Gerald Rosenberg & others. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the standard 3-clause BSD License.  A copy of the License
  * is provided with this distribution in the License.txt file.
  *******************************************************************************/
-/* ANTLR v4 XVisitor grammar */
-
 parser grammar XVisitorParser;
 
 options {
-	superClass = ParserAdaptor	;
 	tokenVocab = XVisitorLexer	;
 }
 
 @header {
 	package net.certiv.xvisitordt.core.parser.gen;
-
-	import net.certiv.xvisitordt.core.parser.ParserAdaptor;
 }
 
 grammarSpec
     :   XVISITOR GRAMMAR ID SEMI 
     	optionsSpec?
-    	action?
-    	xmain+
+    	action*
+    	xgroup*
     	xpath+
     	EOF
     ;
@@ -45,8 +40,8 @@ action
 	:	AT ID actionBlock 
 	;
 
-xmain
-	:	name=ID COLON ID ( OR ID )* actionBlock? SEMI
+xgroup
+	:	name=ID COLON rules+=ID ( OR rules+=ID )* actionBlock? SEMI
 	;
 
 xpath

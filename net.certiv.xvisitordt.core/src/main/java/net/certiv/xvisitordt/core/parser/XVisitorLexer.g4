@@ -11,8 +11,7 @@ lexer grammar XVisitorLexer;
 
 @header {
 	package net.certiv.xvisitordt.core.parser.gen;
-
-	import net.certiv.xvisitordt.core.parser.LexerAdaptor;
+	import  net.certiv.xvisitordt.core.parser.LexerAdaptor;
 }
 
 options {
@@ -56,11 +55,11 @@ LINE_COMMENT
 //
 
 OPTIONS
-	:	'options'	-> pushMode(Options)
+	: 'options'	-> pushMode(Options)
 	;
 
 LBRACE
-	:	LBrace		-> pushMode(ActionBlock)
+	: LBrace	-> pushMode(ActionBlock)
 	;
 
 
@@ -76,7 +75,7 @@ XVISITOR	: 'xvisitor'	;
 COLON		: Colon		;
 COMMA		: Comma		;
 SEMI		: Semi		;
-ASSIGN		: Assign	;
+ASSIGN		: Equal	;
 QUESTION	: Question	;
 STAR		: Star		;
 AT			: At		;
@@ -87,14 +86,8 @@ OR			: Or		;
 NOT			: Not		;
 
 /** Allow unicode rule/token names */
-ID
-	:	NameStartChar NameChar*
-	;
-
-LITERAL
-	:	SglQuoteLiteral
-	|	DblQuoteLiteral
-	;
+ID		: Id		;
+LITERAL	: Literal	;
 
 // ----------
 // Whitespace
@@ -127,15 +120,15 @@ mode Options;
 
 	OPT_ID				: Id				-> type(ID)					;
 	OPT_DOT				: Dot				-> type(DOT)				;
-	OPT_ASSIGN			: Assign			-> type(ASSIGN)				;
+	OPT_ASSIGN			: Equal				-> type(ASSIGN)				;
 	OPT_SEMI			: Semi				-> type(SEMI)				;
 	OPT_STAR			: Star				-> type(STAR)				;
 	OPT_INT				: Int				-> type(INT)				;
 
 	OPT_LITERAL			: Literal			-> type(LITERAL)			;
 
-	OPT_HORZ_WS			: Hws+ 				-> type(HORZ_WS), channel(HIDDEN)		;
-	OPT_VERT_WS			: Vws+ 				-> type(VERT_WS), channel(HIDDEN)		;
+	OPT_HORZ_WS			:	Hws+ 			-> type(HORZ_WS), channel(HIDDEN)		;
+	OPT_VERT_WS			:	Vws+ 			-> type(VERT_WS), channel(HIDDEN)		;
 
 
 // ---------------------------------------------------------------------------------
@@ -166,7 +159,7 @@ mode ActionBlock;
 fragment Colon		: ':'	;
 fragment Comma		: ','	;
 fragment Semi		: ';'	;
-fragment Assign		: '='	;
+fragment Equal		: '='	;
 fragment Question	: '?'	;
 fragment Star		: '*'	;
 fragment At			: '@'	;
@@ -187,16 +180,7 @@ fragment DocComment		: '/**' .*? '*/' ;
 fragment BlockComment	: '/#' .*? '#/' ;
 fragment LineComment	: '#' ~'\n'* ( '\n' Hws* '#' ~'\n'* )*	;
 
-fragment Id	: NameStartChar NameChar*	;
-
-fragment
-NameChar
-	:   NameStartChar
-	|   '0'..'9' |   '_'
-	|   '\u00B7'
-	|   '\u0300'..'\u036F'
-	|   '\u203F'..'\u2040'
-	;
+fragment Id	: NameStartChar NameChar* ;
 
 fragment
 NameStartChar
@@ -212,7 +196,18 @@ NameStartChar
 	|   '\u3001'..'\uD7FF'
 	|   '\uF900'..'\uFDCF'
 	|   '\uFDF0'..'\uFFFD'
-	; 	// ignores | ['\u10000-'\uEFFFF] ;
+	;
+
+fragment
+NameChar
+	:   NameStartChar
+	|   '0'..'9'
+	|   '_'
+	|   '\u00B7'
+	|   '\u0300'..'\u036F'
+	|   '\u203F'..'\u2040'
+	;
+
 
 
 fragment Literal			: DblQuoteLiteral | SglQuoteLiteral ;

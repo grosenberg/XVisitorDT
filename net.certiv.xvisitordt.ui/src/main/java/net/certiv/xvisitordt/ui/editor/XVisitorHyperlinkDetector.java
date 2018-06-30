@@ -10,7 +10,7 @@ import net.certiv.dsl.core.model.DslModelManager;
 import net.certiv.dsl.core.model.IDslElement;
 import net.certiv.dsl.core.model.IStatement;
 import net.certiv.dsl.ui.editor.hyperlink.DslHyperlinkDetector;
-import net.certiv.dsl.ui.text.DslWordFinder;
+import net.certiv.dsl.ui.editor.text.DslWordFinder;
 import net.certiv.xvisitordt.core.XVisitorCore;
 
 public class XVisitorHyperlinkDetector extends DslHyperlinkDetector {

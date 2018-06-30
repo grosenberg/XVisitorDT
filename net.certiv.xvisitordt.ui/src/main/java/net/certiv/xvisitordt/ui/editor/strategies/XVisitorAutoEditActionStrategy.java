@@ -8,9 +8,9 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 
 import net.certiv.dsl.core.preferences.DslPrefsManager;
-import net.certiv.dsl.ui.text.DslTextTools;
-import net.certiv.dsl.ui.text.util.AutoEdit;
-import net.certiv.dsl.ui.text.util.LineRegion;
+import net.certiv.dsl.ui.editor.text.DslTextTools;
+import net.certiv.dsl.ui.editor.text.util.AutoEdit;
+import net.certiv.dsl.ui.editor.text.util.LineRegion;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 import net.certiv.xvisitordt.ui.editor.Partitions;

@@ -8,8 +8,8 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
 import net.certiv.dsl.core.util.Log;
+import net.certiv.dsl.ui.editor.text.util.LineRegion;
 import net.certiv.dsl.ui.formatter.strategies.JavaFormattingStrategy;
-import net.certiv.dsl.ui.text.util.LineRegion;
 import net.certiv.xvisitordt.core.XVisitorCore;
 
 public class ActionCodeFormattingStrategy extends JavaFormattingStrategy {

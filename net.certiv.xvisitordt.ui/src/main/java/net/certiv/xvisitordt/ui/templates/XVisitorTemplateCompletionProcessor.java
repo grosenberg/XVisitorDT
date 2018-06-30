@@ -1,7 +1,7 @@
 package net.certiv.xvisitordt.ui.templates;
 
+import net.certiv.dsl.ui.editor.text.completion.DslContentAssistInvocationContext;
 import net.certiv.dsl.ui.templates.DslTemplateCompletionProcessor;
-import net.certiv.dsl.ui.text.completion.DslContentAssistInvocationContext;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 import net.certiv.xvisitordt.ui.editor.Partitions;
 

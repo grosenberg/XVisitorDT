@@ -17,11 +17,6 @@ public class Partitions {
 	public static final String[] PREFIXES = new String[] { "options" };
 	public static final String[] PREDICATES = new String[] {};
 
-	/**
-	 * Partition type groups by similar treatment:<br>
-	 * COMMENT_SL, COMMENT_ML, COMMENT_JD<br>
-	 * STRING, ACTION
-	 */
 	public static final String[] SPECIAL_TYPES = new String[] { COMMENT_JD, COMMENT_ML, COMMENT_SL, STRING, ACTION };
 	public static final String[] STRING_AND_COMMENT_TYPES = new String[] { COMMENT_JD, COMMENT_ML, COMMENT_SL, STRING };
 	public static final String[] COMMENT_TYPES = new String[] { COMMENT_JD, COMMENT_ML, COMMENT_SL };

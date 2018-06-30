@@ -9,11 +9,10 @@ import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.preferences.DslPrefsKey;
-import net.certiv.dsl.core.util.Log;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.DslEditor;
-import net.certiv.dsl.ui.text.DslWordFinder;
-import net.certiv.dsl.ui.text.folding.IFoldingStructureProvider;
+import net.certiv.dsl.ui.editor.text.DslWordFinder;
+import net.certiv.dsl.ui.editor.text.folding.IFoldingStructureProvider;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 import net.certiv.xvisitordt.ui.editor.folding.XVisitorFoldingStructureProvider;
@@ -40,7 +39,6 @@ public class XVisitorEditor extends DslEditor {
 	@Override
 	protected void initializeEditor() {
 		super.initializeEditor();
-		Log.debug(this, "XVisitor editor started");
 		setEditorContextMenuId(EDITOR_CONTEXT);
 		setRulerContextMenuId(RULER_CONTEXT);
 		finder = new DslWordFinder();

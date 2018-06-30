@@ -17,6 +17,7 @@ import net.certiv.dsl.core.util.Strings;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.core.parser.gen.CodeAssistVisitor;
 import net.certiv.xvisitordt.core.parser.gen.StructureVisitor;
+import net.certiv.xvisitordt.core.parser.gen.ValidityVisitor;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorLexer;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.ActionContext;
@@ -44,21 +45,23 @@ public class XVisitorSourceParser extends DslSourceParser {
 			throws RecognitionException, Exception {
 		Log.debug(this, "Parse [name=" + name + "]");
 
-		input = CharStreams.fromString(content);
+		input = CharStreams.fromString(content, name);
 		XVisitorLexer lexer = new XVisitorLexer(input);
-
-		// lexer.setLexerHelper(new LexerHelper());
 		XVisitorTokenFactory factory = new XVisitorTokenFactory(input);
 		lexer.setTokenFactory(factory);
 		tokens = new CommonTokenStream(lexer);
 
 		parser = new XVisitorParser(tokens);
 		parser.setTokenFactory(factory);
-		parser.removeErrorListeners(); // remove ConsoleErrorListener to reduce the noise
-		parser.addErrorListener(errListener); // add error listener to feed error markers
-		GrammarSpecContext parseTree = ((XVisitorParser) parser).grammarSpec();
+		parser.removeErrorListeners();
+		parser.addErrorListener(errListener);
+		GrammarSpecContext tree = ((XVisitorParser) parser).grammarSpec();
 
-		return parseTree;
+		ValidityVisitor walker = new ValidityVisitor(tree);
+		walker.setHelper(parser, errListener);
+		walker.findAll();
+
+		return tree;
 	}
 
 	/** Make the internal element structure. */

@@ -5,10 +5,10 @@ import org.eclipse.ui.IEditorPart;
 
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.ui.DslUI;
+import net.certiv.dsl.ui.editor.text.completion.CompletionLabelProvider;
+import net.certiv.dsl.ui.editor.text.completion.DslCompletionProcessor;
+import net.certiv.dsl.ui.editor.text.completion.DslCompletionProposal;
 import net.certiv.dsl.ui.templates.DslTemplateContext;
-import net.certiv.dsl.ui.text.completion.CompletionLabelProvider;
-import net.certiv.dsl.ui.text.completion.DslCompletionProcessor;
-import net.certiv.dsl.ui.text.completion.DslCompletionProposal;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 
