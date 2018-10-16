@@ -168,49 +168,49 @@
          point="org.eclipse.ui.preferencePages">
       <page
             category="net.certiv.certivtools.prefs.TopLevelPage"
-            class="net.certiv.xvisitordt.ui.preferences.page.PrefPageXVisitor"
+            class="net.certiv.xvisitordt.ui.preferences.page.GeneralPage"
             id="net.certiv.xvisitordt.ui.preferences.page.PrefPageXVisitor"
             name="XVisitor">
       </page>
       <page
             category="net.certiv.xvisitordt.ui.preferences.page.PrefPageXVisitor"
-            class="net.certiv.xvisitordt.ui.preferences.page.PrefPageMarkOccurrences"
+            class="net.certiv.xvisitordt.ui.preferences.page.MarkOccurrencesPage"
             id="net.certiv.xvisitordt.ui.preferences.page.PrefPageMarkOccurrences"
             name="Mark Occurrences">
       </page>
       <page
             category="net.certiv.xvisitordt.ui.preferences.page.PrefPageXVisitor"
-            class="net.certiv.xvisitordt.ui.preferences.page.PrefPageEditor"
+            class="net.certiv.xvisitordt.ui.preferences.page.EditorPage"
             id="net.certiv.antlrdt4.preferences.page.PrefPageEditor"
             name="Editor">
       </page>
       <page
             category="net.certiv.xvisitordt.ui.preferences.page.PrefPageXVisitor"
-            class="net.certiv.xvisitordt.ui.preferences.page.PrefPageFolding"
+            class="net.certiv.xvisitordt.ui.preferences.page.FoldingPage"
             id="net.certiv.xvisitordt.ui.preferences.page.PrefPageFolding"
             name="Folding">
       </page>
       <page
             category="net.certiv.xvisitordt.ui.preferences.page.PrefPageXVisitor"
-            class="net.certiv.xvisitordt.ui.preferences.page.PrefPageSyntaxColoring"
+            class="net.certiv.xvisitordt.ui.preferences.page.SyntaxColorPage"
             id="net.certiv.xvisitordt.ui.preferences.page.PrefPageSyntaxColoring"
             name="Syntax Coloring">
       </page>
       <page
             category="net.certiv.xvisitordt.ui.preferences.page.PrefPageXVisitor"
-            class="net.certiv.xvisitordt.ui.preferences.page.PrefPageCodeTemplates"
+            class="net.certiv.xvisitordt.ui.preferences.page.TemplatesPage"
             id="net.certiv.xvisitordt.ui.preferences.page.PrefPageCodeTemplates"
             name="Templates">
       </page>
       <page
             category="net.certiv.xvisitordt.ui.preferences.page.PrefPageXVisitor"
-            class="net.certiv.xvisitordt.ui.preferences.page.PrefPageFormatter"
+            class="net.certiv.xvisitordt.ui.preferences.page.FormatterPage"
             id="net.certiv.xvisitordt.ui.preferences.page.PrefPageFormatter"
             name="Formatter">
       </page>
       <page
             category="net.certiv.xvisitordt.ui.preferences.page.PrefPageXVisitor"
-            class="net.certiv.xvisitordt.ui.preferences.page.PrefPageBuilder"
+            class="net.certiv.xvisitordt.ui.preferences.page.BuilderPage"
             id="net.certiv.xvisitordt.ui.preferences.page.PrefPageBuilder"
             name="Builder">
       </page>

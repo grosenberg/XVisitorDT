@@ -9,8 +9,8 @@ import org.eclipse.jface.text.ITypedRegion;
 
 import net.certiv.dsl.core.preferences.DslPrefsManager;
 import net.certiv.dsl.ui.editor.text.DslTextTools;
-import net.certiv.dsl.ui.editor.text.util.AutoEdit;
-import net.certiv.dsl.ui.editor.text.util.LineRegion;
+import net.certiv.dsl.ui.editor.text.LineRegion;
+import net.certiv.dsl.ui.editor.text.SmartEdit;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 import net.certiv.xvisitordt.ui.editor.Partitions;
@@ -21,9 +21,9 @@ public class XVisitorAutoEditActionStrategy extends DefaultIndentLineAutoEditStr
 	private static final String[] CLOSETERMS = new String[] { ")", "}" };
 	private String partitioning;
 
-	public XVisitorAutoEditActionStrategy(String partitioning) {
+	public XVisitorAutoEditActionStrategy(String partition) {
 		super();
-		this.partitioning = partitioning;
+		this.partitioning = partition;
 	}
 
 	public DslPrefsManager getPrefsMgr() {
@@ -38,9 +38,9 @@ public class XVisitorAutoEditActionStrategy extends DefaultIndentLineAutoEditStr
 	public void customizeDocumentCommand(IDocument doc, DocumentCommand cmd) {
 
 		if (getPrefsMgr().isSmartMode()) {
-			if (AutoEdit.isNewLineInsertionCommand(doc, cmd)) {
+			if (SmartEdit.isNewLineInsertionCommand(doc, cmd)) {
 				insertAfterNewLine(doc, cmd);
-			} else if (AutoEdit.isSingleCharactedInsertionOrReplaceCommand(cmd)) {
+			} else if (SmartEdit.isSingleCharactedInsertionOrReplaceCommand(cmd)) {
 				if (cmd.offset != -1) smartInsertCharacter(doc, cmd);
 			}
 		} else {
@@ -55,7 +55,7 @@ public class XVisitorAutoEditActionStrategy extends DefaultIndentLineAutoEditStr
 			String adjIndent = adjustIndent(doc, cmd, lr, getPrefsMgr().getTabSize());
 			buf.append(adjIndent);
 
-			IRegion rightWord = AutoEdit.locateTextRight(doc, lr);
+			IRegion rightWord = SmartEdit.locateTextRight(doc, lr);
 			if (rightWord != null) { // trim to word
 				cmd.length = rightWord.getOffset() - lr.pos;
 			} else if (lr.lineEnd > lr.pos) { // trim trailing WS
@@ -74,43 +74,41 @@ public class XVisitorAutoEditActionStrategy extends DefaultIndentLineAutoEditStr
 	private String adjustIndent(IDocument doc, DocumentCommand cmd, LineRegion lr, int tabSize)
 			throws BadLocationException {
 
-		int alignCol = findAlignmentColumn(doc, lr, tabSize, 100, partitioning, Partitions.XVISITOR_PARTITIONING);
+		int alignCol = findAlignmentColumn(doc, lr, tabSize, 100, partitioning, Partitions.PARTITIONING);
 
 		// if at line beginning, no appended indent
 		if (alignCol <= 0) return "";
 
-		// IRegion leftWord = AutoEdit.locateTextLeft(doc, lr);
-		IRegion rightWord = AutoEdit.locateTextRight(doc, lr);
-		ITypedRegion part = AutoEdit.partition(doc, lr.pos);
-		int oBrace = AutoEdit.findMatchingCharacterInPartition(doc, part.getOffset(), '{', part.getType(), 40);
+		// IRegion leftWord = SmartEdit.locateTextLeft(doc, lr);
+		IRegion rightWord = SmartEdit.locateTextRight(doc, lr);
+		ITypedRegion part = SmartEdit.getPartitionAtOffset(doc, lr.pos, Partitions.PARTITIONING);
+		int oBrace = SmartEdit.findMatchingCharacterInPartition(doc, part.getOffset(), '{', part.getType(), 40);
 		int cBrace = part.getOffset() + part.getLength() - 1;
 
 		if (rightWord != null) {
 			// if before first open brace, prefix indent one from alignment col
 			if (rightWord.getOffset() == oBrace) {
-				return getPrefsMgr().getIndentByVirtualSize(
-						alignCol + getPrefsMgr().getIndentationSize());
+				return getPrefsMgr().getIndentByVirtualSize(alignCol + getPrefsMgr().getIndentationSize());
 			}
 
 			// if before last close brace, align with open brace or reduce indent
 			if (rightWord.getOffset() == cBrace) {
-				int lnStart = AutoEdit.lineOffset(doc, oBrace);
-				int oBraceCol = AutoEdit.calculateVisualLength(doc, tabSize, lnStart, oBrace);
-				alignCol = oBraceCol <= alignCol ? oBraceCol
-						: alignCol - getPrefsMgr().getIndentationSize();
+				int lnStart = SmartEdit.getLineOffset(doc, oBrace);
+				int oBraceCol = SmartEdit.calculateVisualLength(doc, tabSize, lnStart, oBrace);
+				alignCol = oBraceCol <= alignCol ? oBraceCol : alignCol - getPrefsMgr().getIndentationSize();
 				alignCol = alignCol > 0 ? alignCol : 0;
 				return getPrefsMgr().getIndentByVirtualSize(alignCol);
 			}
 		}
 
 		// if on open brace line, align with first word, else indent from open brace
-		if (AutoEdit.lineOffset(doc, lr.pos) == AutoEdit.lineOffset(doc, oBrace)) {
-			int lnStart = AutoEdit.lineOffset(doc, oBrace);
-			int wordStart = AutoEdit.findEndOfWhiteSpace(doc, oBrace + 1, lr.pos);
+		if (SmartEdit.getLineOffset(doc, lr.pos) == SmartEdit.getLineOffset(doc, oBrace)) {
+			int lnStart = SmartEdit.getLineOffset(doc, oBrace);
+			int wordStart = SmartEdit.findEndOfWhiteSpace(doc, oBrace + 1, lr.pos);
 			if (wordStart < lr.pos) {
-				alignCol = AutoEdit.calculateVisualLength(doc, tabSize, lnStart, wordStart);
+				alignCol = SmartEdit.calculateVisualLength(doc, tabSize, lnStart, wordStart);
 			} else {
-				int oBraceCol = AutoEdit.calculateVisualLength(doc, tabSize, lnStart, oBrace);
+				int oBraceCol = SmartEdit.calculateVisualLength(doc, tabSize, lnStart, oBrace);
 				alignCol = oBraceCol + getPrefsMgr().getIndentationSize();
 			}
 			return getPrefsMgr().getIndentByVirtualSize(alignCol);
@@ -123,25 +121,25 @@ public class XVisitorAutoEditActionStrategy extends DefaultIndentLineAutoEditStr
 	private int findAlignmentColumn(IDocument doc, LineRegion lr, int tabSize, int limit, String contentType,
 			String partitioning) throws BadLocationException {
 
-		int partOffset = AutoEdit.partitionOffset(doc, lr.pos);
+		int partOffset = SmartEdit.getPartitionStartOffset(doc, lr.pos, partitioning);
 		int pos = lr.pos < lr.indentCol ? lr.indentCol : lr.pos;
 
 		if (pos == lr.lineBeg || pos == lr.indentCol || pos == partOffset) {
-			return AutoEdit.calculateVisualLength(doc, tabSize, lr.lineBeg, pos);
+			return SmartEdit.calculateVisualLength(doc, tabSize, lr.lineBeg, pos);
 		}
 
 		int offset = pos - 1;
 		while (offset > 0 && offset > lr.indentCol && offset > partOffset && offset > pos - limit) {
 			char c = doc.getChar(offset);
-			if (AutoEdit.matchTerms(ALIGNTERMS, doc, offset)) {
+			if (SmartEdit.matchTerms(ALIGNTERMS, doc, offset)) {
 				break;
-			} else if (AutoEdit.matchTerms(CLOSETERMS, doc, offset)) {
-				offset = AutoEdit.skipToMatchingChar(doc, offset - 1, c, partitioning,
+			} else if (SmartEdit.matchTerms(CLOSETERMS, doc, offset)) {
+				offset = SmartEdit.findMatchingCharacter(doc, offset - 1, c, partitioning,
 						Partitions.STRING_AND_COMMENT_TYPES, limit);
 			}
 			offset--;
 		}
-		return AutoEdit.calculateVisualLength(doc, tabSize, lr.lineBeg, offset);
+		return SmartEdit.calculateVisualLength(doc, tabSize, lr.lineBeg, offset);
 	}
 
 	private void smartInsertCharacter(IDocument doc, DocumentCommand cmd) {
@@ -151,14 +149,14 @@ public class XVisitorAutoEditActionStrategy extends DefaultIndentLineAutoEditStr
 				case '(':
 				case '{':
 				case '[':
-					cmd = AutoEdit.autoClose(getTools(), doc, cmd, getPrefsMgr().closeBrackets(),
+					cmd = SmartEdit.autoClose(getTools(), doc, cmd, getPrefsMgr().closeBrackets(),
 							getPrefsMgr().closeStrings());
 					break;
 				case '}':
 				case ')':
 				case ']':
 					// TODO: this looks wrong
-					cmd = AutoEdit.autoClose(getTools(), doc, cmd, getPrefsMgr().closeBrackets(),
+					cmd = SmartEdit.autoClose(getTools(), doc, cmd, getPrefsMgr().closeBrackets(),
 							getPrefsMgr().closeStrings());
 					break;
 				case '\t':
@@ -174,14 +172,13 @@ public class XVisitorAutoEditActionStrategy extends DefaultIndentLineAutoEditStr
 			throws BadLocationException {
 
 		LineRegion lr = new LineRegion(doc, cmd);
-		IRegion rightText = AutoEdit.locateTextRight(doc, lr);
+		IRegion rightText = SmartEdit.locateTextRight(doc, lr);
 
 		if (lr.pos <= lr.indentCol) {
 			if (rightText == null) {
-				int prevLine = AutoEdit.getLastNonEmptyLine(doc, lr.lineNum, null);
+				int prevLine = SmartEdit.getLastNonEmptyLine(doc, lr.lineNum, null);
 				LineRegion lrp = new LineRegion(doc, prevLine);
-				int alignCol = findAlignmentColumn(doc, lrp, tabSize, 100, partitioning,
-						Partitions.XVISITOR_PARTITIONING);
+				int alignCol = findAlignmentColumn(doc, lrp, tabSize, 100, partitioning, Partitions.PARTITIONING);
 				cmd.offset = lr.lineBeg;
 				cmd.length = lr.lineEnd - lr.lineBeg;
 				cmd.text = getPrefsMgr().getIndentByVirtualSize(alignCol);

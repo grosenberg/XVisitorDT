@@ -2,13 +2,13 @@ package net.certiv.xvisitordt.ui.editor.strategies;
 
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.ui.DslUI;
-import net.certiv.dsl.ui.editor.text.AbstractStringEditStrategy;
+import net.certiv.dsl.ui.editor.text.AbstractAutoEditStrategy;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 
-public class XVisitorAutoEditStringStrategy extends AbstractStringEditStrategy {
+public class SmartAutoEditStrategy extends AbstractAutoEditStrategy {
 
-	public XVisitorAutoEditStringStrategy(String partitioning) {
+	public SmartAutoEditStrategy(String partitioning) {
 		super(partitioning);
 	}
 

@@ -5,23 +5,34 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 
+import net.certiv.dsl.core.DslCore;
+import net.certiv.dsl.core.color.DslColorManager;
 import net.certiv.dsl.core.preferences.DslPrefsManagerDelta;
-import net.certiv.dsl.ui.preferences.page.AbstractFieldEditorPreferencePage;
+import net.certiv.dsl.ui.DslUI;
+import net.certiv.dsl.ui.preferences.blocks.IPreferenceConfigBlock;
+import net.certiv.dsl.ui.preferences.pages.AbstractFieldEditorPreferencePage;
 import net.certiv.xvisitordt.core.XVisitorCore;
+import net.certiv.xvisitordt.ui.XVisitorUI;
 
-public class PrefPageXVisitor extends AbstractFieldEditorPreferencePage {
+public class GeneralPage extends AbstractFieldEditorPreferencePage {
 
-	public PrefPageXVisitor() {
+	public GeneralPage() {
 		super(GRID);
-		DslPrefsManagerDelta delta = XVisitorCore.getDefault().getPrefsManager().createDeltaManager();
-		delta.setDefaultProject(null);
-		setPreferenceStore(delta);
 	}
 
-	/**
-	 * Creates the field editors.
-	 */
+	@Override
+	public DslUI getDslUI() {
+		return XVisitorUI.getDefault();
+	}
+
+	@Override
+	public DslCore getDslCore() {
+		return XVisitorCore.getDefault();
+	}
+
+	@Override
 	public void createFieldEditors() {
 		Composite parent = getFieldEditorParent();
 
@@ -35,4 +46,13 @@ public class PrefPageXVisitor extends AbstractFieldEditorPreferencePage {
 
 		GridLayoutFactory.fillDefaults().numColumns(3).applyTo(awComp);
 	}
+
+	@Override
+	protected IPreferenceConfigBlock createConfigurationBlock(AbstractFieldEditorPreferencePage page, Composite parent,
+			DslPrefsManagerDelta delta, FormToolkit formkit, DslColorManager colorMgr) {
+		return null;
+	}
+
+	@Override
+	protected void adjustSubLayout() {}
 }

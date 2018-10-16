@@ -25,7 +25,7 @@ public class XVisitorFoldingStructureProvider extends AbstractDslFoldingStructur
 
 	@Override
 	protected String getPartitioning() {
-		return Partitions.XVISITOR_PARTITIONING;
+		return Partitions.PARTITIONING;
 	}
 
 	@Override

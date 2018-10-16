@@ -133,10 +133,10 @@ public class GrammarUtil {
 	// */
 	// public static String determineBuildFolder(IResource resource) {
 	// IProject project = resource.getProject();
-	// String choice = Prefs.getString(PrefsKey.BUILDER_USE, project);
+	// String choice = Prefs.getString(Prefs.BUILDER_USE, project);
 	// // default is current
 	// String outputPath = resource.getParent().getLocation().toPortableString();
-	// if (choice.equals(PrefsKey.BUILDER_USE_GRAMMAR)) {
+	// if (choice.equals(Prefs.BUILDER_USE_GRAMMAR)) {
 	// String folderPath = AntlrModuleDeclaration.packagePath;
 	// if (folderPath != null && folderPath.length() > 0) {
 	// IPath projFolder = project.getLocation();
@@ -145,12 +145,12 @@ public class GrammarUtil {
 	// projFolder = projFolder.append(folderPath.replaceAll("\\.", "/"));
 	// outputPath = projFolder.toPortableString();
 	// }
-	// } else if (choice.equals(PrefsKey.BUILDER_USE_RELATIVE)) {
-	// String relPath = Prefs.getString(PrefsKey.BUILDER_REL_PATH, project);
+	// } else if (choice.equals(Prefs.BUILDER_USE_RELATIVE)) {
+	// String relPath = Prefs.getString(Prefs.BUILDER_REL_PATH, project);
 	// outputPath =
 	// resource.getParent().getLocation().append(relPath).toPortableString();
-	// } else if (choice.equals(PrefsKey.BUILDER_USE_ABSOLUTE)) {
-	// String absPath = Prefs.getString(PrefsKey.BUILDER_ABS_PATH, project);
+	// } else if (choice.equals(Prefs.BUILDER_USE_ABSOLUTE)) {
+	// String absPath = Prefs.getString(Prefs.BUILDER_ABS_PATH, project);
 	// if (absPath != null && absPath.length() != 0) {
 	// outputPath = absPath;
 	// }

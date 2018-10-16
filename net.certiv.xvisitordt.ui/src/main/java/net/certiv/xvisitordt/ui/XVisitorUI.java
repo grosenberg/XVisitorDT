@@ -11,16 +11,11 @@ import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.text.DslTextTools;
 import net.certiv.dsl.ui.formatter.IDslFormatterFactory;
 import net.certiv.xvisitordt.core.XVisitorCore;
+import net.certiv.xvisitordt.ui.editor.XVisitorEditor;
 import net.certiv.xvisitordt.ui.editor.XVisitorTextTools;
-import net.certiv.xvisitordt.ui.preferences.formatter.FormatterFactory;
+import net.certiv.xvisitordt.ui.templates.XVisitorTemplateContextType;
 
-/**
- * The activator class controls the plug-in life cycle
- */
 public class XVisitorUI extends DslUI {
-
-	// Should be unique, lower case, single word
-	private static final String DSL_NAME = "xvisitor";
 
 	private static XVisitorUI plugin;
 
@@ -28,9 +23,6 @@ public class XVisitorUI extends DslUI {
 	private DslTextTools textTools;
 	private IDslFormatterFactory factory;
 
-	/**
-	 * The constructor
-	 */
 	public XVisitorUI() {
 		super();
 		Log.defLevel(LogLevel.Debug);
@@ -38,7 +30,7 @@ public class XVisitorUI extends DslUI {
 
 	/**
 	 * Returns the shared instance of the plugin.
-	 * 
+	 *
 	 * @return the shared instance
 	 */
 	public static XVisitorUI getDefault() {
@@ -53,6 +45,20 @@ public class XVisitorUI extends DslUI {
 	@Override
 	public DslCore getDslCore() {
 		return XVisitorCore.getDefault();
+	}
+
+	@Override
+	protected String getEditorId() {
+		return XVisitorEditor.EDITOR_ID;
+	}
+
+	@Override
+	protected String[] getDslContextTypes() {
+		return new String[] { XVisitorTemplateContextType.GRAMMAR_CONTEXT_TYPE_ID,
+				XVisitorTemplateContextType.OPTIONS_CONTEXT_TYPE_ID, //
+				XVisitorTemplateContextType.ACTIONS_CONTEXT_TYPE_ID, //
+				XVisitorTemplateContextType.JAVADOC_CONTEXT_TYPE_ID //
+		};
 	}
 
 	@Override
@@ -75,12 +81,12 @@ public class XVisitorUI extends DslUI {
 
 	@Override
 	public String getDslLanguageName() {
-		return DSL_NAME;
+		return XVisitorCore.DSL_NAME;
 	}
 
 	/**
 	 * Returns an image descriptor for the image file at the given plug-in relative path
-	 * 
+	 *
 	 * @param path the path
 	 * @return the image descriptor
 	 */
@@ -105,13 +111,5 @@ public class XVisitorUI extends DslUI {
 			textTools = new XVisitorTextTools(true);
 		}
 		return textTools;
-	}
-
-	@Override
-	public IDslFormatterFactory getFormatterFactory() {
-		if (factory == null) {
-			factory = new FormatterFactory();
-		}
-		return factory;
 	}
 }

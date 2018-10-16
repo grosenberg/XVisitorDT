@@ -1,10 +1,5 @@
 package net.certiv.xvisitordt.ui.templates;
 
-import net.certiv.dsl.ui.editor.text.completion.DslContentAssistInvocationContext;
-import net.certiv.dsl.ui.templates.DslTemplateCompletionProcessor;
-import net.certiv.xvisitordt.ui.XVisitorUI;
-import net.certiv.xvisitordt.ui.editor.Partitions;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPartitioningException;
 import org.eclipse.jface.text.IDocument;
@@ -16,6 +11,12 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateContextType;
 
+import net.certiv.dsl.ui.editor.text.completion.DslContentAssistInvocationContext;
+import net.certiv.dsl.ui.editor.text.completion.tmpl.DslTemplateCompletionProcessor;
+import net.certiv.dsl.ui.templates.CompletionManager;
+import net.certiv.xvisitordt.ui.XVisitorUI;
+import net.certiv.xvisitordt.ui.editor.Partitions;
+
 public class XVisitorTemplateCompletionProcessor extends DslTemplateCompletionProcessor {
 
 	private static char[] IGNORE = new char[] { '.' };
@@ -26,7 +27,7 @@ public class XVisitorTemplateCompletionProcessor extends DslTemplateCompletionPr
 
 	@Override
 	protected String getContextTypeId() {
-		return XVisitorTemplateContextType.XVISITOR_CONTEXT_TYPE_ID;
+		return XVisitorTemplateContextType.CONTEXT_TYPE_ID;
 	}
 
 	@Override
@@ -34,9 +35,8 @@ public class XVisitorTemplateCompletionProcessor extends DslTemplateCompletionPr
 		return IGNORE;
 	}
 
-	@Override
-	protected XVisitorTemplateAccess getTemplateAccess() {
-		return XVisitorTemplateAccess.getInstance();
+	private CompletionManager getCompletionMgr() {
+		return XVisitorUI.getDefault().getCompletionMgr();
 	}
 
 	// NOTE: this handles empty prefixes
@@ -46,7 +46,7 @@ public class XVisitorTemplateCompletionProcessor extends DslTemplateCompletionPr
 		if (prefix.length() == 0) {
 			TemplateContextType contextType = getContextType(viewer, region);
 			String cId = contextType.getId();
-			if (XVisitorTemplateContextType.XVISITOR_CONTEXT_TYPE_ID.equals(cId)) {
+			if (XVisitorTemplateContextType.CONTEXT_TYPE_ID.equals(cId)) {
 				return true;
 			}
 			return false;
@@ -59,26 +59,24 @@ public class XVisitorTemplateCompletionProcessor extends DslTemplateCompletionPr
 		IDocumentExtension3 doc = (IDocumentExtension3) viewer.getDocument();
 		ITypedRegion typedRegion = null;
 		try {
-			typedRegion = doc.getPartition(Partitions.XVISITOR_PARTITIONING, region.getOffset(), true);
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		} catch (BadPartitioningException e) {
+			typedRegion = doc.getPartition(Partitions.PARTITIONING, region.getOffset(), true);
+		} catch (BadLocationException | BadPartitioningException e) {
 			e.printStackTrace();
 		}
 		if (typedRegion == null) return null;
 		String type = typedRegion.getType();
 
 		if (type.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
-			return getTemplateAccess().getContextTypeRegistry()
+			return getCompletionMgr().getTemplateContextTypeRegistry()
 					.getContextType(XVisitorTemplateContextType.GRAMMAR_CONTEXT_TYPE_ID);
 			// } else if (type.equals(Partitions.OPTIONS)) {
 			// return getTemplateAccess().getContextTypeRegistry().getContextType(
 			// XVisitorTemplateContextType.OPTIONS_CONTEXT_TYPE_ID);
 		} else if (type.equals(Partitions.COMMENT_JD)) {
-			return getTemplateAccess().getContextTypeRegistry()
+			return getCompletionMgr().getTemplateContextTypeRegistry()
 					.getContextType(XVisitorTemplateContextType.JAVADOC_CONTEXT_TYPE_ID);
 		} else if (isValidPartition(type)) {
-			return getTemplateAccess().getContextTypeRegistry()
+			return getCompletionMgr().getTemplateContextTypeRegistry()
 					.getContextType(XVisitorTemplateContextType.ACTIONS_CONTEXT_TYPE_ID);
 		}
 
@@ -98,7 +96,7 @@ public class XVisitorTemplateCompletionProcessor extends DslTemplateCompletionPr
 				|| contextTypeId.equals(XVisitorTemplateContextType.OPTIONS_CONTEXT_TYPE_ID)
 				|| contextTypeId.equals(XVisitorTemplateContextType.ACTIONS_CONTEXT_TYPE_ID)
 				|| contextTypeId.equals(XVisitorTemplateContextType.JAVADOC_CONTEXT_TYPE_ID)) {
-			return getTemplateAccess().getTemplateStore().getTemplates(contextTypeId);
+			return getCompletionMgr().getTemplates();
 		}
 		return new Template[0];
 	}

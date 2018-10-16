@@ -2,11 +2,11 @@ package net.certiv.xvisitordt.ui.editor.strategies;
 
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.ui.DslUI;
-import net.certiv.dsl.ui.editor.strategies.AutoEditSemicolonStrategy;
+import net.certiv.dsl.ui.editor.text.AbstractSemicolonEditStrategy;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 
-public class XVisitorAutoEditSemicolonStrategy extends AutoEditSemicolonStrategy {
+public class XVisitorAutoEditSemicolonStrategy extends AbstractSemicolonEditStrategy {
 
 	public XVisitorAutoEditSemicolonStrategy(String partitioning) {
 		super(partitioning);

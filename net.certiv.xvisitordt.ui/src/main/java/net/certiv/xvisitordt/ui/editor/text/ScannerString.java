@@ -9,8 +9,8 @@ import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
-import net.certiv.dsl.ui.editor.text.AbstractBufferedRuleBasedScanner;
-import net.certiv.xvisitordt.core.preferences.PrefsKey;
+import net.certiv.dsl.ui.editor.scanners.AbstractBufferedRuleBasedScanner;
+import net.certiv.xvisitordt.core.preferences.Prefs;
 
 public class ScannerString extends AbstractBufferedRuleBasedScanner {
 
@@ -24,14 +24,14 @@ public class ScannerString extends AbstractBufferedRuleBasedScanner {
 	@Override
 	protected String[] getTokenProperties() {
 		if (tokenProperties == null) {
-			tokenProperties = new String[] { bind(PrefsKey.EDITOR_STRING_COLOR) };
+			tokenProperties = new String[] { bind(Prefs.EDITOR_STRING_COLOR) };
 		}
 		return tokenProperties;
 	}
 
 	@Override
 	protected List<IRule> createRules() {
-		IToken token = getToken(bind(PrefsKey.EDITOR_STRING_COLOR));
+		IToken token = getToken(bind(Prefs.EDITOR_STRING_COLOR));
 		setDefaultReturnToken(token);
 
 		List<IRule> rules = new ArrayList<IRule>();

@@ -10,7 +10,7 @@ import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.text.completion.DslCompletionProposal;
 import net.certiv.xvisitordt.core.XVisitorCore;
-import net.certiv.xvisitordt.core.preferences.PrefsKey;
+import net.certiv.xvisitordt.core.preferences.Prefs;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 import net.certiv.xvisitordt.ui.editor.Partitions;
 import net.certiv.xvisitordt.ui.editor.strategies.XVisitorAutoEditSemicolonStrategy;
@@ -44,9 +44,9 @@ public class XVisitorCompletionProposal extends DslCompletionProposal {
 
 	@Override
 	protected boolean isSmartTrigger(char trigger) {
-		return trigger == ';' && getDslCore().getPrefsManager().getBoolean(PrefsKey.EDITOR_SMART_SEMICOLON);
+		return trigger == ';' && getDslCore().getPrefsManager().getBoolean(Prefs.EDITOR_SMART_SEMICOLON);
 		// || trigger == '{' &&
-		// getDslCore().getPrefsManager().getBoolean(PrefsKey.EDITOR_SMART_OPENING_BRACE);
+		// getDslCore().getPrefsManager().getBoolean(Prefs.EDITOR_SMART_OPENING_BRACE);
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class XVisitorCompletionProposal extends DslCompletionProposal {
 		cmd.shiftsCaret = true;
 		cmd.caretOffset = getReplacementOffset() + getCursorPosition();
 
-		XVisitorAutoEditSemicolonStrategy strategy = new XVisitorAutoEditSemicolonStrategy(Partitions.XVISITOR_PARTITIONING);
+		XVisitorAutoEditSemicolonStrategy strategy = new XVisitorAutoEditSemicolonStrategy(Partitions.PARTITIONING);
 		strategy.customizeDocumentCommand(document, cmd);
 
 		replace(document, cmd.offset, cmd.length, cmd.text);

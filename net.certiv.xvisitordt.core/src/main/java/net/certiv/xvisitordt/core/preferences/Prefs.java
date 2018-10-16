@@ -5,7 +5,7 @@ import net.certiv.dsl.core.preferences.DslPrefsKey;
 /**
  * Preference keys that are unique to this Dsl plugin. Prefix with the Dsl plugin ID just to ensure.
  */
-public class PrefsKey extends DslPrefsKey {
+public class Prefs extends DslPrefsKey {
 
 	// @formatter:off
 	public static final String EDITOR_ACTION_COLOR = "{DSL_ID}" + ".action";

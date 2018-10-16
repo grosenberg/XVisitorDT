@@ -9,7 +9,7 @@ import net.certiv.dsl.core.model.IDslElement;
 import net.certiv.dsl.core.model.IStatement.Form;
 import net.certiv.dsl.core.model.IStatement.Realm;
 import net.certiv.dsl.core.model.IStatement.Type;
-import net.certiv.dsl.core.parser.IModelMaker;
+import net.certiv.dsl.core.model.builder.DslModelMaker;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.ActionContext;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.GrammarSpecContext;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.OptionContext;
@@ -18,15 +18,15 @@ import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.XgroupContext;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.XpathContext;
 
 /** Implementing functions for the outline tree walker. */
-public abstract class StructureAdaptor extends Processor {
+public abstract class StructureBuilder extends Processor {
 
-	private IModelMaker maker;
+	private DslModelMaker maker;
 
-	public StructureAdaptor(ParseTree tree) {
+	public StructureBuilder(ParseTree tree) {
 		super(tree);
 	}
 
-	public void setMaker(IModelMaker maker) {
+	public void setMaker(DslModelMaker maker) {
 		this.maker = maker;
 	}
 

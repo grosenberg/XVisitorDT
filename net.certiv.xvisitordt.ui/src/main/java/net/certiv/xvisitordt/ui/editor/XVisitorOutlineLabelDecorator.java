@@ -19,6 +19,7 @@ public class XVisitorOutlineLabelDecorator extends OutlineLabelDecorator {
 		return (XVisitorImages) XVisitorUI.getDefault().getImageProvider();
 	}
 
+	@Override
 	public String decorateText(String text) {
 		switch (getElementKind()) {
 			case IDslElement.MODULE:
@@ -50,59 +51,45 @@ public class XVisitorOutlineLabelDecorator extends OutlineLabelDecorator {
 		return text;
 	}
 
+	@Override
 	public Image decorateImage(Image image) {
 		// create the base image
-		ImageDescriptor baseImage = createBaseImageDescriptor(image);
-		int type = 0;
+		ImageDescriptor desc = createMissingImageDescriptor(image);
 		switch (getElementKind()) {
 			case IDslElement.MODULE:
-				baseImage = getImageProvider().DESC_OBJ_MODULE;
-				type = 1;
+				desc = getImageProvider().DESC_OBJ_MODULE;
 				break;
 			case IDslElement.STATEMENT:
-				baseImage = getImageProvider().DESC_OBJ_STATEMENT;
-				type = 2;
+				desc = getImageProvider().DESC_OBJ_STATEMENT;
 				if (hasData()) {
 					ModelData data = (ModelData) getData();
 					switch (data.type) {
 						case Options:
-							baseImage = getImageProvider().DESC_OBJ_OPTION;
-							type = 3;
+							desc = getImageProvider().DESC_OBJ_OPTION;
 							break;
 						case Option:
-							baseImage = getImageProvider().DESC_OBJ_ENUM;
-							type = 4;
+							desc = getImageProvider().DESC_OBJ_ENUM;
 							break;
 						case PathRule:
-							baseImage = getImageProvider().DESC_OBJ_LEXER;
-							type = 8;
+							desc = getImageProvider().DESC_OBJ_LEXER;
 							break;
 						case GroupRule:
-							baseImage = getImageProvider().DESC_OBJ_PARSER;
-							type = 10;
+							desc = getImageProvider().DESC_OBJ_PARSER;
 							break;
 						case AtAction:
-							baseImage = getImageProvider().DESC_OBJ_ACTION;
-							type = 13;
+							desc = getImageProvider().DESC_OBJ_ACTION;
 							break;
 						default:
-							baseImage = getImageProvider().DESC_OBJ_REQUIRED;
-							type = 7;
+							desc = getImageProvider().DESC_OBJ_REQUIRED;
 							break;
 					}
 				}
 				break;
 			case IDslElement.BEG_BLOCK:
 			case IDslElement.END_BLOCK:
-				baseImage = getImageProvider().DESC_OBJ_BLOCK;
-				type = 14;
+				desc = getImageProvider().DESC_OBJ_BLOCK;
 				break;
 		}
-		Image img = fetchImage(type);
-		if (img == null) {
-			img = baseImage.createImage();
-			storeImage(type, img);
-		}
-		return img;
+		return findImage(desc);
 	}
 }

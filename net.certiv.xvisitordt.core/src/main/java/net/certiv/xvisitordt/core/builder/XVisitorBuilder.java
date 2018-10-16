@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -23,6 +22,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.ToolFactory;
@@ -30,37 +30,33 @@ import org.eclipse.jdt.core.formatter.CodeFormatter;
 import org.eclipse.jdt.core.manipulation.OrganizeImportsOperation;
 import org.eclipse.jdt.core.manipulation.OrganizeImportsOperation.IChooseImportQuery;
 import org.eclipse.jdt.core.search.TypeNameMatch;
-import org.eclipse.jdt.internal.formatter.DefaultCodeFormatter;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
 
 import net.certiv.antlr.xvisitor.Tool;
-import net.certiv.antlr.xvisitor.tool.Messages;
 import net.certiv.dsl.core.DslCore;
+import net.certiv.dsl.core.builder.DslBuilder;
+import net.certiv.dsl.core.model.DslModelManager;
+import net.certiv.dsl.core.model.ICodeUnit;
+import net.certiv.dsl.core.preferences.consts.Builder;
 import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.core.util.Log;
-import net.certiv.dsl.core.util.loader.DynamicLoader;
+import net.certiv.dsl.core.util.antlr.AntlrUtil;
+import net.certiv.dsl.core.util.eclipse.DynamicLoader;
+import net.certiv.dsl.core.util.eclipse.JdtUtil;
 import net.certiv.xvisitordt.core.XVisitorCore;
-import net.certiv.xvisitordt.core.preferences.PrefsKey;
 
-@SuppressWarnings("restriction")
-public class XVisitorBuilder extends XVisitorBuilderBase {
+public class XVisitorBuilder extends DslBuilder {
 
-	private static final int WORK_BUILD = 100;
-	private static final IStatus F_STATUS = new Status(IStatus.CANCEL, XVisitorCore.PLUGIN_ID,
+	private static final IStatus FAIL_STATUS = new Status(IStatus.CANCEL, XVisitorCore.PLUGIN_ID,
 			"XVisitor build failed.");
-
-	public static final String BUILDER_ID = "net.certiv.xvisitordt.core.builder";
-	public static final String MARKER_TYPE = "net.certiv.xvisitordt.core.problemMarker";
-
-	/* The current .xv file being edited, or null */
-	private IFile file;
-	private IPath filepath;
-	private IPath projpath;
+	private String prefix;
 
 	public XVisitorBuilder() {
 		super();
+
+		prefix = getDslCore().getProblemMakerId(XVisitorCore.DSL_NAME);
 	}
 
 	@Override
@@ -69,51 +65,44 @@ public class XVisitorBuilder extends XVisitorBuilderBase {
 	}
 
 	@Override
-	public String getBuilderID() {
-		return BUILDER_ID;
+	public boolean isBuildAllowed(IProject project, IResource res) {
+		if (requireCurrentProject() && !inCurrentProject(res)) return false;
+
+		boolean inSrc = requireSourcePath() && inJavaSourceFolder(res);
+		boolean inSpc = requireSpecialPath() && inSpecialFolder(res);
+		if (inSrc || inSpc) return true;
+		return false;
+	}
+
+	/** whether in a Java source folder */
+	protected boolean inJavaSourceFolder(IResource res) {
+		List<IPackageFragmentRoot> folders = JdtUtil.getJavaSourceFolders(res.getProject());
+		for (IPackageFragmentRoot folder : folders) {
+			if (folder.getPath().isPrefixOf(res.getFullPath())) return true;
+		}
+		return false;
+	}
+
+	// allow non-source path grammars?
+	private boolean inSpecialFolder(IResource res) {
+		return false;
 	}
 
 	@Override
-	public IStatus buildSourceModules(IProgressMonitor monitor, int ticks, List<IFile> srcModules)
-			throws CoreException {
-
-		if (!builderEnabled() || srcModules.isEmpty()) return null;
+	public IStatus buildSourceModules(IProgressMonitor monitor, int ticks, List<IFile> modules) throws CoreException {
+		if (modules.isEmpty()) return Status.OK_STATUS;
 
 		try {
-			monitor.beginTask(CoreUtil.EMPTY_STRING, WORK_BUILD);
-			file = CoreUtil.getActiveDslFile(getDslCore().getDslFileExtensions());
-			filepath = file != null ? file.getFullPath() : null;
-			projpath = getProject().getFullPath();
-
-			for (IFile module : srcModules) {
-				IPath modpath = module.getFullPath();
-				if (restrictToActiveProject() && !projpath.isPrefixOf(modpath)) continue;
-				if (restrictToActiveProjectPath() && !modpath.equals(filepath)) continue;
-				if (excludeIgnoredPaths(module)) continue;
-
-				// Log.info(this, "Building " + buildDescription(module));
-				clearMarkers(module);
-				try {
-					compileGrammar(module, CoreUtil.subMonitorFor(monitor, WORK_BUILD));
-				} catch (Exception e) {
-					Log.error(this, "Failed to resolve build element", e);
-				}
+			monitor.beginTask("XVisitor Build", WORK_BUILD);
+			for (IFile module : modules) {
+				compileGrammar(module, CoreUtil.subMonitorFor(monitor, WORK_BUILD));
 			}
 			Log.debug(this, "Build done");
 			return Status.OK_STATUS;
+
 		} finally {
 			monitor.done();
 		}
-	}
-
-	private boolean excludeIgnoredPaths(IFile module) {
-		if (resolvePackageName(module) == null) return true;
-		IPath path = determineGeneratedSourcePath(module);
-		if (path == null) return true;
-		for (String segment : path.segments()) {
-			if (segment.equals("ignore")) return true;
-		}
-		return false;
 	}
 
 	private void compileGrammar(IResource resource, IProgressMonitor monitor) {
@@ -129,7 +118,8 @@ public class XVisitorBuilder extends XVisitorBuilderBase {
 			}
 
 			String srcFile = file.getLocation().toString();
-			String outputDirectory = determineBuildFolder(file).toString();
+			String outputDirectory = determineBuildPath(file).toString();
+
 			Log.info(this, "Build [" + srcFile + "]");
 			Log.info(this, "Output [" + outputDirectory + "]");
 
@@ -151,14 +141,14 @@ public class XVisitorBuilder extends XVisitorBuilderBase {
 					} catch (Exception e) {
 						Log.info(this, "Failed to construct classloader; restoring.");
 						thread.setContextClassLoader(parent);
-						return F_STATUS;
+						return FAIL_STATUS;
 					}
 
-					XVisitorErrorListener toolErrs = new XVisitorErrorListener();
+					ToolErrorListener errListener = new ToolErrorListener(file, prefix);
 
 					Tool tool = new Tool();
 					tool.removeListeners();
-					tool.addListener(toolErrs);
+					tool.addListener(errListener);
 					tool.setLevel("warn");
 					tool.setLibDirectory(outputDirectory);
 					tool.setOutputDirectory(outputDirectory);
@@ -184,34 +174,18 @@ public class XVisitorBuilder extends XVisitorBuilderBase {
 						thread.setContextClassLoader(parent);
 					}
 
-					publishErrors(resource, toolErrs);
 					postCompileCleanup(file, monitor);
 					monitor.worked(1);
 
-					if (!ok) return F_STATUS;
+					if (!ok) return FAIL_STATUS;
 					return Status.OK_STATUS;
 				}
 			};
 
 			// finalize and schedule job
-			buildJob.setPriority(Job.SHORT);
+			buildJob.setPriority(Job.BUILD);
 			buildJob.setSystem(true);
 			buildJob.schedule();
-		}
-	}
-
-	private void publishErrors(IResource resource, XVisitorErrorListener toolErrs) {
-		if (toolErrs.hasErrors()) {
-			for (Messages err : toolErrs.getErrList()) {
-				createProblemMarker(resource, err.offendingToken, err.toString(), IMarker.SEVERITY_ERROR);
-				Log.error(this, err.toString());
-			}
-		}
-		if (toolErrs.hasWarnings()) {
-			for (Messages err : toolErrs.getWarnList()) {
-				createProblemMarker(resource, err.offendingToken, err.toString(), IMarker.SEVERITY_WARNING);
-				Log.warn(this, err.toString());
-			}
 		}
 	}
 
@@ -223,21 +197,19 @@ public class XVisitorBuilder extends XVisitorBuilderBase {
 		IProject project = file.getProject();
 
 		// refresh directory
-		if (getDslCore().getPrefsManager().getBoolean(project, PrefsKey.BUILDER_REFRESH)) {
-			boolean markDerived = getDslCore().getPrefsManager().getBoolean(project, PrefsKey.BUILDER_MARK_DERIVED);
+		if (getDslCore().getPrefsManager().getBoolean(project, Builder.BUILDER_REFRESH)) {
+			boolean markDerived = getDslCore().getPrefsManager().getBoolean(project, Builder.BUILDER_MARK_DERIVED);
 			doBuilderRefresh(file, markDerived, monitor);
 		}
 		// format all
-		if (getDslCore().getPrefsManager().getBoolean(project, PrefsKey.BUILDER_FORMAT)) {
+		if (getDslCore().getPrefsManager().getBoolean(project, Builder.BUILDER_FORMAT)) {
 			doBuilderFormat(file, monitor);
 		}
 		// organize imports
-		if (getDslCore().getPrefsManager().getBoolean(project, PrefsKey.BUILDER_ORGANIZE)) {
+		if (getDslCore().getPrefsManager().getBoolean(project, Builder.BUILDER_ORGANIZE)) {
 			doBuilderOrganizeImports(file, monitor);
 		}
 	}
-
-	// ///////////////////////////////////////////////////////////////////////////////
 
 	private void doBuilderRefresh(IFile file, boolean markDerived, IProgressMonitor monitor) {
 		IContainer folder = getBuildFolder(file);
@@ -253,15 +225,8 @@ public class XVisitorBuilder extends XVisitorBuilderBase {
 					String ext = name.substring(dot + 1);
 					for (IResource res : folder.members()) {
 						if (res.getType() == IResource.FILE) {
-							if (res.getFileExtension().startsWith("g4")) {
-								continue;
-							} else if (res.getName().equals(name + ".tokens")) {
-								res.setDerived(true, monitor);
-							} else if (res.getName().startsWith(name + "Parser")) {
-								res.setDerived(true, monitor);
-							} else if (res.getName().startsWith(name + "Lexer")) {
-								res.setDerived(true, monitor);
-							} else if (res.getName().equals(name + "." + ext)) {
+							if (res.getFileExtension().equals("xv")) continue;
+							if (res.getName().equals(name + "Visitor." + ext)) {
 								res.setDerived(true, monitor);
 							}
 						}
@@ -292,8 +257,8 @@ public class XVisitorBuilder extends XVisitorBuilderBase {
 			for (ICompilationUnit cu : cus) {
 				monitor.worked(1);
 				String content = cu.getSource();
-				TextEdit textEdit = formatter.format(DefaultCodeFormatter.K_COMPILATION_UNIT, content, 0,
-						content.length(), 0, null);
+				TextEdit textEdit = formatter.format(CodeFormatter.K_COMPILATION_UNIT, content, 0, content.length(), 0,
+						null);
 
 				if (textEdit != null) {
 					IDocument document = new Document();
@@ -335,9 +300,35 @@ public class XVisitorBuilder extends XVisitorBuilderBase {
 		monitor.worked(1);
 	}
 
-	private IContainer getBuildFolder(IResource resource) {
-		IPath path = determineBuildFolder(resource);
+	private IContainer getBuildFolder(IFile file) {
+		IPath path = determineBuildPath(file);
 		return containerOfPath(path);
+	}
+
+	/**
+	 * Determine the build folder for a given a resource representing a grammar file.
+	 *
+	 * @param resource typically the grammar IFile
+	 * @return a filesystem absolute path to the build folder
+	 */
+	protected IPath determineBuildPath(IFile file) {
+		IPath grammarPath = determineGeneratedSourcePath(file);
+		return file.getProject().getLocation().append(grammarPath);
+	}
+
+	protected IPath determineGeneratedSourcePath(IFile file) {
+		IPath workingPath = JdtUtil.determineSourceFolder(file);
+		String pkg = resolvePackageName(file);
+		if (pkg != null && !pkg.isEmpty()) {
+			workingPath = workingPath.append(pkg.replaceAll("\\.", "/"));
+		}
+		return workingPath;
+	}
+
+	private String resolvePackageName(IFile file) {
+		DslModelManager mgr = getDslCore().getModelManager();
+		ICodeUnit unit = mgr.create(file);
+		return AntlrUtil.resolvePackageName(unit);
 	}
 
 	private IContainer containerOfPath(IPath path) {
@@ -363,60 +354,4 @@ public class XVisitorBuilder extends XVisitorBuilderBase {
 		}
 		return cuList.toArray(new ICompilationUnit[cuList.size()]);
 	}
-
-	// =====================================================================
-
-	// private void compileGrammar(IResource resource, IProgressMonitor monitor) {
-	// if (resource != null && resource instanceof IFile && (resource.getName().endsWith(".xv"))) {
-	// IFile file = (IFile) resource;
-	//
-	// try {
-	// String srcFile = file.getLocation().toString();
-	// String outputDirectory = determineBuildFolder(file).toString();
-	// List<String> srcFiles = new ArrayList<>();
-	// srcFiles.add(srcFile);
-	//
-	// Log.info(this, "Build [" + srcFile + "]");
-	// Log.info(this, "Output [" + outputDirectory + "]");
-	// monitor.worked(1);
-	//
-	// XVisitorErrorListener toolErrs = new XVisitorErrorListener();
-	//
-	// Tool tool = new Tool();
-	// tool.removeListeners();
-	// tool.addListener(toolErrs);
-	// tool.setLevel("warn");
-	// tool.setLibDirectory(outputDirectory);
-	// tool.setOutputDirectory(outputDirectory);
-	// tool.setGrammarFiles(srcFiles);
-	// monitor.worked(1);
-	//
-	// try {
-	// tool.genModel();
-	// monitor.worked(1);
-	// } catch (Exception | Error e) {
-	// Log.error(this, "XVisitor build failed: " + e.getMessage());
-	// Log.error(this, " - Src Files: " + srcFiles);
-	// Log.error(this, " - Out Dir : " + outputDirectory);
-	// }
-	//
-	// publishErrors(resource, toolErrs);
-	// postCompileCleanup(file, monitor);
-	// monitor.worked(1);
-	// } catch (Exception | Error e) {
-	// Log.error(this, "Build failed.", e);
-	// }
-	// }
-	// }
-
-	// private String buildDescription(IFile file) {
-	// String projName = "";
-	// String fileName = "";
-	// if (file != null) {
-	// projName = file.getProject().getName() + ", ";
-	// fileName = file.getName() + ", ";
-	// }
-	// String name = projName + fileName;
-	// return "[" + name + "time=" + new Date(System.currentTimeMillis()) + "]";
-	// }
 }

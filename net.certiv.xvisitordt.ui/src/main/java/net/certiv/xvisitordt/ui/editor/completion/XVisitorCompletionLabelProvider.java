@@ -14,11 +14,12 @@ public class XVisitorCompletionLabelProvider extends CompletionLabelProvider {
 
 	@Override
 	public ImageDescriptor createImageDescriptor(CompletionProposal proposal) {
-		return null;
+		return dslUI.getImageProvider().DESC_OBJS_KEYWORD;
+
 	}
 
 	@Override
 	public String createLabel(CompletionProposal proposal) {
-		return null;
+		return createSimpleLabel(proposal);
 	}
 }

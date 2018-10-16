@@ -12,16 +12,16 @@ import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.model.IStatement;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.text.completion.CompletionLabelProvider;
-import net.certiv.dsl.ui.editor.text.completion.DslCollector;
 import net.certiv.dsl.ui.editor.text.completion.DslCompletionProposal;
+import net.certiv.dsl.ui.editor.text.completion.DslCompletionProposalCollector;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 import net.certiv.xvisitordt.ui.editor.text.ScannerDefault;
 
-public class XVisitorCollector extends DslCollector {
+public class XVisitorCollector extends DslCompletionProposalCollector {
 
-	public XVisitorCollector(ICodeUnit cu) {
-		super(cu);
+	public XVisitorCollector(ICodeUnit unit) {
+		super(unit);
 	}
 
 	@Override
@@ -35,21 +35,20 @@ public class XVisitorCollector extends DslCollector {
 	}
 
 	@Override
-	protected CompletionLabelProvider createCompletionProposalLabelProvider() {
+	protected CompletionLabelProvider createProposalLabelProvider() {
 		return new XVisitorCompletionLabelProvider();
 	}
 
 	@Override
-	protected DslCompletionProposal createDslCompletionProposal(String completion, int offset, int length, Image image,
-			String label, int relevance) {
-		return createDslCompletionProposal(completion, offset, length, image, new StyledString(label), relevance,
-				false);
+	protected DslCompletionProposal createDslProposal(String completion, int offset, int length, Image image,
+			String displayString, int relevance) {
+		return createDslProposal(completion, offset, length, image, new StyledString(displayString), relevance, false);
 	}
 
 	@Override
-	protected DslCompletionProposal createDslCompletionProposal(String completion, int offset, int length, Image image,
-			StyledString label, int relevance, boolean inDoc) {
-		return new XVisitorCompletionProposal(completion, offset, length, image, label, relevance, inDoc);
+	protected DslCompletionProposal createDslProposal(String completion, int offset, int length, Image image,
+			StyledString displayString, int relevance, boolean inDoc) {
+		return new XVisitorCompletionProposal(completion, offset, length, image, displayString, relevance, inDoc);
 	}
 
 	@Override
@@ -57,13 +56,8 @@ public class XVisitorCollector extends DslCollector {
 		return VAR_TRIGGER;
 	}
 
-	/**
-	 * @param offset invocation offset
-	 */
 	@Override
 	public void prepareProposals(ICodeUnit unit, int offset) throws DslModelException {
-
-		if (!parseValid()) return;
 
 		// 1) handle lexer and parser rule names: captured as a list of tokens
 		Set<IStatement> rules = getDslCore().getModelManager().getCodeAssistElements(unit);

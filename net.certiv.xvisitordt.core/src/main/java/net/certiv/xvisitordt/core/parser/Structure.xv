@@ -6,13 +6,13 @@
 xvisitor grammar Structure;
 
 options {
-	superClass  = StructureAdaptor ;
+	superClass  = StructureBuilder ;
 	parserClass = XVisitorParser ;
 }
 
 @header {
-	package net.certiv.xvisitordt.core.parser.gen;
-	import net.certiv.xvisitordt.core.parser.StructureAdaptor;
+	package net.certiv.xvisitordt.core.parser.gen ;
+	import net.certiv.xvisitordt.core.parser.StructureBuilder ;
 }
 
 structure

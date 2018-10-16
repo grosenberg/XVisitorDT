@@ -3,35 +3,22 @@ package net.certiv.xvisitordt.core;
 import org.osgi.framework.BundleContext;
 
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.parser.ISourceParserFactory;
-import net.certiv.dsl.core.util.Log;
-import net.certiv.dsl.core.util.Log.LogLevel;
-import net.certiv.xvisitordt.core.parser.XVisitorSourceParserFactory;
+import net.certiv.dsl.core.parser.DslSourceParser;
+import net.certiv.xvisitordt.core.parser.XVisitorSourceParser;
 
-/**
- * The activator class controls the plug-in life cycle
- */
 public class XVisitorCore extends DslCore {
 
 	private static final String[] EXTENSIONS = new String[] { "xv" };
 
+	// Should be unique, lower case, single word
+	public static final String DSL_NAME = "xvisitor";
+
 	private static XVisitorCore plugin;
 
-	private XVisitorSourceParserFactory factory;
-
-	/**
-	 * The constructor
-	 */
 	public XVisitorCore() {
 		super();
-		Log.defLevel(LogLevel.Debug);
 	}
 
-	/**
-	 * Returns the shared instance
-	 * 
-	 * @return the shared instance
-	 */
 	public static XVisitorCore getDefault() {
 		return plugin;
 	}
@@ -64,10 +51,17 @@ public class XVisitorCore extends DslCore {
 	}
 
 	@Override
-	public ISourceParserFactory getSourceParserFactory() {
-		if (factory == null) {
-			factory = new XVisitorSourceParserFactory();
+	public DslSourceParser createSourceParser(String type) {
+		switch (type) {
+			case DSL_NAME:
+				return new XVisitorSourceParser();
+			default:
+				return null;
 		}
-		return factory;
+	}
+
+	@Override
+	public String getProblemMakerId(String type) {
+		return getPluginId() + String.format(".%s_marker", type);
 	}
 }

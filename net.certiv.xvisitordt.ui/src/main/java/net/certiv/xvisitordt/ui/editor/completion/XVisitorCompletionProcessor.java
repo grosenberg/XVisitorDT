@@ -7,8 +7,6 @@ import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.text.completion.CompletionLabelProvider;
 import net.certiv.dsl.ui.editor.text.completion.DslCompletionProcessor;
-import net.certiv.dsl.ui.editor.text.completion.DslCompletionProposal;
-import net.certiv.dsl.ui.templates.DslTemplateContext;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 
@@ -33,9 +31,11 @@ public class XVisitorCompletionProcessor extends DslCompletionProcessor {
 		return new XVisitorCompletionLabelProvider();
 	}
 
-	@Override
-	public void createCategories() {
-		addCategory(DslCompletionProposal.ID, DslCompletionProposal.NAME, new XVisitorCodeCompletionComputer());
-		addCategory(DslTemplateContext.ID, DslTemplateContext.NAME, new XVisitorTemplateCompletionComputer());
-	}
+	// @Override
+	// public void createCategories() {
+	// addCategory(DslCompletionProposal.ID, DslCompletionProposal.NAME, new
+	// XVisitorCodeCompletionComputer());
+	// addCategory(DslTemplateContext.ID, DslTemplateContext.NAME, new
+	// XVisitorTemplateCompletionComputer());
+	// }
 }

@@ -4,25 +4,29 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.IColorManager;
+import net.certiv.dsl.core.color.IColorManager;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
 import net.certiv.dsl.ui.DslUI;
-import net.certiv.dsl.ui.editor.text.DslSourceViewerConfiguration;
-import net.certiv.dsl.ui.formatter.DslFormatterPreferencePage;
+import net.certiv.dsl.ui.editor.DslSourceViewerConfiguration;
+import net.certiv.dsl.ui.formatter.IDslFormatterFactory;
+import net.certiv.dsl.ui.preferences.pages.DslFormatterPreferencePage;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 import net.certiv.xvisitordt.ui.editor.Partitions;
 import net.certiv.xvisitordt.ui.editor.XVisitorSimpleSourceViewerConfiguration;
+import net.certiv.xvisitordt.ui.preferences.formatter.FormatterFactory;
 
 /** Preference page for formatting */
-public class PrefPageFormatter extends DslFormatterPreferencePage {
+public class FormatterPage extends DslFormatterPreferencePage {
+
+	private FormatterFactory factory;
 
 	@Override
 	protected DslSourceViewerConfiguration createSimpleSourceViewerConfiguration(IColorManager colorManager,
 			IPreferenceStore preferenceStore, ITextEditor editor, boolean configureFormatter) {
 
 		return new XVisitorSimpleSourceViewerConfiguration(colorManager, (IDslPrefsManager) preferenceStore, editor,
-				Partitions.XVISITOR_PARTITIONING, configureFormatter);
+				Partitions.PARTITIONING, configureFormatter);
 	}
 
 	@Override
@@ -33,5 +37,13 @@ public class PrefPageFormatter extends DslFormatterPreferencePage {
 	@Override
 	public DslCore getDslCore() {
 		return XVisitorCore.getDefault();
+	}
+
+	@Override
+	protected IDslFormatterFactory getFormatterFactory() {
+		if (factory == null) {
+			factory = new FormatterFactory();
+		}
+		return factory;
 	}
 }

@@ -10,10 +10,10 @@ import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.text.rules.WordRule;
 
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
-import net.certiv.dsl.ui.editor.text.AbstractBufferedRuleBasedScanner;
+import net.certiv.dsl.ui.editor.scanners.AbstractBufferedRuleBasedScanner;
 import net.certiv.dsl.ui.editor.text.rules.CharsRule;
 import net.certiv.dsl.ui.editor.text.rules.DslWordRule;
-import net.certiv.xvisitordt.core.preferences.PrefsKey;
+import net.certiv.xvisitordt.core.preferences.Prefs;
 
 public class ScannerAction extends AbstractBufferedRuleBasedScanner {
 
@@ -34,17 +34,17 @@ public class ScannerAction extends AbstractBufferedRuleBasedScanner {
 	@Override
 	protected String[] getTokenProperties() {
 		if (tokenProperties == null) {
-			tokenProperties = new String[] { bind(PrefsKey.EDITOR_KEYWORDS_COLOR), bind(PrefsKey.EDITOR_STRING_COLOR),
-					bind(PrefsKey.EDITOR_ACTION_COLOR) };
+			tokenProperties = new String[] { bind(Prefs.EDITOR_KEYWORDS_COLOR), bind(Prefs.EDITOR_STRING_COLOR),
+					bind(Prefs.EDITOR_ACTION_COLOR) };
 		}
 		return tokenProperties;
 	}
 
 	@Override
 	protected List<IRule> createRules() {
-		IToken keyword = getToken(bind(PrefsKey.EDITOR_KEYWORDS_COLOR));
-		IToken string = getToken(bind(PrefsKey.EDITOR_STRING_COLOR));
-		IToken action = getToken(bind(PrefsKey.EDITOR_ACTION_COLOR));
+		IToken keyword = getToken(bind(Prefs.EDITOR_KEYWORDS_COLOR));
+		IToken string = getToken(bind(Prefs.EDITOR_STRING_COLOR));
+		IToken action = getToken(bind(Prefs.EDITOR_ACTION_COLOR));
 
 		DslWordRule keywordRule = new DslWordRule(new WordDetector());
 		for (String word : KEYWORDS) {

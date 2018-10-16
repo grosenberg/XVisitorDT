@@ -13,19 +13,19 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.IColorManager;
+import net.certiv.dsl.core.color.IColorManager;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
 import net.certiv.dsl.core.util.Strings;
-import net.certiv.dsl.core.util.TabStyle;
+import net.certiv.dsl.core.util.eclipse.TabStyle;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.DoubleClickStrategy;
-import net.certiv.dsl.ui.editor.text.DslPresentationReconciler;
-import net.certiv.dsl.ui.editor.text.DslSourceViewerConfiguration;
+import net.certiv.dsl.ui.editor.DslPresentationReconciler;
+import net.certiv.dsl.ui.editor.DslSourceViewerConfiguration;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.ui.XVisitorUI;
+import net.certiv.xvisitordt.ui.editor.strategies.SmartAutoEditStrategy;
 import net.certiv.xvisitordt.ui.editor.strategies.XVisitorAutoEditActionStrategy;
 import net.certiv.xvisitordt.ui.editor.strategies.XVisitorAutoEditDocStrategy;
-import net.certiv.xvisitordt.ui.editor.strategies.XVisitorAutoEditStrategy;
 import net.certiv.xvisitordt.ui.editor.strategies.XVisitorAutoEditStringStrategy;
 import net.certiv.xvisitordt.ui.editor.text.ScannerAction;
 import net.certiv.xvisitordt.ui.editor.text.ScannerCommentJD;
@@ -106,7 +106,7 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
 		if (XVisitorCore.getDefault().getPrefsManager().getTabStyle() == TabStyle.SPACES) {
 			return new String[] {
-					Strings.getNSpaces(XVisitorCore.getDefault().getPrefsManager().getIndentationSize()) };
+					Strings.dup(XVisitorCore.getDefault().getPrefsManager().getIndentationSize(), Strings.SPC) };
 		} else {
 			return new String[] { "\t" };
 		}
@@ -186,7 +186,7 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 				strategy = new XVisitorAutoEditActionStrategy(partitioning);
 				break;
 			default:
-				strategy = new XVisitorAutoEditStrategy(partitioning);
+				strategy = new SmartAutoEditStrategy(partitioning);
 		}
 		return new IAutoEditStrategy[] { strategy };
 	}

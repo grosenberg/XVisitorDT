@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import net.certiv.dsl.core.model.util.IDescriptionData;
+import net.certiv.dsl.core.model.IDescriptionData;
 
 public class ModelData implements IDescriptionData {
 

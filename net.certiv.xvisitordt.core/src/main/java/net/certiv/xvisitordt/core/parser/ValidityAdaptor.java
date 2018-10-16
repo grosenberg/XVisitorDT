@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.Path;
 import net.certiv.antlr.runtime.xvisitor.Processor;
 import net.certiv.dsl.core.util.Reflect;
 import net.certiv.dsl.core.util.Strings;
-import net.certiv.dsl.core.util.TreeMultimap;
+import net.certiv.dsl.core.util.stores.TreeMultimap;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.GrammarSpecContext;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.ReferenceContext;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorParser.WordContext;
