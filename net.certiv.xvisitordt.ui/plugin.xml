@@ -61,7 +61,7 @@
             class="net.certiv.xvisitordt.ui.search.AntlrSearchPage"
             enabled="true"
             extensions="g:90"
-            icon="icons/obj16/search_obj.gif"
+            icon="icons/obj16/search_obj.png"
             id="net.certiv.xvisitordt.ui.AntlrSearchPage"
             label="AntlrSearchPage"
             showScopeSection="true"
@@ -109,6 +109,47 @@
             name="net.certiv.xvisitordt.ui.occurrences">
       </type>
    </extension>
+   <extension
+         point="org.eclipse.ui.editors.markerAnnotationSpecification">
+      <specification
+            annotationImageProvider="net.certiv.xvisitordt.ui.editor.AnnotationImageProvider"
+            annotationType="net.certiv.xvisitordt.ui.error">
+      </specification>
+      <specification
+            annotationImageProvider="net.certiv.xvisitordt.ui.editor.AnnotationImageProvider"
+            annotationType="net.certiv.xvisitordt.ui.warning">
+      </specification>
+      <specification
+            annotationImageProvider="net.certiv.xvisitordt.ui.editor.AnnotationImageProvider"
+            annotationType="net.certiv.xvisitordt.ui.info">
+      </specification>
+      <specification
+            annotationType="net.certiv.xvisitordt.ui.occurrences"
+            colorPreferenceKey="occurrenceIndicationColor"
+            colorPreferenceValue="212,212,212"
+            contributesToHeader="false"
+            highlightPreferenceKey="occurrenceHighlighting"
+            highlightPreferenceValue="true"
+            icon="$nl$/icons/full/obj16/searchm_obj.png"
+            includeOnPreferencePage="true"
+            isGoToNextNavigationTarget="false"
+            isGoToNextNavigationTargetKey="isOccurrenceGoToNextNavigationTarget"
+            isGoToPreviousNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="isOccurrenceGoToPreviousNavigationTarget"
+            label="Occurrences"
+            overviewRulerPreferenceKey="occurrenceIndicationInOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            presentationLayer="4"
+            showInNextPrevDropdownToolbarAction="true"
+            showInNextPrevDropdownToolbarActionKey="showOccurrenceInNextPrevDropdownToolbarAction"
+            textPreferenceKey="occurrenceIndication"
+            textPreferenceValue="false"
+            textStylePreferenceKey="occurrenceTextStyle"
+            textStylePreferenceValue="NONE"
+            verticalRulerPreferenceKey="occurrenceIndicationInVerticalRuler"
+            verticalRulerPreferenceValue="false">
+      </specification>
+   </extension>
   <extension
         point="org.eclipse.ui.editors.templates">
      <include
@@ -144,7 +185,7 @@
             class="net.certiv.xvisitordt.ui.templates.VocabName"
             contextTypeId="antlrOptions"
             description="Proper name of the Tokens Vocabulary file"
-            icon="icons/elcl16/templateprop_co.gif"
+            icon="icons/elcl16/templateprop_co.png"
             name="Tokens Vocab Name"
             type="vocabName">
       </resolver>
@@ -287,6 +328,23 @@
      </command>
   </extension>
 -->
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            name="XVisitor Category"
+            id="net.certiv.xvisitordt.ui.commands.category">
+      </category>
+      <command
+            categoryId="net.certiv.xvisitordt.ui.commands.category"
+            id="net.certiv.xvisitordt.ui.removeNatureCommand"
+            name="Remove XVisitor Nature">
+      </command>
+      <command
+            categoryId="net.certiv.xvisitordt.ui.commands.category"
+            id="net.certiv.xvisitordt.ui.cleanGrammarCommand"
+            name="Clean Grammar Problems">
+      </command>
+   </extension>
 
    <extension
          point="org.eclipse.ui.handlers">
@@ -375,47 +433,6 @@
 	        commandId="net.certiv.xvisitordt.ui.edit.text.toggleMarkOccurrences"
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
 	</extension>
-   <extension
-         point="org.eclipse.ui.editors.markerAnnotationSpecification">
-      <specification
-            annotationImageProvider="net.certiv.xvisitordt.ui.editor.AnnotationImageProvider"
-            annotationType="net.certiv.xvisitordt.ui.error">
-      </specification>
-      <specification
-            annotationImageProvider="net.certiv.xvisitordt.ui.editor.AnnotationImageProvider"
-            annotationType="net.certiv.xvisitordt.ui.warning">
-      </specification>
-      <specification
-            annotationImageProvider="net.certiv.xvisitordt.ui.editor.AnnotationImageProvider"
-            annotationType="net.certiv.xvisitordt.ui.info">
-      </specification>
-      <specification
-            annotationType="net.certiv.xvisitordt.ui.occurrences"
-            colorPreferenceKey="occurrenceIndicationColor"
-            colorPreferenceValue="212,212,212"
-            contributesToHeader="false"
-            highlightPreferenceKey="occurrenceHighlighting"
-            highlightPreferenceValue="true"
-            icon="$nl$/icons/full/obj16/searchm_obj.gif"
-            includeOnPreferencePage="true"
-            isGoToNextNavigationTarget="false"
-            isGoToNextNavigationTargetKey="isOccurrenceGoToNextNavigationTarget"
-            isGoToPreviousNavigationTarget="false"
-            isGoToPreviousNavigationTargetKey="isOccurrenceGoToPreviousNavigationTarget"
-            label="Occurrences"
-            overviewRulerPreferenceKey="occurrenceIndicationInOverviewRuler"
-            overviewRulerPreferenceValue="true"
-            presentationLayer="4"
-            showInNextPrevDropdownToolbarAction="true"
-            showInNextPrevDropdownToolbarActionKey="showOccurrenceInNextPrevDropdownToolbarAction"
-            textPreferenceKey="occurrenceIndication"
-            textPreferenceValue="false"
-            textStylePreferenceKey="occurrenceTextStyle"
-            textStylePreferenceValue="NONE"
-            verticalRulerPreferenceKey="occurrenceIndicationInVerticalRuler"
-            verticalRulerPreferenceValue="false">
-      </specification>
-   </extension>
   <!--
   <extension
         id="defaultProposalCategory"
@@ -428,7 +445,7 @@
         name="Template Proposals"
         point="net.certiv.dsl.ui.completionProposalComputer">
      <proposalCategory
-           icon="icons/elcl16/templateprop_co.gif"></proposalCategory>
+           icon="icons/elcl16/templateprop_co.png"></proposalCategory>
   </extension>
   <extension
         id="TemplateCompletionProposalComputer"
@@ -467,7 +484,7 @@
                id="net.certiv.xvisitordt.ui.toolbars.dslToolbar">
             <command
                   commandId="net.certiv.xvisitordt.ui.edit.text.toggleMarkOccurrences"
-                  icon="icons/etool16/mark_occurrences.gif"
+                  icon="icons/etool16/mark_occurrences.png"
                   style="toggle"
                   tooltip="Toggle Mark Occcurrences">
 	            <visibleWhen
@@ -479,7 +496,7 @@
             </command>
             <command
                   commandId="net.certiv.xvisitordt.ui.build"
-                  icon="icons/etool16/build_exec.gif"
+                  icon="icons/etool16/build_exec.png"
                   style="push"
                   tooltip="Build XVisitor grammars">
 	            <visibleWhen
@@ -527,23 +544,6 @@
       </actionSet>
    </extension>
 -->
-   <extension
-         point="org.eclipse.ui.commands">
-      <category
-            name="XVisitor Category"
-            id="net.certiv.xvisitordt.ui.commands.category">
-      </category>
-      <command
-            categoryId="net.certiv.xvisitordt.ui.commands.category"
-            id="net.certiv.xvisitordt.ui.removeNatureCommand"
-            name="Remove XVisitor Nature">
-      </command>
-      <command
-            categoryId="net.certiv.xvisitordt.ui.commands.category"
-            id="net.certiv.xvisitordt.ui.cleanGrammarCommand"
-            name="Clean Grammar Problems">
-      </command>
-   </extension>
    
    <extension point="org.eclipse.ui.menus">
       <menuContribution

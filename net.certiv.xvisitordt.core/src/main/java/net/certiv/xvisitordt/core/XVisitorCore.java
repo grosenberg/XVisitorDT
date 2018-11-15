@@ -3,6 +3,7 @@ package net.certiv.xvisitordt.core;
 import org.osgi.framework.BundleContext;
 
 import net.certiv.dsl.core.DslCore;
+import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.parser.DslSourceParser;
 import net.certiv.xvisitordt.core.parser.XVisitorSourceParser;
 
@@ -51,17 +52,10 @@ public class XVisitorCore extends DslCore {
 	}
 
 	@Override
-	public DslSourceParser createSourceParser(String type) {
-		switch (type) {
-			case DSL_NAME:
-				return new XVisitorSourceParser();
-			default:
-				return null;
+	public DslSourceParser createSourceParser(ICodeUnit unit, String contentType) {
+		if (DSL_NAME.equals(contentType) || getContentTypeId().equals(contentType)) {
+			return new XVisitorSourceParser(unit.getParseRecord());
 		}
-	}
-
-	@Override
-	public String getProblemMakerId(String type) {
-		return getPluginId() + String.format(".%s_marker", type);
+		return null;
 	}
 }

@@ -6,10 +6,8 @@ import org.osgi.framework.BundleContext;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.util.Log;
 import net.certiv.dsl.core.util.Log.LogLevel;
-import net.certiv.dsl.ui.DslImages;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.text.DslTextTools;
-import net.certiv.dsl.ui.formatter.IDslFormatterFactory;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.ui.editor.XVisitorEditor;
 import net.certiv.xvisitordt.ui.editor.XVisitorTextTools;
@@ -19,9 +17,8 @@ public class XVisitorUI extends DslUI {
 
 	private static XVisitorUI plugin;
 
-	private DslImages imageProvider;
+	private XVisitorImages imageProvider;
 	private DslTextTools textTools;
-	private IDslFormatterFactory factory;
 
 	public XVisitorUI() {
 		super();
@@ -95,7 +92,7 @@ public class XVisitorUI extends DslUI {
 	}
 
 	@Override
-	public DslImages getImageProvider() {
+	public XVisitorImages getImageProvider() {
 		if (imageProvider == null) {
 			imageProvider = new XVisitorImages();
 		}

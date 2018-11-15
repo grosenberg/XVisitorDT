@@ -34,7 +34,7 @@ public abstract class StructureBuilder extends Processor {
 		GrammarSpecContext ctx = (GrammarSpecContext) lastPathNode();
 		String name = ctx.ID().getText() + " [xvisitor]";
 		ModelData data = new ModelData(ModelType.GrammarType, ctx, name);
-		maker.module(ctx, ctx.ID(), data);
+		maker.module(ctx, ctx.ID().getText(), data); // XXX: hacked; need to fix grammar
 		addRefName(ctx.ID(), ModelType.Value, Type.LITERAL, Form.DECLARATION, Realm.GLOBAL);
 	}
 

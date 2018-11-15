@@ -40,6 +40,7 @@ public class XVisitorAutoEditActionStrategy extends DefaultIndentLineAutoEditStr
 		if (getPrefsMgr().isSmartMode()) {
 			if (SmartEdit.isNewLineInsertionCommand(doc, cmd)) {
 				insertAfterNewLine(doc, cmd);
+
 			} else if (SmartEdit.isSingleCharactedInsertionOrReplaceCommand(cmd)) {
 				if (cmd.offset != -1) smartInsertCharacter(doc, cmd);
 			}

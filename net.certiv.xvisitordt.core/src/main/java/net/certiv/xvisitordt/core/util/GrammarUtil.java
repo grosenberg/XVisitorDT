@@ -199,11 +199,9 @@ public class GrammarUtil {
 	// }
 
 	/**
-	 * Determine the value assigned to the ASTLabelType key in the options block of
-	 * a grammar.
-	 * 
-	 * @param gFile
-	 *            the grammar file
+	 * Determine the value assigned to the ASTLabelType key in the options block of a grammar.
+	 *
+	 * @param gFile the grammar file
 	 * @return the ASTLabelType value
 	 */
 	public static String determineASTLabelType(IFile gFile) {

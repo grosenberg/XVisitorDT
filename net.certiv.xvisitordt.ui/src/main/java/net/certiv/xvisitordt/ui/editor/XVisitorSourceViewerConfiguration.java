@@ -24,9 +24,7 @@ import net.certiv.dsl.ui.editor.DslSourceViewerConfiguration;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 import net.certiv.xvisitordt.ui.editor.strategies.SmartAutoEditStrategy;
-import net.certiv.xvisitordt.ui.editor.strategies.XVisitorAutoEditActionStrategy;
 import net.certiv.xvisitordt.ui.editor.strategies.XVisitorAutoEditDocStrategy;
-import net.certiv.xvisitordt.ui.editor.strategies.XVisitorAutoEditStringStrategy;
 import net.certiv.xvisitordt.ui.editor.text.ScannerAction;
 import net.certiv.xvisitordt.ui.editor.text.ScannerCommentJD;
 import net.certiv.xvisitordt.ui.editor.text.ScannerCommentML;
@@ -178,12 +176,6 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 			case Partitions.COMMENT_JD:
 			case Partitions.COMMENT_ML:
 				strategy = new XVisitorAutoEditDocStrategy(partitioning);
-				break;
-			case Partitions.STRING:
-				strategy = new XVisitorAutoEditStringStrategy(partitioning);
-				break;
-			case Partitions.ACTION:
-				strategy = new XVisitorAutoEditActionStrategy(partitioning);
 				break;
 			default:
 				strategy = new SmartAutoEditStrategy(partitioning);

@@ -6,9 +6,9 @@ import java.util.List;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
-import net.certiv.dsl.core.model.DslModelManager;
 import net.certiv.dsl.core.model.IDslElement;
 import net.certiv.dsl.core.model.IStatement;
+import net.certiv.dsl.core.model.builder.ModelManager;
 import net.certiv.dsl.ui.editor.hyperlink.DslHyperlinkDetector;
 import net.certiv.dsl.ui.editor.text.DslWordFinder;
 import net.certiv.xvisitordt.core.XVisitorCore;
@@ -45,7 +45,7 @@ public class XVisitorHyperlinkDetector extends DslHyperlinkDetector {
 	}
 
 	@Override
-	public DslModelManager getModelMgr() {
+	public ModelManager getModelMgr() {
 		return XVisitorCore.getDefault().getModelManager();
 	}
 }

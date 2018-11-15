@@ -50,9 +50,6 @@
       <persistent
             value="true">
       </persistent>
-      <attribute
-            name="externalLocation">
-      </attribute>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">

@@ -17,12 +17,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.ToolFactory;
@@ -37,26 +37,22 @@ import org.eclipse.text.edits.TextEdit;
 import net.certiv.antlr.xvisitor.Tool;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.builder.DslBuilder;
-import net.certiv.dsl.core.model.DslModelManager;
+import net.certiv.dsl.core.model.DslSourceRoot;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.preferences.consts.Builder;
 import net.certiv.dsl.core.util.CoreUtil;
 import net.certiv.dsl.core.util.Log;
 import net.certiv.dsl.core.util.antlr.AntlrUtil;
 import net.certiv.dsl.core.util.eclipse.DynamicLoader;
-import net.certiv.dsl.core.util.eclipse.JdtUtil;
 import net.certiv.xvisitordt.core.XVisitorCore;
 
 public class XVisitorBuilder extends DslBuilder {
 
 	private static final IStatus FAIL_STATUS = new Status(IStatus.CANCEL, XVisitorCore.PLUGIN_ID,
 			"XVisitor build failed.");
-	private String prefix;
 
 	public XVisitorBuilder() {
 		super();
-
-		prefix = getDslCore().getProblemMakerId(XVisitorCore.DSL_NAME);
 	}
 
 	@Override
@@ -65,37 +61,22 @@ public class XVisitorBuilder extends DslBuilder {
 	}
 
 	@Override
-	public boolean isBuildAllowed(IProject project, IResource res) {
-		if (requireCurrentProject() && !inCurrentProject(res)) return false;
-
-		boolean inSrc = requireSourcePath() && inJavaSourceFolder(res);
-		boolean inSpc = requireSpecialPath() && inSpecialFolder(res);
-		if (inSrc || inSpc) return true;
-		return false;
-	}
-
-	/** whether in a Java source folder */
-	protected boolean inJavaSourceFolder(IResource res) {
-		List<IPackageFragmentRoot> folders = JdtUtil.getJavaSourceFolders(res.getProject());
-		for (IPackageFragmentRoot folder : folders) {
-			if (folder.getPath().isPrefixOf(res.getFullPath())) return true;
-		}
-		return false;
-	}
-
-	// allow non-source path grammars?
-	private boolean inSpecialFolder(IResource res) {
-		return false;
+	public boolean isBuildAllowed(IProject project, ICodeUnit unit) {
+		DslSourceRoot srcRoot = unit.getSourceRoot();
+		if (srcRoot.isOutputRoot()) return false;
+		if (!allowNativeSourcePath() && srcRoot.isNativeSourceRoot()) return false;
+		if (!allowExtraSourcePath() && srcRoot.isExtraSourceRoot()) return false;
+		return true;
 	}
 
 	@Override
-	public IStatus buildSourceModules(IProgressMonitor monitor, int ticks, List<IFile> modules) throws CoreException {
-		if (modules.isEmpty()) return Status.OK_STATUS;
+	public IStatus buildSourceModules(IProgressMonitor monitor, int ticks, List<ICodeUnit> units) throws CoreException {
 
+		if (units.isEmpty()) return Status.OK_STATUS;
 		try {
 			monitor.beginTask("XVisitor Build", WORK_BUILD);
-			for (IFile module : modules) {
-				compileGrammar(module, CoreUtil.subMonitorFor(monitor, WORK_BUILD));
+			for (ICodeUnit unit : units) {
+				compileGrammar(unit, CoreUtil.subMonitorFor(monitor, WORK_BUILD));
 			}
 			Log.debug(this, "Build done");
 			return Status.OK_STATUS;
@@ -105,9 +86,10 @@ public class XVisitorBuilder extends DslBuilder {
 		}
 	}
 
-	private void compileGrammar(IResource resource, IProgressMonitor monitor) {
-		if (resource != null && resource instanceof IFile && (resource.getName().endsWith(".xv"))) {
-			IFile file = (IFile) resource;
+	private void compileGrammar(ICodeUnit unit, IProgressMonitor monitor) {
+		if (unit != null && unit.getElementName().endsWith(".xv")) {
+
+			IFile file = (IFile) unit.getResource();
 			URL[] urls;
 			try {
 				urls = DynamicLoader.getURLs(file.getProject());
@@ -118,10 +100,11 @@ public class XVisitorBuilder extends DslBuilder {
 			}
 
 			String srcFile = file.getLocation().toString();
-			String outputDirectory = determineBuildPath(file).toString();
+			IPath output = determineBuildPath(unit);
+			if (output == null) return;
 
 			Log.info(this, "Build [" + srcFile + "]");
-			Log.info(this, "Output [" + outputDirectory + "]");
+			Log.info(this, "Output [" + output + "]");
 
 			List<String> srcFiles = new ArrayList<>();
 			srcFiles.add(srcFile);
@@ -144,14 +127,15 @@ public class XVisitorBuilder extends DslBuilder {
 						return FAIL_STATUS;
 					}
 
-					ToolErrorListener errListener = new ToolErrorListener(file, prefix);
+					ToolErrorListener errListener = new ToolErrorListener(file, getDslCore().getProblemMakerId(),
+							XVisitorCore.DSL_NAME);
 
 					Tool tool = new Tool();
 					tool.removeListeners();
 					tool.addListener(errListener);
 					tool.setLevel("warn");
-					tool.setLibDirectory(outputDirectory);
-					tool.setOutputDirectory(outputDirectory);
+					tool.setLibDirectory(output.toString());
+					tool.setOutputDirectory(output.toString());
 					tool.setGrammarFiles(srcFiles);
 					monitor.worked(1);
 
@@ -163,8 +147,8 @@ public class XVisitorBuilder extends DslBuilder {
 						ok = false;
 						Log.error(this, "XVisitor build failed: " + e.getMessage());
 						Log.error(this, " - Src Files: " + srcFiles);
-						Log.error(this, " - Lib Dir : " + outputDirectory);
-						Log.error(this, " - Out Dir : " + outputDirectory);
+						Log.error(this, " - Lib Dir : " + output);
+						Log.error(this, " - Out Dir : " + output);
 
 						URLClassLoader urlLoader = (URLClassLoader) thread.getContextClassLoader();
 						for (URL url : urlLoader.getURLs()) {
@@ -174,7 +158,7 @@ public class XVisitorBuilder extends DslBuilder {
 						thread.setContextClassLoader(parent);
 					}
 
-					postCompileCleanup(file, monitor);
+					postCompileCleanup(unit, output, monitor);
 					monitor.worked(1);
 
 					if (!ok) return FAIL_STATUS;
@@ -189,37 +173,63 @@ public class XVisitorBuilder extends DslBuilder {
 		}
 	}
 
-	private void postCompileCleanup(IFile file, IProgressMonitor monitor) {
-		if (!file.exists()) {
-			Log.info(this, "Compile produced no file[file=" + file.getFullPath() + "]");
+	private IPath determineBuildPath(ICodeUnit unit) {
+		if (unit != null) {
+			DslSourceRoot srcRoot = unit.getSourceRoot();
+			String pkg = AntlrUtil.resolvePackageName(unit);
+
+			if (srcRoot.isNativeSourceRoot()) {
+				if (pkg != null && !pkg.isEmpty()) {
+					Path path = new Path(pkg.replaceAll("\\.", "/"));
+					return srcRoot.getLocation().append(path);
+				}
+				return null;
+
+			} else if (srcRoot.isExtraSourceRoot()) {
+				IPath output = unit.getDslProject().getLocation().append("target/generated-sources/antlr4/");
+				if (pkg != null && !pkg.isEmpty()) {
+					Path path = new Path(pkg.replaceAll("\\.", "/"));
+					return output.append(path);
+
+				} else {
+					IPath path = unit.getParent().getLocation().makeRelativeTo(srcRoot.getLocation());
+					return output.append(path);
+				}
+			}
+		}
+		return null;
+	}
+
+	private void postCompileCleanup(ICodeUnit unit, IPath output, IProgressMonitor monitor) {
+		if (!unit.exists()) {
+			Log.info(this, "Compile produced no file[file=" + unit.getPath() + "]");
 			return;
 		}
-		IProject project = file.getProject();
+		IProject project = unit.getProject();
+		IContainer folder = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(output);
 
 		// refresh directory
-		if (getDslCore().getPrefsManager().getBoolean(project, Builder.BUILDER_REFRESH)) {
-			boolean markDerived = getDslCore().getPrefsManager().getBoolean(project, Builder.BUILDER_MARK_DERIVED);
-			doBuilderRefresh(file, markDerived, monitor);
+		if (getPrefs().getBoolean(project, Builder.BUILDER_REFRESH)) {
+			boolean markDerived = getPrefs().getBoolean(project, Builder.BUILDER_MARK_DERIVED);
+			doBuilderRefresh(unit, folder, markDerived, monitor);
 		}
 		// format all
-		if (getDslCore().getPrefsManager().getBoolean(project, Builder.BUILDER_FORMAT)) {
-			doBuilderFormat(file, monitor);
+		if (getPrefs().getBoolean(project, Builder.BUILDER_FORMAT)) {
+			doBuilderFormat(unit, folder, monitor);
 		}
 		// organize imports
-		if (getDslCore().getPrefsManager().getBoolean(project, Builder.BUILDER_ORGANIZE)) {
-			doBuilderOrganizeImports(file, monitor);
+		if (getPrefs().getBoolean(project, Builder.BUILDER_ORGANIZE)) {
+			doBuilderOrganizeImports(unit, folder, monitor);
 		}
 	}
 
-	private void doBuilderRefresh(IFile file, boolean markDerived, IProgressMonitor monitor) {
-		IContainer folder = getBuildFolder(file);
+	private void doBuilderRefresh(ICodeUnit unit, IContainer folder, boolean markDerived, IProgressMonitor monitor) {
 		try {
 			if (folder != null) {
-				// refresh files
 				folder.refreshLocal(IResource.DEPTH_ONE, monitor);
 				if (markDerived) {
 					// and set generated files as derived resources
-					String name = file.getName();
+					String name = unit.getElementName();
 					int dot = name.lastIndexOf('.');
 					name = name.substring(0, dot);
 					String ext = name.substring(dot + 1);
@@ -234,7 +244,7 @@ public class XVisitorBuilder extends DslBuilder {
 				}
 			} else {
 				Log.error(this, "Failed to determine build folder; refreshing all");
-				IProject project = file.getProject();
+				IProject project = unit.getProject();
 				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			}
 		} catch (CoreException e) {
@@ -244,16 +254,15 @@ public class XVisitorBuilder extends DslBuilder {
 		Log.info(this, "Workspace refreshed");
 	}
 
-	private void doBuilderFormat(IFile file, IProgressMonitor monitor) {
+	private void doBuilderFormat(ICodeUnit unit, IContainer folder, IProgressMonitor monitor) {
 		Log.info(this, "Formatting...");
-		IContainer folder = getBuildFolder(file);
-		IProject project = file.getProject();
+		IProject project = unit.getProject();
 		IJavaProject javaProject = JavaCore.create(project);
 		Map<String, String> options = javaProject.getOptions(true);
 		CodeFormatter formatter = ToolFactory.createCodeFormatter(options);
 
 		try {
-			ICompilationUnit[] cus = getCompilationUnits(file, folder);
+			ICompilationUnit[] cus = getCompilationUnits(unit.getResource(), folder);
 			for (ICompilationUnit cu : cus) {
 				monitor.worked(1);
 				String content = cu.getSource();
@@ -276,8 +285,7 @@ public class XVisitorBuilder extends DslBuilder {
 		monitor.worked(1);
 	}
 
-	private void doBuilderOrganizeImports(IFile file, IProgressMonitor monitor) {
-		IContainer folder = getBuildFolder(file);
+	private void doBuilderOrganizeImports(ICodeUnit unit, IContainer folder, IProgressMonitor monitor) {
 		IChooseImportQuery query = new IChooseImportQuery() {
 
 			@Override
@@ -287,7 +295,7 @@ public class XVisitorBuilder extends DslBuilder {
 		};
 
 		try {
-			ICompilationUnit[] cus = getCompilationUnits(file, folder);
+			ICompilationUnit[] cus = getCompilationUnits(unit.getResource(), folder);
 			for (ICompilationUnit cu : cus) {
 				OrganizeImportsOperation op = new OrganizeImportsOperation(cu, null, true, true, true, query);
 				op.run(monitor);
@@ -300,49 +308,12 @@ public class XVisitorBuilder extends DslBuilder {
 		monitor.worked(1);
 	}
 
-	private IContainer getBuildFolder(IFile file) {
-		IPath path = determineBuildPath(file);
-		return containerOfPath(path);
-	}
-
-	/**
-	 * Determine the build folder for a given a resource representing a grammar file.
-	 *
-	 * @param resource typically the grammar IFile
-	 * @return a filesystem absolute path to the build folder
-	 */
-	protected IPath determineBuildPath(IFile file) {
-		IPath grammarPath = determineGeneratedSourcePath(file);
-		return file.getProject().getLocation().append(grammarPath);
-	}
-
-	protected IPath determineGeneratedSourcePath(IFile file) {
-		IPath workingPath = JdtUtil.determineSourceFolder(file);
-		String pkg = resolvePackageName(file);
-		if (pkg != null && !pkg.isEmpty()) {
-			workingPath = workingPath.append(pkg.replaceAll("\\.", "/"));
-		}
-		return workingPath;
-	}
-
-	private String resolvePackageName(IFile file) {
-		DslModelManager mgr = getDslCore().getModelManager();
-		ICodeUnit unit = mgr.create(file);
-		return AntlrUtil.resolvePackageName(unit);
-	}
-
-	private IContainer containerOfPath(IPath path) {
-		return ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(path);
-	}
-
 	private ICompilationUnit[] getCompilationUnits(IResource resource, IContainer folder) {
 		ArrayList<ICompilationUnit> cuList = new ArrayList<>();
 		IResource[] children = null;
 		try {
 			children = folder.members();
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
+		} catch (CoreException e) {}
 
 		for (IResource child : children) {
 			try {
