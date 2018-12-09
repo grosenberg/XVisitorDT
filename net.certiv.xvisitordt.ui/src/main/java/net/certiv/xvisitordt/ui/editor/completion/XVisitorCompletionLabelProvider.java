@@ -14,7 +14,7 @@ public class XVisitorCompletionLabelProvider extends CompletionLabelProvider {
 
 	@Override
 	public ImageDescriptor createImageDescriptor(CompletionProposal proposal) {
-		return dslUI.getImageProvider().DESC_OBJS_KEYWORD;
+		return imgMgr.getDescriptor(imgMgr.IMG_OBJS_KEYWORD);
 
 	}
 

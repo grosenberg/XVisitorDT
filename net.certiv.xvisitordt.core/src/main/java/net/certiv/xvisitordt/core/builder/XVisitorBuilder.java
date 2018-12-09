@@ -1,6 +1,6 @@
 package net.certiv.xvisitordt.core.builder;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -37,11 +37,12 @@ import org.eclipse.text.edits.TextEdit;
 import net.certiv.antlr.xvisitor.Tool;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.builder.DslBuilder;
+import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.model.DslSourceRoot;
 import net.certiv.dsl.core.model.ICodeUnit;
+import net.certiv.dsl.core.parser.DslProblemCollector;
 import net.certiv.dsl.core.preferences.consts.Builder;
 import net.certiv.dsl.core.util.CoreUtil;
-import net.certiv.dsl.core.util.Log;
 import net.certiv.dsl.core.util.antlr.AntlrUtil;
 import net.certiv.dsl.core.util.eclipse.DynamicLoader;
 import net.certiv.xvisitordt.core.XVisitorCore;
@@ -61,24 +62,17 @@ public class XVisitorBuilder extends DslBuilder {
 	}
 
 	@Override
-	public boolean isBuildAllowed(IProject project, ICodeUnit unit) {
-		DslSourceRoot srcRoot = unit.getSourceRoot();
-		if (srcRoot.isOutputRoot()) return false;
-		if (!allowNativeSourcePath() && srcRoot.isNativeSourceRoot()) return false;
-		if (!allowExtraSourcePath() && srcRoot.isExtraSourceRoot()) return false;
-		return true;
-	}
-
-	@Override
 	public IStatus buildSourceModules(IProgressMonitor monitor, int ticks, List<ICodeUnit> units) throws CoreException {
 
 		if (units.isEmpty()) return Status.OK_STATUS;
 		try {
 			monitor.beginTask("XVisitor Build", WORK_BUILD);
 			for (ICodeUnit unit : units) {
+				DslProblemCollector collector = unit.getParseRecord().collector;
+				if (collector != null) collector.beginCollecting();
 				compileGrammar(unit, CoreUtil.subMonitorFor(monitor, WORK_BUILD));
+				if (collector != null) collector.endCollecting();
 			}
-			Log.debug(this, "Build done");
 			return Status.OK_STATUS;
 
 		} finally {
@@ -90,21 +84,12 @@ public class XVisitorBuilder extends DslBuilder {
 		if (unit != null && unit.getElementName().endsWith(".xv")) {
 
 			IFile file = (IFile) unit.getResource();
-			URL[] urls;
-			try {
-				urls = DynamicLoader.getURLs(file.getProject());
-				Log.info(this, DynamicLoader.dumpURLs(urls));
-			} catch (MalformedURLException e) {
-				Log.error(this, e.getMessage());
-				return;
-			}
-
 			String srcFile = file.getLocation().toString();
 			IPath output = determineBuildPath(unit);
 			if (output == null) return;
 
-			Log.info(this, "Build [" + srcFile + "]");
-			Log.info(this, "Output [" + output + "]");
+			// Log.info(this, "Build [" + srcFile + "]");
+			// Log.info(this, "Output [" + output + "]");
 
 			List<String> srcFiles = new ArrayList<>();
 			srcFiles.add(srcFile);
@@ -118,46 +103,39 @@ public class XVisitorBuilder extends DslBuilder {
 					Thread thread = Thread.currentThread();
 					ClassLoader parent = thread.getContextClassLoader();
 
-					try {
-						DynamicLoader loader = DynamicLoader.create(urls, parent);
-						thread.setContextClassLoader(loader);
-					} catch (Exception e) {
-						Log.info(this, "Failed to construct classloader; restoring.");
-						thread.setContextClassLoader(parent);
-						return FAIL_STATUS;
-					}
-
-					ToolErrorListener errListener = new ToolErrorListener(file, getDslCore().getProblemMakerId(),
-							XVisitorCore.DSL_NAME);
-
-					Tool tool = new Tool();
-					tool.removeListeners();
-					tool.addListener(errListener);
-					tool.setLevel("warn");
-					tool.setLibDirectory(output.toString());
-					tool.setOutputDirectory(output.toString());
-					tool.setGrammarFiles(srcFiles);
-					monitor.worked(1);
-
 					boolean ok = true;
-					try {
-						tool.genModel();
+					try (DynamicLoader loader = DynamicLoader.create(unit.getProject(), parent)) {
+						thread.setContextClassLoader(loader);
+
+						Tool tool = new Tool();
+						tool.removeListeners();
+						tool.addListener(new ToolErrorListener(unit.getParseRecord()));
+						tool.setLevel("warn");
+						tool.setLibDirectory(output.toString());
+						tool.setOutputDirectory(output.toString());
+						tool.setGrammarFiles(srcFiles);
 						monitor.worked(1);
-					} catch (Exception | Error e) {
-						ok = false;
-						Log.error(this, "XVisitor build failed: " + e.getMessage());
-						Log.error(this, " - Src Files: " + srcFiles);
-						Log.error(this, " - Lib Dir : " + output);
-						Log.error(this, " - Out Dir : " + output);
 
-						URLClassLoader urlLoader = (URLClassLoader) thread.getContextClassLoader();
-						for (URL url : urlLoader.getURLs()) {
-							Log.error(this, " - Classpath: " + url.getPath());
+						try {
+							tool.genModel();
+							monitor.worked(1);
+						} catch (Exception | Error e) {
+							ok = false;
+							Log.error(this, "XVisitor build failed: " + e.getMessage());
+							Log.error(this, " - Src Files: " + srcFiles);
+							Log.error(this, " - Lib Dir : " + output);
+							Log.error(this, " - Out Dir : " + output);
+
+							try (URLClassLoader urlLoader = (URLClassLoader) thread.getContextClassLoader()) {
+								for (URL url : urlLoader.getURLs()) {
+									Log.error(this, " - Classpath: " + url.getPath());
+								}
+							} catch (IOException e1) {}
 						}
-					} finally {
-						thread.setContextClassLoader(parent);
-					}
 
+					} catch (IOException e) {}
+
+					thread.setContextClassLoader(parent);
 					postCompileCleanup(unit, output, monitor);
 					monitor.worked(1);
 
@@ -251,11 +229,11 @@ public class XVisitorBuilder extends DslBuilder {
 			Log.error(this, "Failed to refresh");
 		}
 		monitor.worked(1);
-		Log.info(this, "Workspace refreshed");
+		// Log.info(this, "Workspace refreshed");
 	}
 
 	private void doBuilderFormat(ICodeUnit unit, IContainer folder, IProgressMonitor monitor) {
-		Log.info(this, "Formatting...");
+		// Log.info(this, "Formatting...");
 		IProject project = unit.getProject();
 		IJavaProject javaProject = JavaCore.create(project);
 		Map<String, String> options = javaProject.getOptions(true);

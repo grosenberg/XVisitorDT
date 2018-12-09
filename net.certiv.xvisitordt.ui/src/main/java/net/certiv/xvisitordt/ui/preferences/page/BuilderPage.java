@@ -35,9 +35,9 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.color.DslColorManager;
+import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.preferences.DslPrefsManagerDelta;
 import net.certiv.dsl.core.preferences.consts.Builder;
-import net.certiv.dsl.core.util.Log;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.preferences.blocks.IPreferenceConfigBlock;
 import net.certiv.dsl.ui.preferences.editors.BooleanFieldEditor;

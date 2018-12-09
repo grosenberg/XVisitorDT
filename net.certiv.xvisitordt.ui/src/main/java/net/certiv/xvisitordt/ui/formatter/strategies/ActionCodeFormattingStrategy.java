@@ -7,7 +7,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
-import net.certiv.dsl.core.util.Log;
+import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.ui.editor.text.LineRegion;
 import net.certiv.dsl.ui.formatter.strategies.JavaFormattingStrategy;
 import net.certiv.xvisitordt.core.XVisitorCore;

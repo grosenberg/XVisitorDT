@@ -1,5 +1,6 @@
 package net.certiv.xvisitordt.core.parser;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -9,12 +10,13 @@ import java.util.Set;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CommonToken;
 import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.eclipse.core.runtime.Path;
 
 import net.certiv.antlr.runtime.xvisitor.Processor;
+import net.certiv.dsl.core.parser.DslErrorListener;
 import net.certiv.dsl.core.util.Reflect;
 import net.certiv.dsl.core.util.Strings;
 import net.certiv.dsl.core.util.stores.TreeMultimap;
@@ -41,7 +43,7 @@ public abstract class ValidityAdaptor extends Processor {
 		}
 	};
 
-	private final TreeMultimap<String, Token> xruleMap = new TreeMultimap<String, Token>(null, comp);
+	private final TreeMultimap<String, Token> xruleMap = new TreeMultimap<>(null, comp);
 	private final Set<String> xpaths = new HashSet<>();
 
 	public ValidityAdaptor(ParseTree tree) {
@@ -49,24 +51,25 @@ public abstract class ValidityAdaptor extends Processor {
 	}
 
 	@SuppressWarnings("deprecation")
-	public void setHelper(Parser parser, BaseErrorListener errListener) {
+	public void setHelper(Parser parser, Recognizer<?, ?> ref, DslErrorListener errListener) {
 		this.parser = parser;
 		this.errListener = errListener;
 
-		this.ruleNames = Arrays.asList(parser.getRuleNames());
-		this.termNames = Arrays.asList(parser.getTokenNames());
+		this.ruleNames = Arrays.asList(ref.getRuleNames());
+		this.termNames = Arrays.asList(ref.getTokenNames());
+
 	}
 
 	public void checkXVisitor() {
 		GrammarSpecContext ctx = (GrammarSpecContext) lastPathNode();
-		Path path = new Path(parser.getSourceName());
-		String filename = path.lastSegment();
-		String ext = path.getFileExtension();
-		if (ext != null) {
-			filename = filename.substring(0, filename.length() - (ext.length() + 1));
+		String sourceName = ctx.ID().getSymbol().getTokenSource().getSourceName();
+		String filename = new File(sourceName).getName();
+		int dot = filename.indexOf('.');
+		if (dot > -1) {
+			filename = filename.substring(0, dot);
 		}
 		if (!ctx.ID().getText().equals(filename)) {
-			reportNameMismatch(ctx.ID().getSymbol(), filename + "." + ext);
+			reportNameMismatch(ctx.ID().getSymbol(), sourceName);
 		}
 	}
 
@@ -123,6 +126,29 @@ public abstract class ValidityAdaptor extends Processor {
 		}
 	}
 
+	// check token content against valid rule, terminal, and label names
+	private void eval(RuleContext ctx, Token token) {
+		boolean isReference = false;
+	
+		String name = token.getText();
+		int dot = name.indexOf(0);
+		if (dot > -1) name = name.substring(0, dot); // removes .text, etc.
+		if (name.startsWith("$")) {
+			isReference = true;
+			name = name.substring(1);
+		}
+	
+		boolean lower = Character.isLowerCase(name.charAt(0));
+		if (lower && ruleNames.contains(name)) return;
+		if (!lower && termNames.contains(name)) return;
+		if (Reflect.hasField(ctx, name)) return;
+	
+		// no matching rule, terminal, or label found
+		String errType = !isReference ? "path element" : "or inaccessible reference";
+		String errMsg = String.format("Unknown %s: %s", errType, name);
+		errListener.syntaxError(parser, token, token.getLine(), token.getCharPositionInLine() + 1, errMsg, null);
+	}
+
 	private void reportNameMismatch(Token token, String filename) {
 		String errMsg = String.format("Grammar name '%s' does not match file name '%s'", token.getText(), filename);
 		errListener.syntaxError(parser, token, token.getLine(), token.getCharPositionInLine() + 1, errMsg, null);
@@ -140,29 +166,6 @@ public abstract class ValidityAdaptor extends Processor {
 
 	private void reportMissingXPath(Token token) {
 		String errMsg = String.format("Missing XPath rule: %s", token.getText());
-		errListener.syntaxError(parser, token, token.getLine(), token.getCharPositionInLine() + 1, errMsg, null);
-	}
-
-	// check token content against valid rule, terminal, and label names
-	private void eval(RuleContext ctx, Token token) {
-		boolean isReference = false;
-
-		String name = token.getText();
-		int dot = name.indexOf(0);
-		if (dot > -1) name = name.substring(0, dot); // removes .text, etc.
-		if (name.startsWith("$")) {
-			isReference = true;
-			name = name.substring(1);
-		}
-
-		boolean lower = Character.isLowerCase(name.charAt(0));
-		if (lower && ruleNames.contains(name)) return;
-		if (!lower && termNames.contains(name)) return;
-		if (Reflect.hasField(ctx, name)) return;
-
-		// no matching rule, terminal, or label found
-		String errType = !isReference ? "path element" : "or inaccessible reference";
-		String errMsg = String.format("Unknown %s: %s", errType, name);
 		errListener.syntaxError(parser, token, token.getLine(), token.getCharPositionInLine() + 1, errMsg, null);
 	}
 }

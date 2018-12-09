@@ -1,11 +1,11 @@
 package net.certiv.xvisitordt.ui;
 
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.osgi.framework.BundleContext;
 
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.util.Log;
-import net.certiv.dsl.core.util.Log.LogLevel;
+import net.certiv.dsl.core.log.Log;
+import net.certiv.dsl.core.log.Log.LogLevel;
+import net.certiv.dsl.ui.DslImageManager;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.text.DslTextTools;
 import net.certiv.xvisitordt.core.XVisitorCore;
@@ -17,7 +17,7 @@ public class XVisitorUI extends DslUI {
 
 	private static XVisitorUI plugin;
 
-	private XVisitorImages imageProvider;
+	private XVImageManager imgMgr;
 	private DslTextTools textTools;
 
 	public XVisitorUI() {
@@ -81,22 +81,12 @@ public class XVisitorUI extends DslUI {
 		return XVisitorCore.DSL_NAME;
 	}
 
-	/**
-	 * Returns an image descriptor for the image file at the given plug-in relative path
-	 *
-	 * @param path the path
-	 * @return the image descriptor
-	 */
-	public static ImageDescriptor getImageDescriptor(String path) {
-		return imageDescriptorFromPlugin(PLUGIN_ID, path);
-	}
-
 	@Override
-	public XVisitorImages getImageProvider() {
-		if (imageProvider == null) {
-			imageProvider = new XVisitorImages();
+	public DslImageManager getImageManager() {
+		if (imgMgr == null) {
+			imgMgr = new XVImageManager();
 		}
-		return imageProvider;
+		return imgMgr;
 	}
 
 	/**

@@ -22,10 +22,10 @@ public class XVisitorTextTools extends DslTextTools {
 	@Override
 	public void createAutoClosePairs() {
 		for (String contentType : Partitions.getAllContentTypes()) {
-			addAutoClosePair(contentType, '{', '}');
-			addAutoClosePair(contentType, '(', ')');
-			addAutoClosePair(contentType, '[', ']');
-			addAutoClosePair(contentType, '<', '>');
+			addAutoClosePair(contentType, "{", "}");
+			addAutoClosePair(contentType, "(", ")");
+			addAutoClosePair(contentType, "[", "]");
+			addAutoClosePair(contentType, "<", ">");
 		}
 	}
 
@@ -33,7 +33,7 @@ public class XVisitorTextTools extends DslTextTools {
 	public void createAutoIndentPairs() {
 		String[] contentTypes = { IDocument.DEFAULT_CONTENT_TYPE, Partitions.ACTION };
 		for (String contentType : contentTypes) {
-			addAutoIndentPair(contentType, '{', '}');
+			addAutoIndentPair(contentType, "{", "}");
 		}
 	}
 

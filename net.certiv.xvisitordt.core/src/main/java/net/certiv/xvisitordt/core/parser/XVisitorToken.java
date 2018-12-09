@@ -5,10 +5,11 @@ import org.antlr.v4.runtime.CommonToken;
 import org.antlr.v4.runtime.TokenSource;
 import org.antlr.v4.runtime.misc.Pair;
 
+import net.certiv.dsl.core.parser.IDslToken;
 import net.certiv.dsl.core.util.Strings;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorLexer;
 
-public class XVisitorToken extends CommonToken {
+public class XVisitorToken extends CommonToken implements IDslToken {
 
 	private int _mode;
 	private boolean hasStyles;
@@ -20,6 +21,11 @@ public class XVisitorToken extends CommonToken {
 
 	public XVisitorToken(Pair<TokenSource, CharStream> source, int type, int channel, int start, int stop) {
 		super(source, type, channel, start, stop);
+	}
+
+	@Override
+	public int getMode() {
+		return _mode;
 	}
 
 	public void setMode(int mode) {

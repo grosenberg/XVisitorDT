@@ -21,6 +21,7 @@ import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.DoubleClickStrategy;
 import net.certiv.dsl.ui.editor.DslPresentationReconciler;
 import net.certiv.dsl.ui.editor.DslSourceViewerConfiguration;
+import net.certiv.dsl.ui.editor.reconcile.DslReconciler;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 import net.certiv.xvisitordt.ui.editor.strategies.SmartAutoEditStrategy;
@@ -32,7 +33,6 @@ import net.certiv.xvisitordt.ui.editor.text.ScannerCommentSL;
 import net.certiv.xvisitordt.ui.editor.text.ScannerDefault;
 import net.certiv.xvisitordt.ui.editor.text.ScannerString;
 import net.certiv.xvisitordt.ui.formatter.strategies.ActionCodeFormattingStrategy;
-import net.certiv.xvisitordt.ui.formatter.strategies.GrammarCommentFormattingStrategy;
 
 public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfiguration {
 
@@ -60,36 +60,19 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	}
 
 	@Override
-	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
-		return Partitions.getContentTypes(IDocument.DEFAULT_CONTENT_TYPE);
+	protected void initializeScanners() {
+		IDslPrefsManager store = getPrefStore();
+		commentJDScanner = new ScannerCommentJD(store);
+		commentMLScanner = new ScannerCommentML(store);
+		commentSLScanner = new ScannerCommentSL(store);
+		stringScanner = new ScannerString(store);
+		actionScanner = new ScannerAction(store);
+		defaultScanner = new ScannerDefault(store);
 	}
 
-	/**
-	 * Loads content formatters into the SourceViewer for execution on receipt of a ISourceViewer.FORMAT
-	 * command.
-	 * <p>
-	 * The master strategy utilizes the DSL formatter tree grammar to drive formatting of the default
-	 * partition. The slave strategies are executed to format particular non-default partitions.
-	 * </p>
-	 * <p>
-	 * Two built-in non-default partition strategies are provided:
-	 * <code>CommentFormattingStrategy()</code> and <code>JavaFormattingStrategy()</code> that use the
-	 * JDT formatter and global JDT formatting preferences. The comment strategy can format stand-alone
-	 * single-line, mutiple-line, and JavaDoc-style comments. The JavaCode strategy can format discrete
-	 * blocks of otherwise standard Java code, including embedded comments.
-	 * </p>
-	 *
-	 * @param sourceViewer the viewer that will contain the content to format
-	 * @return the content formatter
-	 */
 	@Override
-	public IContentFormatter getContentFormatter(ISourceViewer sourceViewer) {
-		MultiPassContentFormatter formatter = (MultiPassContentFormatter) super.getContentFormatter(sourceViewer);
-		formatter.setSlaveStrategy(new ActionCodeFormattingStrategy(), Partitions.ACTION);
-		formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(), Partitions.COMMENT_JD);
-		formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(), Partitions.COMMENT_ML);
-		formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(), Partitions.COMMENT_SL);
-		return formatter;
+	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
+		return Partitions.getAllContentTypes();
 	}
 
 	@Override
@@ -108,17 +91,6 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 		} else {
 			return new String[] { "\t" };
 		}
-	}
-
-	@Override
-	protected void initializeScanners() {
-		IDslPrefsManager store = getPrefStore();
-		commentJDScanner = new ScannerCommentJD(store);
-		commentMLScanner = new ScannerCommentML(store);
-		commentSLScanner = new ScannerCommentSL(store);
-		stringScanner = new ScannerString(store);
-		actionScanner = new ScannerAction(store);
-		defaultScanner = new ScannerDefault(store);
 	}
 
 	@Override
@@ -169,6 +141,16 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	}
 
 	@Override
+	public DslReconciler getReconciler(ISourceViewer viewer) {
+		DslReconciler reconciler = super.getReconciler(viewer);
+
+		XVReconcilingStrategy antlr = new XVReconcilingStrategy(getEditor(), viewer);
+		reconciler.setReconcilingStrategy(antlr, IDocument.DEFAULT_CONTENT_TYPE);
+
+		return reconciler;
+	}
+
+	@Override
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
 		String partitioning = getConfiguredDocumentPartitioning(sourceViewer);
 		IAutoEditStrategy strategy;
@@ -181,6 +163,34 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 				strategy = new SmartAutoEditStrategy(partitioning);
 		}
 		return new IAutoEditStrategy[] { strategy };
+	}
+
+	/**
+	 * Loads content formatters into the SourceViewer for execution on receipt of a ISourceViewer.FORMAT
+	 * command.
+	 * <p>
+	 * The master strategy utilizes the DSL formatter tree grammar to drive formatting of the default
+	 * partition. The slave strategies are executed to format particular non-default partitions.
+	 * </p>
+	 * <p>
+	 * Two built-in non-default partition strategies are provided:
+	 * <code>CommentFormattingStrategy()</code> and <code>JavaFormattingStrategy()</code> that use the
+	 * JDT formatter and global JDT formatting preferences. The comment strategy can format stand-alone
+	 * single-line, mutiple-line, and JavaDoc-style comments. The JavaCode strategy can format discrete
+	 * blocks of otherwise standard Java code, including embedded comments.
+	 * </p>
+	 *
+	 * @param sourceViewer the viewer that will contain the content to format
+	 * @return the content formatter
+	 */
+	@Override
+	public IContentFormatter getContentFormatter(ISourceViewer sourceViewer) {
+		MultiPassContentFormatter formatter = (MultiPassContentFormatter) super.getContentFormatter(sourceViewer);
+		formatter.setSlaveStrategy(new ActionCodeFormattingStrategy(), Partitions.ACTION);
+		// formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(), Partitions.COMMENT_JD);
+		// formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(), Partitions.COMMENT_ML);
+		// formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(), Partitions.COMMENT_SL);
+		return formatter;
 	}
 
 	// @Override

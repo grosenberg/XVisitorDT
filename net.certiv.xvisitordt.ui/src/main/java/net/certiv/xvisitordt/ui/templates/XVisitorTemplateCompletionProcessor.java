@@ -69,7 +69,7 @@ public class XVisitorTemplateCompletionProcessor extends DslTemplateCompletionPr
 		if (type.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
 			return getCompletionMgr().getTemplateContextTypeRegistry()
 					.getContextType(XVisitorTemplateContextType.GRAMMAR_CONTEXT_TYPE_ID);
-			// } else if (type.equals(Partitions.OPTIONS)) {
+			// } else if (mType.equals(Partitions.OPTIONS)) {
 			// return getTemplateAccess().getContextTypeRegistry().getContextType(
 			// XVisitorTemplateContextType.OPTIONS_CONTEXT_TYPE_ID);
 		} else if (type.equals(Partitions.COMMENT_JD)) {

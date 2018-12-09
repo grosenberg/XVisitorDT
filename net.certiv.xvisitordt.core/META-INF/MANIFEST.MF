@@ -25,6 +25,7 @@ Bundle-Vendor: Certiv Analytics
 Export-Package: net.certiv.xvisitordt.core,
  net.certiv.xvisitordt.core.builder,
  net.certiv.xvisitordt.core.formatter,
+ net.certiv.xvisitordt.core.model,
  net.certiv.xvisitordt.core.parser,
  net.certiv.xvisitordt.core.parser.gen,
  net.certiv.xvisitordt.core.preferences,

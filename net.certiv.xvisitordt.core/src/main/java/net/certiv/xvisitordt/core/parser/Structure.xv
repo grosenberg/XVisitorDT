@@ -1,20 +1,15 @@
-/**
- * Version 1.0 - 2010.07.29 - Initial version
- * Version 4.0 - 2013.12.22 - Updated to AntlrV4 & AntlrXTree
- * Version 4.1 - 2014.01.05 
- */
-xvisitor grammar Structure;
+xvisitor grammar Structure ;
 
 options {
 	superClass  = StructureBuilder ;
 	parserClass = XVisitorParser ;
-}
+} 
 
 @header {
 	package net.certiv.xvisitordt.core.parser.gen ;
 	import net.certiv.xvisitordt.core.parser.StructureBuilder ;
 }
-
+ 
 structure
 	: grammarSpec
 	| optionsBlock
@@ -46,5 +41,6 @@ groupRule			: //xgroup
 					;
 
 pathRule			: //xpath
-							{ processPathRule(); }
+							{ onEntry: processPathRule(); }
+							{ onExit:  endBlock(); }	
 					;

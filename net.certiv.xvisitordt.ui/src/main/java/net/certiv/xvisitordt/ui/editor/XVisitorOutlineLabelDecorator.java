@@ -5,18 +5,14 @@ import org.eclipse.swt.graphics.Image;
 
 import net.certiv.dsl.core.model.IDslElement;
 import net.certiv.dsl.ui.editor.OutlineLabelDecorator;
-import net.certiv.xvisitordt.core.parser.ModelData;
-import net.certiv.xvisitordt.ui.XVisitorImages;
+import net.certiv.xvisitordt.core.model.ModelData;
+import net.certiv.xvisitordt.ui.XVImageManager;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 
 public class XVisitorOutlineLabelDecorator extends OutlineLabelDecorator {
 
 	public XVisitorOutlineLabelDecorator() {
-		super();
-	}
-
-	private XVisitorImages getImageProvider() {
-		return (XVisitorImages) XVisitorUI.getDefault().getImageProvider();
+		super(XVisitorUI.getDefault().getImageManager());
 	}
 
 	@Override
@@ -28,12 +24,18 @@ public class XVisitorOutlineLabelDecorator extends OutlineLabelDecorator {
 					return data.key;
 				}
 				return text;
+
+			case IDslElement.DECLARATION:
+				return text;
+
 			case IDslElement.STATEMENT:
+			case IDslElement.FIELD:
 				if (hasData()) {
 					ModelData data = (ModelData) getData();
-					switch (data.type) {
+					switch (data.mType) {
 						case Option:
 							return data.key + " = " + data.value.getText();
+
 						case AtAction:
 							if (!data.key.isEmpty()) {
 								return data.key + "::" + data.value.getText();
@@ -53,43 +55,48 @@ public class XVisitorOutlineLabelDecorator extends OutlineLabelDecorator {
 
 	@Override
 	public Image decorateImage(Image image) {
-		// create the base image
-		ImageDescriptor desc = createMissingImageDescriptor(image);
+		XVImageManager mgr = (XVImageManager) imgMgr;
+		ImageDescriptor desc = null;
+
 		switch (getElementKind()) {
 			case IDslElement.MODULE:
-				desc = getImageProvider().DESC_OBJ_MODULE;
+				desc = mgr.getDescriptor(mgr.IMG_OBJ_MODULE);
 				break;
 			case IDslElement.STATEMENT:
-				desc = getImageProvider().DESC_OBJ_STATEMENT;
+			case IDslElement.FIELD:
+				desc = mgr.getDescriptor(mgr.IMG_OBJ_STATEMENT);
 				if (hasData()) {
 					ModelData data = (ModelData) getData();
-					switch (data.type) {
+					switch (data.mType) {
 						case Options:
-							desc = getImageProvider().DESC_OBJ_OPTION;
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_OPTION);
 							break;
 						case Option:
-							desc = getImageProvider().DESC_OBJ_ENUM;
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_ENUM);
 							break;
 						case PathRule:
-							desc = getImageProvider().DESC_OBJ_LEXER;
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_LEXER);
 							break;
 						case GroupRule:
-							desc = getImageProvider().DESC_OBJ_PARSER;
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_PARSER);
 							break;
 						case AtAction:
-							desc = getImageProvider().DESC_OBJ_ACTION;
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_ACTION);
 							break;
 						default:
-							desc = getImageProvider().DESC_OBJ_REQUIRED;
+							desc = mgr.getDescriptor(mgr.IMG_OBJ_REQUIRED);
 							break;
 					}
 				}
 				break;
 			case IDslElement.BEG_BLOCK:
 			case IDslElement.END_BLOCK:
-				desc = getImageProvider().DESC_OBJ_BLOCK;
+				desc = mgr.getDescriptor(mgr.IMG_OBJ_BLOCK);
 				break;
+
+			default:
+				desc = ImageDescriptor.getMissingImageDescriptor();
 		}
-		return findImage(desc);
+		return mgr.get(desc);
 	}
 }

@@ -58,9 +58,9 @@ public class XVisitorCollector extends DslCompletionProposalCollector {
 		// Set<IStatement> rules = getDslCore().getModelManager().getCodeAssistElements(unit);
 		// for (IStatement rule : rules) {
 		// char[] name = rule.getElementName().toCharArray();
-		// int type = CompletionProposal.METHOD_REF; // parser
-		// if (Character.isUpperCase(name[0])) type = CompletionProposal.FIELD_REF; // lexer
-		// CompletionProposal proposal = CompletionProposal.create(type, offset);
+		// int mType = CompletionProposal.METHOD_REF; // parser
+		// if (Character.isUpperCase(name[0])) mType = CompletionProposal.FIELD_REF; // lexer
+		// CompletionProposal proposal = CompletionProposal.create(mType, offset);
 		// proposal.setName(name);
 		// proposal.setCompletion(name);
 		// accept(proposal);

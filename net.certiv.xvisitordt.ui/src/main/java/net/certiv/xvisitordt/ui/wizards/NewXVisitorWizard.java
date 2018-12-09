@@ -14,6 +14,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.util.CoreUtil;
+import net.certiv.dsl.ui.DslImageManager;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.wizards.DslBaseWizard;
 import net.certiv.xvisitordt.core.XVisitorCore;
@@ -44,9 +45,11 @@ public class NewXVisitorWizard extends DslBaseWizard {
 
 	@Override
 	public ImageDescriptor getPageImageDescriptor() {
-		return getDslUI().getImageProvider().DESC_WIZBAN_NEW_FILE;
+		DslImageManager imgMgr = getDslUI().getImageManager();
+		return imgMgr.getDescriptor(imgMgr.IMG_WIZBAN_NEW_FILE);
 	}
 
+	@Override
 	public void addPages() {
 		super.addPages();
 		newPage = new NewXVisitorWizardPage("NewPage", getSelection());
@@ -55,6 +58,7 @@ public class NewXVisitorWizard extends DslBaseWizard {
 		addPage(newPage);
 	}
 
+	@Override
 	public boolean performFinish() {
 		final String filename = newPage.getFileName();
 		final IPath container = newPage.getContainerFullPath();
@@ -65,6 +69,7 @@ public class NewXVisitorWizard extends DslBaseWizard {
 
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 
+			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
 					doFinish(filename, container, packageName, parserName, superclass, importTxt, monitor);

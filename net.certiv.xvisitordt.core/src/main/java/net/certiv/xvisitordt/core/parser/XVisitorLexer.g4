@@ -5,7 +5,6 @@
  * terms of the standard 3-clause BSD License.  A copy of the License
  * is provided with this distribution in the License.txt file.
  *******************************************************************************/
-/* ANTLR v4 XVisitor grammar */
 
 lexer grammar XVisitorLexer;
 
@@ -23,7 +22,6 @@ tokens {
 	RBRACE,
 	TEXT
 }
-
 
 
 // ---------------------------------------------------------------------------------
