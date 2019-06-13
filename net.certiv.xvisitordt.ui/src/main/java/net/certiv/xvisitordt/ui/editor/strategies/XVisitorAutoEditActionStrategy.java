@@ -38,10 +38,10 @@ public class XVisitorAutoEditActionStrategy extends DefaultIndentLineAutoEditStr
 	public void customizeDocumentCommand(IDocument doc, DocumentCommand cmd) {
 
 		if (getPrefsMgr().isSmartMode()) {
-			if (SmartEdit.isNewLineInsertionCommand(doc, cmd)) {
+			if (SmartEdit.isNewLineCommand(doc, cmd)) {
 				insertAfterNewLine(doc, cmd);
 
-			} else if (SmartEdit.isSingleCharactedInsertionOrReplaceCommand(cmd)) {
+			} else if (SmartEdit.isSingleCharactedCommand(cmd)) {
 				if (cmd.offset != -1) smartInsertCharacter(doc, cmd);
 			}
 		} else {
@@ -53,7 +53,7 @@ public class XVisitorAutoEditActionStrategy extends DefaultIndentLineAutoEditStr
 		try {
 			StringBuilder buf = new StringBuilder(cmd.text);
 			LineRegion lr = new LineRegion(doc, cmd);
-			String adjIndent = adjustIndent(doc, cmd, lr, getPrefsMgr().getTabSize());
+			String adjIndent = adjustIndent(doc, cmd, lr, getPrefsMgr().getTabWidth());
 			buf.append(adjIndent);
 
 			IRegion rightWord = SmartEdit.locateTextRight(doc, lr);
@@ -89,14 +89,14 @@ public class XVisitorAutoEditActionStrategy extends DefaultIndentLineAutoEditStr
 		if (rightWord != null) {
 			// if before first open brace, prefix indent one from alignment col
 			if (rightWord.getOffset() == oBrace) {
-				return getPrefsMgr().getIndentByVirtualSize(alignCol + getPrefsMgr().getIndentationSize());
+				return getPrefsMgr().getIndentByVirtualSize(alignCol + getPrefsMgr().getTabWidth());
 			}
 
 			// if before last close brace, align with open brace or reduce indent
 			if (rightWord.getOffset() == cBrace) {
 				int lnStart = SmartEdit.getLineOffset(doc, oBrace);
 				int oBraceCol = SmartEdit.calculateVisualLength(doc, tabSize, lnStart, oBrace);
-				alignCol = oBraceCol <= alignCol ? oBraceCol : alignCol - getPrefsMgr().getIndentationSize();
+				alignCol = oBraceCol <= alignCol ? oBraceCol : alignCol - getPrefsMgr().getTabWidth();
 				alignCol = alignCol > 0 ? alignCol : 0;
 				return getPrefsMgr().getIndentByVirtualSize(alignCol);
 			}
@@ -110,7 +110,7 @@ public class XVisitorAutoEditActionStrategy extends DefaultIndentLineAutoEditStr
 				alignCol = SmartEdit.calculateVisualLength(doc, tabSize, lnStart, wordStart);
 			} else {
 				int oBraceCol = SmartEdit.calculateVisualLength(doc, tabSize, lnStart, oBrace);
-				alignCol = oBraceCol + getPrefsMgr().getIndentationSize();
+				alignCol = oBraceCol + getPrefsMgr().getTabWidth();
 			}
 			return getPrefsMgr().getIndentByVirtualSize(alignCol);
 		}
@@ -161,7 +161,7 @@ public class XVisitorAutoEditActionStrategy extends DefaultIndentLineAutoEditStr
 							getPrefsMgr().closeStrings());
 					break;
 				case '\t':
-					cmd = smartInsertTab(doc, cmd, getPrefsMgr().getTabSize());
+					cmd = smartInsertTab(doc, cmd, getPrefsMgr().getTabWidth());
 					break;
 			}
 		} catch (BadLocationException e) {

@@ -5,12 +5,12 @@ import java.net.URL;
 import org.eclipse.swt.widgets.Composite;
 
 import net.certiv.dsl.core.DslCore;
+import net.certiv.dsl.core.preferences.consts.Formatter;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.formatter.FormatterModifyTabPage;
 import net.certiv.dsl.ui.formatter.IFormatterModifyDialog;
 import net.certiv.dsl.ui.preferences.bind.IControlCreationManager;
 import net.certiv.xvisitordt.core.XVisitorCore;
-import net.certiv.xvisitordt.core.preferences.Prefs;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 
 public class TabBlankLines extends FormatterModifyTabPage {
@@ -24,14 +24,14 @@ public class TabBlankLines extends FormatterModifyTabPage {
 
 		Composite blanks = createOptionGroup(parent, "Blank Lines", 2);
 
-		manager.createNumber(blanks, bind(Prefs.FORMATTER_EMPTY_LINES_TO_PRESERVE), "Blank lines to preserve: ");
-		manager.createNumber(blanks, bind(Prefs.FORMATTER_EMPTY_LINES_AFTER_TERMINAL),
+		manager.createNumber(blanks, bind(Formatter.FORMATTER_EMPTY_LINES_TO_PRESERVE), "Blank lines to preserve: ");
+		manager.createNumber(blanks, bind(Formatter.FORMATTER_EMPTY_LINES_AFTER_TERMINAL),
 				"Required blank lines after terminal: ");
 	}
 
 	@Override
 	protected URL getPreviewContent() {
-		return getClass().getResource("PreviewBlankLines.g4"); //$NON-NLS-1$
+		return getClass().getResource("Preview.xv"); //$NON-NLS-1$
 	}
 
 	@Override

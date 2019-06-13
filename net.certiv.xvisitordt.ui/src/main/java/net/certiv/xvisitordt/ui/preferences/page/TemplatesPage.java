@@ -8,8 +8,8 @@ import net.certiv.dsl.core.preferences.DslPrefsManager;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.text.DslTextTools;
+import net.certiv.dsl.ui.preferences.pages.DslTemplatePreferencePage;
 import net.certiv.dsl.ui.templates.CompletionManager;
-import net.certiv.dsl.ui.templates.DslTemplatePreferencePage;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 import net.certiv.xvisitordt.ui.editor.Partitions;
@@ -26,6 +26,16 @@ public class TemplatesPage extends DslTemplatePreferencePage {
 	}
 
 	@Override
+	public DslUI getDslUI() {
+		return XVisitorUI.getDefault();
+	}
+
+	@Override
+	public DslCore getDslCore() {
+		return XVisitorCore.getDefault();
+	}
+
+	@Override
 	protected XVisitorSourceViewerConfiguration createSourceViewerConfiguration() {
 		return new XVisitorSimpleSourceViewerConfiguration(getColorManager(), (IDslPrefsManager) getPreferenceStore(),
 				null, Partitions.PARTITIONING, false);
@@ -37,13 +47,8 @@ public class TemplatesPage extends DslTemplatePreferencePage {
 	}
 
 	@Override
-	public DslUI getDslUI() {
-		return XVisitorUI.getDefault();
-	}
-
-	@Override
-	public DslCore getDslCore() {
-		return XVisitorCore.getDefault();
+	protected CompletionManager getCompletionMgr() {
+		return XVisitorUI.getDefault().getCompletionMgr();
 	}
 
 	private IColorManager getColorManager() {
@@ -52,10 +57,5 @@ public class TemplatesPage extends DslTemplatePreferencePage {
 
 	private DslTextTools getTextTools() {
 		return XVisitorUI.getDefault().getTextTools();
-	}
-
-	@Override
-	protected CompletionManager getCompletionMgr() {
-		return XVisitorUI.getDefault().getCompletionMgr();
 	}
 }

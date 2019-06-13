@@ -9,9 +9,12 @@ import net.certiv.dsl.ui.formatter.DslFormatterFactory;
 import net.certiv.dsl.ui.formatter.IFormatterModifyDialog;
 import net.certiv.dsl.ui.formatter.IFormatterModifyDialogOwner;
 import net.certiv.xvisitordt.core.XVisitorCore;
+import net.certiv.xvisitordt.core.formatter.XVisitorSourceFormatter;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 
 public class FormatterFactory extends DslFormatterFactory {
+
+	private IDslCodeFormatter formatter;
 
 	public FormatterFactory() {
 		super();
@@ -19,7 +22,7 @@ public class FormatterFactory extends DslFormatterFactory {
 
 	@Override
 	public URL getPreviewContent() {
-		return getClass().getResource("FormatPreview.g4");
+		return getClass().getResource("Preview.xv");
 	}
 
 	@Override
@@ -39,6 +42,9 @@ public class FormatterFactory extends DslFormatterFactory {
 
 	@Override
 	public IDslCodeFormatter createFormatter() {
-		return null;
+		if (formatter == null) {
+			formatter = new XVisitorSourceFormatter();
+		}
+		return formatter;
 	}
 }

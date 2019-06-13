@@ -34,9 +34,9 @@ public class SyntaxColoringConfigBlock extends AbstractEditorColoringConfigurati
 
 	// { "Action Block Names", PrefsKey.EDITOR_ACTION_NAMED_COLOR, coreCategory }
 	private static final String[][] fSyntaxColorListModel = new String[][] {
-			{ "JavaDoc-style Comment", PrefsKey.EDITOR_COMMENT_JD_COLOR, CmtsCat },
-			{ "Multi-line Comment", PrefsKey.EDITOR_COMMENT_ML_COLOR, CmtsCat },
-			{ "Single line Comment", PrefsKey.EDITOR_COMMENT_SL_COLOR, CmtsCat },
+			{ "JavaDoc-style Comment", PrefsKey.EDITOR_COMMENT_DC_COLOR, CmtsCat },
+			{ "Multi-line Comment", PrefsKey.EDITOR_COMMENT_BL_COLOR, CmtsCat },
+			{ "Single line Comment", PrefsKey.EDITOR_COMMENT_LN_COLOR, CmtsCat },
 			{ "Keywords", PrefsKey.EDITOR_KEYWORDS_COLOR, CoreCat },
 			{ "Strings", PrefsKey.EDITOR_STRING_COLOR, CoreCat },
 			{ "Action Blocks", PrefsKey.EDITOR_ACTION_COLOR, CoreCat }, };

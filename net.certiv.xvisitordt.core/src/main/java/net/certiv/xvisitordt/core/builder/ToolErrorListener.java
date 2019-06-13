@@ -7,7 +7,7 @@ import net.certiv.antlr.xvisitor.tool.IToolListener;
 import net.certiv.antlr.xvisitor.tool.Messages;
 import net.certiv.antlr.xvisitor.tool.Messages.ToolMessage;
 import net.certiv.dsl.core.parser.DslParseRecord;
-import net.certiv.dsl.core.parser.DslProblem;
+import net.certiv.dsl.core.parser.problems.DslProblem;
 import net.certiv.v4.runtime.dsl.MsgUtil;
 
 public class ToolErrorListener implements IToolListener {
@@ -41,6 +41,6 @@ public class ToolErrorListener implements IToolListener {
 		Token token = MsgUtil.offendingToken(msg);
 		String cause = MsgUtil.displayMessage(msg, token);
 		DslProblem problem = new DslProblem(record, severity, cause, token);
-		if (record.collector != null) record.collector.accept(problem);
+		record.getCollector().accept(problem);
 	}
 }

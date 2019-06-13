@@ -54,6 +54,7 @@ public class XVisitorTemplateCompletionProcessor extends DslTemplateCompletionPr
 		return true;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected TemplateContextType getContextType(ITextViewer viewer, IRegion region) {
 		IDocumentExtension3 doc = (IDocumentExtension3) viewer.getDocument();

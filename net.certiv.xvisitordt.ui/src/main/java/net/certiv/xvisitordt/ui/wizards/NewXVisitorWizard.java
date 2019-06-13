@@ -1,15 +1,11 @@
 package net.certiv.xvisitordt.ui.wizards;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import net.certiv.dsl.core.DslCore;
@@ -25,7 +21,7 @@ public class NewXVisitorWizard extends DslBaseWizard {
 	private NewXVisitorWizardPage newPage;
 
 	public NewXVisitorWizard() {
-		super();
+		super("XVNewWizard");
 	}
 
 	@Override
@@ -52,48 +48,20 @@ public class NewXVisitorWizard extends DslBaseWizard {
 	@Override
 	public void addPages() {
 		super.addPages();
-		newPage = new NewXVisitorWizardPage("NewPage", getSelection());
+		newPage = new NewXVisitorWizardPage(this, getSelection());
 		newPage.setTitle("Grammar");
 		newPage.setDescription("Create new XVisitor grammar");
 		addPage(newPage);
 	}
 
 	@Override
-	public boolean performFinish() {
+	protected void finishPage(IProgressMonitor monitor) throws InterruptedException, CoreException {
 		final String filename = newPage.getFileName();
-		final IPath container = newPage.getContainerFullPath();
+		final IPath containerPath = newPage.getContainerFullPath();
 		final String packageName = newPage.getPackageText();
 		final String parserName = newPage.getParserClass();
 		final String superclass = newPage.getSuperClass();
 		final String importTxt = newPage.getImportTxt();
-
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-
-			@Override
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				try {
-					doFinish(filename, container, packageName, parserName, superclass, importTxt, monitor);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
-				}
-			}
-		};
-		try {
-			getContainer().run(true, false, op);
-		} catch (InterruptedException e) {
-			return false;
-		} catch (InvocationTargetException e) {
-			Throwable realException = e.getTargetException();
-			MessageDialog.openError(getShell(), "Error", realException.getMessage());
-			return false;
-		}
-		return true;
-	}
-
-	private void doFinish(String filename, IPath containerPath, String packageName, String parserName,
-			String superclass, String importTxt, IProgressMonitor monitor) throws CoreException {
 
 		monitor.beginTask("Creating " + filename, 2);
 		IWorkspaceRoot root = CoreUtil.getWorkspaceRoot();

@@ -1,7 +1,5 @@
 package net.certiv.xvisitordt.ui.wizards;
 
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -13,13 +11,14 @@ import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.fields.ITextButtonAdapter;
 import net.certiv.dsl.ui.fields.TextButtonField;
+import net.certiv.dsl.ui.wizards.DslBaseWizard;
 import net.certiv.dsl.ui.wizards.DslContainerWizardPage;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 
 /**
- * The class <code>NewXVisitorWizardPage</code> contains controls and validation routines for a 'New
- * DSL WizardPage'.
+ * The class <code>NewXVisitorWizardPage</code> contains controls and validation routines
+ * for a 'New DSL WizardPage'.
  */
 public class NewXVisitorWizardPage extends DslContainerWizardPage {
 
@@ -37,8 +36,8 @@ public class NewXVisitorWizardPage extends DslContainerWizardPage {
 	 *
 	 * @param pageName the wizard page's name
 	 */
-	public NewXVisitorWizardPage(String pageName, IStructuredSelection selection) {
-		super(pageName, selection);
+	public NewXVisitorWizardPage(DslBaseWizard wizard, IStructuredSelection selection) {
+		super("XVNewWizardPage", wizard, selection);
 	}
 
 	@Override
@@ -86,17 +85,17 @@ public class NewXVisitorWizardPage extends DslContainerWizardPage {
 		public void buttonPressed(TextButtonField field, String id, SelectionEvent e) {
 			switch (id) {
 				case PACKAGE:
-					IPackageFragment result = choosePackage();
-					pkgField.setText(result.getElementName());
+					String result = choosePackage();
+					pkgField.setText(result);
 					break;
 				case PARSER:
-					IType pType = chooseSuperClass();
-					parserField.setText(pType.getElementName());
+					String pType = chooseSuperClass();
+					parserField.setText(pType);
 					break;
 				case SUPER:
-					IType sType = chooseSuperClass();
-					superField.setText(sType.getElementName());
-					importTxt = sType.getFullyQualifiedName();
+					String sType = chooseSuperClass();
+					superField.setText(sType);
+					importTxt = sType;
 					break;
 			}
 		}

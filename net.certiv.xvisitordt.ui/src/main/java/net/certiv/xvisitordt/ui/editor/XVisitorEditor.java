@@ -19,7 +19,7 @@ import net.certiv.xvisitordt.ui.editor.folding.XVisitorFoldingStructureProvider;
 
 public class XVisitorEditor extends DslEditor {
 
-	public static final String EDITOR_ID = "net.certiv.xvisitordt.ui.XVisitorEditor";
+	public static final String EDITOR_ID = "net.certiv.xvisitordt.ui.editor.XVisitorEditor";
 	public static final String EDITOR_CONTEXT = "#XVisitorEditorContext";
 	public static final String RULER_CONTEXT = "#XVisitorRulerContext";
 

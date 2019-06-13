@@ -12,6 +12,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.dsl.core.color.IColorManager;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
+import net.certiv.dsl.ui.editor.reconcile.DslReconciler;
 
 public class XVisitorSimpleSourceViewerConfiguration extends XVisitorSourceViewerConfiguration {
 
@@ -24,38 +25,47 @@ public class XVisitorSimpleSourceViewerConfiguration extends XVisitorSourceViewe
 		super(colorManager, store, editor, partitioning);
 	}
 
+	@Override
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
 		return null;
 	}
 
+	@Override
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		return null;
 	}
 
+	@Override
 	public IAnnotationHover getOverviewRulerAnnotationHover(ISourceViewer sourceViewer) {
 		return null;
 	}
 
+	@Override
 	public int[] getConfiguredTextHoverStateMasks(ISourceViewer sourceViewer, String contentType) {
 		return null;
 	}
 
+	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType, int stateMask) {
 		return null;
 	}
 
+	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 		return null;
 	}
 
+	@Override
 	public IContentFormatter getContentFormatter(ISourceViewer sourceViewer) {
 		return null;
 	}
 
+	@Override
 	public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer) {
 		return null;
 	}
 
+	@Override
 	public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer) {
 		return null;
 	}
@@ -68,7 +78,13 @@ public class XVisitorSimpleSourceViewerConfiguration extends XVisitorSourceViewe
 		return null;
 	}
 
+	@Override
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
+		return null;
+	}
+
+	@Override
+	public DslReconciler getReconciler(ISourceViewer viewer) {
 		return null;
 	}
 }

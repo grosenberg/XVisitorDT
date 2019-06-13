@@ -1,0 +1,45 @@
+/**
+ * Simple XVisitor grammar 
+ */
+xvisitor grammar Preview ;
+
+options {
+	superClass  = StructureBuilder ;
+	parserClass = XVisitorParser ;
+} 
+
+# main rule
+structure
+	: grammarSpec
+	| optionsBlock
+	| optionStatement
+	| action
+	| groupRule
+	| pathRule
+	;
+
+# xpath rules
+grammarSpec			: /grammarSpec { grammarModule(); }	;
+
+optionsBlock		: //optionsSpec 
+						{ onEntry: begOptionsBlock(); }
+						{ onExit:  endBlock(); }	
+					;
+
+
+optionStatement		: //optionsSpec/option
+						{ processOptionStatement(); }	
+					;
+
+action				: /grammarSpec/action
+						{ processAction(); }
+					;
+
+groupRule			: //xgroup
+						{ processGroupRule(); }
+					;
+
+pathRule			: //xpath
+						{ onEntry: processPathRule(); }
+						{ onExit:  endBlock(); }	
+					;

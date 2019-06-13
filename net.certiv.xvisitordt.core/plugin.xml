@@ -9,7 +9,7 @@
             file-extensions="xv"
             id="net.certiv.xvisitordt.core.contentType"
             name="XVisitor Content Type"
-            priority="normal">
+            priority="high">
       </content-type>
    </extension>
    <extension
@@ -29,16 +29,14 @@
          id="net.certiv.xvisitordt.core.builder"
          name="XVisitor Builder"
          point="org.eclipse.core.resources.builders">
-      <builder
-            callOnEmptyDelta="true"
-            hasNature="true">
+      <builder>
          <run
                class="net.certiv.xvisitordt.core.builder.XVisitorBuilder">
          </run>
       </builder>
    </extension>
    <extension
-         id="problem"
+         id="net.certiv.xvisitordt.core.problem"
          name="XVisitor Problem"
          point="org.eclipse.core.resources.markers">
       <super

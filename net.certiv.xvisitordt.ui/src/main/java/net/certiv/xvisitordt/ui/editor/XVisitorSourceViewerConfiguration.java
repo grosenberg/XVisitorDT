@@ -86,8 +86,7 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	@Override
 	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
 		if (XVisitorCore.getDefault().getPrefsManager().getTabStyle() == TabStyle.SPACES) {
-			return new String[] {
-					Strings.dup(XVisitorCore.getDefault().getPrefsManager().getIndentationSize(), Strings.SPC) };
+			return new String[] { Strings.dup(XVisitorCore.getDefault().getPrefsManager().getTabWidth(), Strings.SPC) };
 		} else {
 			return new String[] { "\t" };
 		}
@@ -109,7 +108,8 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	}
 
 	/**
-	 * Adapts the behavior of the contained components to the change encoded in the given event.
+	 * Adapts the behavior of the contained components to the change encoded in the given
+	 * event.
 	 *
 	 * @param event the event to which to adapt
 	 */
@@ -124,8 +124,8 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	}
 
 	/**
-	 * Determines whether the preference change encoded by the given event changes the behavior of one
-	 * of its contained components.
+	 * Determines whether the preference change encoded by the given event changes the
+	 * behavior of one of its contained components.
 	 *
 	 * @param event the event to be investigated
 	 * @return <code>true</code> if event causes a behavioral change
@@ -166,19 +166,19 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	}
 
 	/**
-	 * Loads content formatters into the SourceViewer for execution on receipt of a ISourceViewer.FORMAT
-	 * command.
+	 * Loads content formatters into the SourceViewer for execution on receipt of a
+	 * ISourceViewer.FORMAT command.
 	 * <p>
-	 * The master strategy utilizes the DSL formatter tree grammar to drive formatting of the default
-	 * partition. The slave strategies are executed to format particular non-default partitions.
-	 * </p>
+	 * The master strategy utilizes the DSL formatter tree grammar to drive formatting of the
+	 * default partition. The slave strategies are executed to format particular non-default
+	 * partitions.
 	 * <p>
 	 * Two built-in non-default partition strategies are provided:
-	 * <code>CommentFormattingStrategy()</code> and <code>JavaFormattingStrategy()</code> that use the
-	 * JDT formatter and global JDT formatting preferences. The comment strategy can format stand-alone
-	 * single-line, mutiple-line, and JavaDoc-style comments. The JavaCode strategy can format discrete
-	 * blocks of otherwise standard Java code, including embedded comments.
-	 * </p>
+	 * <code>CommentFormattingStrategy()</code> and <code>JavaFormattingStrategy()</code> that
+	 * use the JDT formatter and global JDT formatting preferences. The comment strategy can
+	 * format stand-alone single-line, mutiple-line, and JavaDoc-style comments. The JavaCode
+	 * strategy can format discrete blocks of otherwise standard Java code, including embedded
+	 * comments.
 	 *
 	 * @param sourceViewer the viewer that will contain the content to format
 	 * @return the content formatter
@@ -187,14 +187,18 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	public IContentFormatter getContentFormatter(ISourceViewer sourceViewer) {
 		MultiPassContentFormatter formatter = (MultiPassContentFormatter) super.getContentFormatter(sourceViewer);
 		formatter.setSlaveStrategy(new ActionCodeFormattingStrategy(), Partitions.ACTION);
-		// formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(), Partitions.COMMENT_JD);
-		// formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(), Partitions.COMMENT_ML);
-		// formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(), Partitions.COMMENT_SL);
+		// formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(),
+		// Partitions.COMMENT_JD);
+		// formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(),
+		// Partitions.COMMENT_ML);
+		// formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(),
+		// Partitions.COMMENT_SL);
 		return formatter;
 	}
 
 	// @Override
-	// public IHyperlinkDetector getDslElementHyperlinkDetector(ITextEditor textEditor) {
+	// public IHyperlinkDetector getDslElementHyperlinkDetector(ITextEditor
+	// textEditor) {
 	// return new XVisitorHyperlinkDetector(textEditor);
 	// }
 
@@ -216,10 +220,13 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 		// DslCompletionProcessor processor;
 		// processor = new CompletionProcessor(getEditor(), assistant,
 		// IDocument.DEFAULT_CONTENT_TYPE);
-		// assistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
-		// processor = new CompletionProcessor(getEditor(), assistant, Partitions.ACTION);
+		// assistant.setContentAssistProcessor(processor,
+		// IDocument.DEFAULT_CONTENT_TYPE);
+		// processor = new CompletionProcessor(getEditor(), assistant,
+		// Partitions.ACTION);
 		// assistant.setContentAssistProcessor(processor, Partitions.ACTION);
-		// processor = new CompletionProcessor(getEditor(), assistant, Partitions.COMMENT_JD);
+		// processor = new CompletionProcessor(getEditor(), assistant,
+		// Partitions.COMMENT_JD);
 		// assistant.setContentAssistProcessor(processor, Partitions.COMMENT_JD);
 	}
 }

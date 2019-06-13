@@ -19,7 +19,7 @@ import net.certiv.dsl.core.parser.DslParseRecord;
 import net.certiv.dsl.core.parser.DslSourceParser;
 import net.certiv.dsl.core.util.Strings;
 import net.certiv.dsl.core.util.antlr.AntlrUtil;
-import net.certiv.dsl.core.util.eclipse.DynamicLoader;
+import net.certiv.dsl.jdt.util.DynamicLoader;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.core.model.ModelData;
 import net.certiv.xvisitordt.core.model.ModelType;
