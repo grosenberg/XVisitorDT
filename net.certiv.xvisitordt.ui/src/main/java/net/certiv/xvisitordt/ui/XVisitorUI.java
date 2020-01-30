@@ -8,10 +8,10 @@ import net.certiv.dsl.core.log.Log.LogLevel;
 import net.certiv.dsl.ui.DslImageManager;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.text.DslTextTools;
+import net.certiv.dsl.ui.templates.CompletionManager;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.ui.editor.XVisitorEditor;
 import net.certiv.xvisitordt.ui.editor.XVisitorTextTools;
-import net.certiv.xvisitordt.ui.templates.XVisitorTemplateContextType;
 
 public class XVisitorUI extends DslUI {
 
@@ -19,6 +19,7 @@ public class XVisitorUI extends DslUI {
 
 	private XVImageManager imgMgr;
 	private DslTextTools textTools;
+	private XvCompletionManager compMgr;
 
 	public XVisitorUI() {
 		super();
@@ -45,17 +46,8 @@ public class XVisitorUI extends DslUI {
 	}
 
 	@Override
-	protected String getEditorId() {
+	public String getEditorId() {
 		return XVisitorEditor.EDITOR_ID;
-	}
-
-	@Override
-	protected String[] getDslContextTypes() {
-		return new String[] { XVisitorTemplateContextType.GRAMMAR_CONTEXT_TYPE_ID,
-				XVisitorTemplateContextType.OPTIONS_CONTEXT_TYPE_ID, //
-				XVisitorTemplateContextType.ACTIONS_CONTEXT_TYPE_ID, //
-				XVisitorTemplateContextType.JAVADOC_CONTEXT_TYPE_ID //
-		};
 	}
 
 	@Override
@@ -77,11 +69,6 @@ public class XVisitorUI extends DslUI {
 	}
 
 	@Override
-	public String getDslLanguageName() {
-		return XVisitorCore.DSL_NAME;
-	}
-
-	@Override
 	public DslImageManager getImageManager() {
 		if (imgMgr == null) {
 			imgMgr = new XVImageManager();
@@ -89,14 +76,19 @@ public class XVisitorUI extends DslUI {
 		return imgMgr;
 	}
 
-	/**
-	 * Returns the text tools
-	 */
 	@Override
 	public DslTextTools getTextTools() {
 		if (textTools == null) {
 			textTools = new XVisitorTextTools(true);
 		}
 		return textTools;
+	}
+
+	@Override
+	public CompletionManager getCompletionMgr() {
+		if (compMgr == null) {
+			compMgr = new XvCompletionManager(this, getEditorId());
+		}
+		return compMgr;
 	}
 }

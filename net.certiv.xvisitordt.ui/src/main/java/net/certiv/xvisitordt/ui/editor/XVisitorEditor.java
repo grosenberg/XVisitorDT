@@ -80,7 +80,7 @@ public class XVisitorEditor extends DslEditor {
 
 	@Override
 	protected XVisitorOutlinePage doCreateOutlinePage() {
-		return new XVisitorOutlinePage(this, getPreferenceStore());
+		return new XVisitorOutlinePage(getPreferenceStore());
 	}
 
 	@Override

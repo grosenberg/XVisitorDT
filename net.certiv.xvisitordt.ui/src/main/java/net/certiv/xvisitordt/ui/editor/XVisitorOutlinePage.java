@@ -11,9 +11,9 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.ui.IActionBars;
 
-import net.certiv.dsl.core.model.IDslElement;
-import net.certiv.dsl.core.model.ISourceRef;
-import net.certiv.dsl.ui.editor.DslEditor;
+import net.certiv.dsl.core.model.ISourceUnit;
+import net.certiv.dsl.core.model.IStatement;
+import net.certiv.dsl.core.model.ModelType;
 import net.certiv.dsl.ui.editor.DslOutlinePage;
 import net.certiv.dsl.ui.viewsupport.DslFilterAction;
 import net.certiv.dsl.ui.viewsupport.DslFilterActionGroup;
@@ -29,27 +29,27 @@ public class XVisitorOutlinePage extends DslOutlinePage {
 	protected class GrammarDataProvider extends OutlineDataProvider {
 
 		@Override
-		protected IDslElement[] filterChildren(ISourceRef node) {
-			List<IDslElement> filtered = new ArrayList<>();
-			IDslElement[] children = node.getChildren();
+		protected IStatement[] filterChildren(ISourceUnit node) {
+			List<IStatement> filtered = new ArrayList<>();
+			IStatement[] children = super.filterChildren(node);
 			for (int idx = 0; idx < children.length; idx++) {
-				IDslElement child = children[idx];
+				IStatement child = children[idx];
 				if (endBlock(child)) continue;
 				if (firstFieldOfStatement(idx, child)) continue;
 
 				filtered.add(child);
 			}
-			return filtered.toArray(new IDslElement[filtered.size()]);
+			return filtered.toArray(new IStatement[filtered.size()]);
 		}
 
-		private boolean endBlock(IDslElement child) {
-			return child.getKind() == IDslElement.END_BLOCK;
+		private boolean endBlock(IStatement child) {
+			return child.getModelType() == ModelType.END_BLOCK;
 		}
 
-		private boolean firstFieldOfStatement(int idx, IDslElement child) {
-			if (idx == 0 && child.getKind() == IDslElement.FIELD) {
-				if (child.getParent() != null && (child.getParent().getKind() == IDslElement.STATEMENT
-						|| child.getParent().getKind() == IDslElement.DECLARATION)) {
+		private boolean firstFieldOfStatement(int idx, IStatement child) {
+			if (idx == 0 && child.getModelType() == ModelType.FIELD) {
+				if (child.getParent() != null && (child.getParent().getModelType() == ModelType.STATEMENT
+						|| child.getParent().getModelType() == ModelType.DECLARATION)) {
 					return true;
 				}
 			}
@@ -57,13 +57,13 @@ public class XVisitorOutlinePage extends DslOutlinePage {
 		}
 	}
 
-	public XVisitorOutlinePage(DslEditor editor, IPreferenceStore store) {
-		super(XVisitorUI.getDefault(), editor, store);
+	public XVisitorOutlinePage(IPreferenceStore store) {
+		super(XVisitorUI.getDefault(), store);
 	}
 
 	@Override
 	protected ILabelDecorator getLabelDecorator() {
-		return new XVisitorOutlineLabelDecorator();
+		return new XVisitorStatementLabelProvider();
 	}
 
 	@Override

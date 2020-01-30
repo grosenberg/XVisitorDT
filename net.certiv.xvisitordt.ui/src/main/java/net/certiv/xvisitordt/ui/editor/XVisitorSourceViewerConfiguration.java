@@ -1,5 +1,11 @@
 package net.certiv.xvisitordt.ui.editor;
 
+import static net.certiv.dsl.ui.editor.text.completion.engines.IPrefixStops.*;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
@@ -7,21 +13,29 @@ import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.formatter.MultiPassContentFormatter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
-import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.color.IColorManager;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
+import net.certiv.dsl.core.util.Chars;
 import net.certiv.dsl.core.util.Strings;
 import net.certiv.dsl.core.util.eclipse.TabStyle;
+import net.certiv.dsl.ui.DslImageManager;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.DoubleClickStrategy;
-import net.certiv.dsl.ui.editor.DslPresentationReconciler;
 import net.certiv.dsl.ui.editor.DslSourceViewerConfiguration;
-import net.certiv.dsl.ui.editor.reconcile.DslReconciler;
+import net.certiv.dsl.ui.editor.reconcile.PresentationReconciler;
+import net.certiv.dsl.ui.editor.reconcile.Reconciler;
+import net.certiv.dsl.ui.editor.text.completion.CompletionCategory;
+import net.certiv.dsl.ui.editor.text.completion.CompletionProcessor;
+import net.certiv.dsl.ui.editor.text.completion.engines.FieldEngine;
+import net.certiv.dsl.ui.editor.text.completion.engines.ICompletionEngine;
+import net.certiv.dsl.ui.editor.text.completion.engines.KeywordEngine;
+import net.certiv.dsl.ui.editor.text.completion.engines.TemplateEngine;
 import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 import net.certiv.xvisitordt.ui.editor.strategies.SmartAutoEditStrategy;
@@ -30,7 +44,7 @@ import net.certiv.xvisitordt.ui.editor.text.ScannerAction;
 import net.certiv.xvisitordt.ui.editor.text.ScannerCommentJD;
 import net.certiv.xvisitordt.ui.editor.text.ScannerCommentML;
 import net.certiv.xvisitordt.ui.editor.text.ScannerCommentSL;
-import net.certiv.xvisitordt.ui.editor.text.ScannerDefault;
+import net.certiv.xvisitordt.ui.editor.text.ScannerKeyword;
 import net.certiv.xvisitordt.ui.editor.text.ScannerString;
 import net.certiv.xvisitordt.ui.formatter.strategies.ActionCodeFormattingStrategy;
 
@@ -40,7 +54,7 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	private ScannerCommentJD commentJDScanner;
 	private ScannerCommentML commentMLScanner;
 	private ScannerCommentSL commentSLScanner;
-	private ScannerDefault defaultScanner;
+	private ScannerKeyword defaultScanner;
 	private ScannerString stringScanner;
 	private ScannerAction actionScanner;
 
@@ -67,12 +81,37 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 		commentSLScanner = new ScannerCommentSL(store);
 		stringScanner = new ScannerString(store);
 		actionScanner = new ScannerAction(store);
-		defaultScanner = new ScannerDefault(store);
+		defaultScanner = new ScannerKeyword(store);
 	}
 
 	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return Partitions.getAllContentTypes();
+	}
+
+	// protected void initializeQuickOutlineContexts(InformationPresenter
+	// presenter,
+	// IInformationProvider provider) {
+	// presenter.setInformationProvider(provider, Partitions.COMMENT_JD);
+	// presenter.setInformationProvider(provider, Partitions.COMMENT_ML);
+	// presenter.setInformationProvider(provider, Partitions.ACTION);
+	// }
+
+	@Override
+	public void specializeContentAssistant(ContentAssistant assistant) {
+		XVisitorStatementLabelProvider provider = new XVisitorStatementLabelProvider();
+		DslImageManager imgMgr = getDslUI().getImageManager();
+		Image imgKeyword = imgMgr.get(imgMgr.IMG_OBJS_KEYWORD);
+		Set<Character> stops = new HashSet<>(Arrays.asList(LBRACE, LBRACE, LPAREN, COLON, COMMA, SEMI, PIPE, AT));
+
+		ICompletionEngine keywords = new KeywordEngine(imgKeyword, stops, ScannerKeyword.KEYWORDS);
+		ICompletionEngine fields = new FieldEngine(provider, stops);
+		ICompletionEngine templates = new TemplateEngine(provider, stops);
+
+		CompletionCategory lang = new CompletionCategory("XVisitor", true, false, keywords, fields);
+		CompletionCategory tmpl = new CompletionCategory("XVisitor Templates", false, true, templates);
+		CompletionProcessor proc = new CompletionProcessor(getDslUI(), assistant, lang, tmpl);
+		assistant.setContentAssistProcessor(proc, IDocument.DEFAULT_CONTENT_TYPE);
 	}
 
 	@Override
@@ -86,15 +125,15 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	@Override
 	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
 		if (XVisitorCore.getDefault().getPrefsManager().getTabStyle() == TabStyle.SPACES) {
-			return new String[] { Strings.dup(XVisitorCore.getDefault().getPrefsManager().getTabWidth(), Strings.SPC) };
+			return new String[] { Strings.dup(XVisitorCore.getDefault().getPrefsManager().getTabWidth(), Chars.SP) };
 		} else {
-			return new String[] { "\t" };
+			return new String[] { Strings.TAB };
 		}
 	}
 
 	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
-		PresentationReconciler reconciler = new DslPresentationReconciler();
+		PresentationReconciler reconciler = new PresentationReconciler(getDslUI());
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 
 		buildRepairer(reconciler, commentJDScanner, Partitions.COMMENT_JD);
@@ -108,8 +147,8 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	}
 
 	/**
-	 * Adapts the behavior of the contained components to the change encoded in the given
-	 * event.
+	 * Adapts the behavior of the contained components to the change encoded in the
+	 * given event.
 	 *
 	 * @param event the event to which to adapt
 	 */
@@ -124,11 +163,11 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	}
 
 	/**
-	 * Determines whether the preference change encoded by the given event changes the
-	 * behavior of one of its contained components.
+	 * Determines whether the preference change encoded by the given event changes
+	 * the behavior of one of its contained components.
 	 *
 	 * @param event the event to be investigated
-	 * @return <code>true</code> if event causes a behavioral change
+	 * @return {@code true} if event causes a behavioral change
 	 */
 	@Override
 	public boolean affectsTextPresentation(PropertyChangeEvent event) {
@@ -141,11 +180,11 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	}
 
 	@Override
-	public DslReconciler getReconciler(ISourceViewer viewer) {
-		DslReconciler reconciler = super.getReconciler(viewer);
+	public Reconciler getReconciler(ISourceViewer viewer) {
+		Reconciler reconciler = super.getReconciler(viewer);
 
 		XVReconcilingStrategy antlr = new XVReconcilingStrategy(getEditor(), viewer);
-		reconciler.setReconcilingStrategy(antlr, IDocument.DEFAULT_CONTENT_TYPE);
+		reconciler.addReconcilingStrategy(antlr, IDocument.DEFAULT_CONTENT_TYPE);
 
 		return reconciler;
 	}
@@ -169,16 +208,16 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	 * Loads content formatters into the SourceViewer for execution on receipt of a
 	 * ISourceViewer.FORMAT command.
 	 * <p>
-	 * The master strategy utilizes the DSL formatter tree grammar to drive formatting of the
-	 * default partition. The slave strategies are executed to format particular non-default
-	 * partitions.
+	 * The master strategy utilizes the DSL formatter tree grammar to drive
+	 * formatting of the default partition. The slave strategies are executed to
+	 * format particular non-default partitions.
 	 * <p>
 	 * Two built-in non-default partition strategies are provided:
-	 * <code>CommentFormattingStrategy()</code> and <code>JavaFormattingStrategy()</code> that
-	 * use the JDT formatter and global JDT formatting preferences. The comment strategy can
-	 * format stand-alone single-line, mutiple-line, and JavaDoc-style comments. The JavaCode
-	 * strategy can format discrete blocks of otherwise standard Java code, including embedded
-	 * comments.
+	 * {@code CommentFormattingStrategy()} and {@code JavaFormattingStrategy()} that
+	 * use the JDT formatter and global JDT formatting preferences. The comment
+	 * strategy can format stand-alone single-line, mutiple-line, and JavaDoc-style
+	 * comments. The JavaCode strategy can format discrete blocks of otherwise
+	 * standard Java code, including embedded comments.
 	 *
 	 * @param sourceViewer the viewer that will contain the content to format
 	 * @return the content formatter
@@ -215,18 +254,4 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	// presenter.setInformationProvider(provider, Partitions.ACTION);
 	// }
 
-	@Override
-	protected void alterContentAssistant(ContentAssistant assistant) {
-		// DslCompletionProcessor processor;
-		// processor = new CompletionProcessor(getEditor(), assistant,
-		// IDocument.DEFAULT_CONTENT_TYPE);
-		// assistant.setContentAssistProcessor(processor,
-		// IDocument.DEFAULT_CONTENT_TYPE);
-		// processor = new CompletionProcessor(getEditor(), assistant,
-		// Partitions.ACTION);
-		// assistant.setContentAssistProcessor(processor, Partitions.ACTION);
-		// processor = new CompletionProcessor(getEditor(), assistant,
-		// Partitions.COMMENT_JD);
-		// assistant.setContentAssistProcessor(processor, Partitions.COMMENT_JD);
-	}
 }

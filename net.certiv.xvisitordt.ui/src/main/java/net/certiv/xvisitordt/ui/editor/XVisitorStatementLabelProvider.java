@@ -3,52 +3,55 @@ package net.certiv.xvisitordt.ui.editor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
-import net.certiv.dsl.core.model.IDslElement;
-import net.certiv.dsl.ui.editor.OutlineLabelDecorator;
-import net.certiv.xvisitordt.core.model.ModelData;
+import net.certiv.dsl.ui.editor.StatementLabelProvider;
+import net.certiv.xvisitordt.core.model.Specialization;
 import net.certiv.xvisitordt.ui.XVImageManager;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 
-public class XVisitorOutlineLabelDecorator extends OutlineLabelDecorator {
+public class XVisitorStatementLabelProvider extends StatementLabelProvider {
 
-	public XVisitorOutlineLabelDecorator() {
+	public XVisitorStatementLabelProvider() {
 		super(XVisitorUI.getDefault().getImageManager());
 	}
 
 	@Override
 	public String decorateText(String text) {
-		switch (getElementKind()) {
-			case IDslElement.MODULE:
+		switch (getStatementType()) {
+			case MODULE:
 				if (hasData()) {
-					ModelData data = (ModelData) getData();
-					return data.key;
+					Specialization data = (Specialization) getData();
+					return data.name;
 				}
 				return text;
 
-			case IDslElement.DECLARATION:
+			case DECLARATION:
 				return text;
 
-			case IDslElement.STATEMENT:
-			case IDslElement.FIELD:
+			case STATEMENT:
+			case FIELD:
 				if (hasData()) {
-					ModelData data = (ModelData) getData();
-					switch (data.mType) {
+					Specialization data = (Specialization) getData();
+					switch (data.specializedType) {
 						case Option:
-							return data.key + " = " + data.value.getText();
+							return data.name + " = " + data.value.getText();
 
 						case AtAction:
-							if (!data.key.isEmpty()) {
-								return data.key + "::" + data.value.getText();
+							if (!data.name.isEmpty()) {
+								return data.name + "::" + data.value.getText();
 							}
 							return data.value.getText();
 						default:
-							return data.key;
+							return data.name;
 					}
 				}
 				return text;
-			case IDslElement.BEG_BLOCK:
-			case IDslElement.END_BLOCK:
+
+			case BEG_BLOCK:
 				return text;
+
+			case END_BLOCK:
+			default:
+				break;
 		}
 		return text;
 	}
@@ -58,16 +61,16 @@ public class XVisitorOutlineLabelDecorator extends OutlineLabelDecorator {
 		XVImageManager mgr = (XVImageManager) imgMgr;
 		ImageDescriptor desc = null;
 
-		switch (getElementKind()) {
-			case IDslElement.MODULE:
+		switch (getStatementType()) {
+			case MODULE:
 				desc = mgr.getDescriptor(mgr.IMG_OBJ_MODULE);
 				break;
-			case IDslElement.STATEMENT:
-			case IDslElement.FIELD:
+			case STATEMENT:
+			case FIELD:
 				desc = mgr.getDescriptor(mgr.IMG_OBJ_STATEMENT);
 				if (hasData()) {
-					ModelData data = (ModelData) getData();
-					switch (data.mType) {
+					Specialization data = (Specialization) getData();
+					switch (data.specializedType) {
 						case Options:
 							desc = mgr.getDescriptor(mgr.IMG_OBJ_OPTION);
 							break;
@@ -89,9 +92,11 @@ public class XVisitorOutlineLabelDecorator extends OutlineLabelDecorator {
 					}
 				}
 				break;
-			case IDslElement.BEG_BLOCK:
-			case IDslElement.END_BLOCK:
+			case BEG_BLOCK:
 				desc = mgr.getDescriptor(mgr.IMG_OBJ_BLOCK);
+				break;
+
+			case END_BLOCK:
 				break;
 
 			default:

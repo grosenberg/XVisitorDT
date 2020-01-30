@@ -17,7 +17,7 @@ import net.certiv.xvisitordt.core.XVisitorCore;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 
 /**
- * The class <code>NewXVisitorWizardPage</code> contains controls and validation routines
+ * The class {@code NewXVisitorWizardPage} contains controls and validation routines
  * for a 'New DSL WizardPage'.
  */
 public class NewXVisitorWizardPage extends DslContainerWizardPage {
@@ -32,7 +32,7 @@ public class NewXVisitorWizardPage extends DslContainerWizardPage {
 	private String importTxt = "";
 
 	/**
-	 * Creates a new <code>NewTypeWizardPage</code>.
+	 * Creates a new {@code NewTypeWizardPage}.
 	 *
 	 * @param pageName the wizard page's name
 	 */

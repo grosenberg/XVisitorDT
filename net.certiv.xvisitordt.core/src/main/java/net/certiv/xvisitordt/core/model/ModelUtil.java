@@ -5,33 +5,33 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 
-import net.certiv.dsl.core.model.IDslElement;
 import net.certiv.dsl.core.model.IStatement;
-import net.certiv.dsl.core.model.builder.IDslElementVisitor;
+import net.certiv.dsl.core.model.IStatementVisitor;
 
 public class ModelUtil {
 
-	public static ModelType getModelType(IStatement stmt) {
+	public static SpecializedType getSpecializedType(IStatement stmt) {
 		if (stmt.hasData()) {
-			ModelData data = (ModelData) stmt.getData();
-			return data.mType;
+			Specialization data = (Specialization) stmt.getData();
+			return data.specializedType;
 		}
-		return ModelType.Unknown;
+		return SpecializedType.Unknown;
 	}
 
-	/** Returns all children of the given statement that are of the given model mType. */
-	public static List<IStatement> getChildren(IStatement stmt, ModelType mType) {
+	/** Returns all children of the given statement of the given model type. */
+	public static List<IStatement> getChildren(IStatement stmt, SpecializedType type) {
 		List<IStatement> children = new ArrayList<>();
 		try {
-			stmt.decend(new IDslElementVisitor() {
+			stmt.decend(new IStatementVisitor() {
 
 				@Override
-				public boolean visit(IDslElement child) throws CoreException {
-					if (getModelType((IStatement) child) == mType) children.add((IStatement) child);
-					return true;
+				public boolean onEntry(IStatement child) throws CoreException {
+					if (getSpecializedType(child) == type) children.add(child);
+					return child.hasChildren();
 				}
 			});
 		} catch (CoreException e) {}
+
 		return children;
 	}
 }

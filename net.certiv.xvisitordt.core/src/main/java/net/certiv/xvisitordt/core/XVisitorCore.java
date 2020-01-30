@@ -3,18 +3,13 @@ package net.certiv.xvisitordt.core;
 import org.osgi.framework.BundleContext;
 
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.model.ICodeUnit;
-import net.certiv.dsl.core.parser.DslSourceParser;
-import net.certiv.xvisitordt.core.parser.XVisitorSourceParser;
+import net.certiv.dsl.core.lang.LanguageManager;
 
 public class XVisitorCore extends DslCore {
 
-	private static final String[] EXTENSIONS = new String[] { "xv" };
-
-	// Should be unique, lower case, single word
-	public static final String DSL_NAME = "xvisitor";
-
 	private static XVisitorCore plugin;
+
+	private XvLangManager langMgr;
 
 	public XVisitorCore() {
 		super();
@@ -47,15 +42,10 @@ public class XVisitorCore extends DslCore {
 	}
 
 	@Override
-	public String[] getDslFileExtensions() {
-		return EXTENSIONS;
-	}
-
-	@Override
-	public DslSourceParser createSourceParser(ICodeUnit unit, String contentType) {
-		if (DSL_NAME.equals(contentType) || getContentTypeId().equals(contentType)) {
-			return new XVisitorSourceParser(unit.getParseRecord());
+	public LanguageManager getLangManager() {
+		if (langMgr == null) {
+			langMgr = new XvLangManager(this);
 		}
-		return null;
+		return langMgr;
 	}
 }

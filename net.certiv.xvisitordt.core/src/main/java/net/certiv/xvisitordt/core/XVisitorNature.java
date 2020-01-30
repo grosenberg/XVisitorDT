@@ -1,7 +1,7 @@
 package net.certiv.xvisitordt.core;
 
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.DslNature;
+import net.certiv.dsl.core.lang.DslNature;
 
 public class XVisitorNature extends DslNature {
 

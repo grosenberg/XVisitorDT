@@ -13,14 +13,14 @@ import net.certiv.dsl.ui.editor.text.rules.CharsRule;
 import net.certiv.dsl.ui.editor.text.rules.DslWordRule;
 import net.certiv.xvisitordt.core.preferences.Prefs;
 
-public class ScannerDefault extends AbstractBufferedRuleBasedScanner {
+public class ScannerKeyword extends AbstractBufferedRuleBasedScanner {
 
 	public static final String[] KEYWORDS = { "grammar", "xvisitor", "options", "@header", "@members" };
 	public static final char[] OPERATORS = { '/', '!', '*', '=', '{', '}', '.', ':', ';', '|' };
 
 	private String[] tokenProperties;
 
-	public ScannerDefault(IDslPrefsManager store) {
+	public ScannerKeyword(IDslPrefsManager store) {
 		super(store);
 		initialize();
 	}

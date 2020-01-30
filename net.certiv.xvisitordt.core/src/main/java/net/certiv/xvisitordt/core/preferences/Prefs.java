@@ -3,22 +3,23 @@ package net.certiv.xvisitordt.core.preferences;
 import net.certiv.dsl.core.preferences.DslPrefsKey;
 
 /**
- * Preference keys that are unique to this Dsl plugin. Prefix with the Dsl plugin ID just to ensure.
+ * Preference keys that are unique to this Dsl plugin. Prefix with the Dsl
+ * plugin ID just to ensure.
  */
 public class Prefs extends DslPrefsKey {
 
 	// @formatter:off
 	public static final String EDITOR_ACTION_COLOR = "{DSL_ID}" + ".action";
-	public static final String EDITOR_ACTION_BOLD = EDITOR_ACTION_COLOR + EDITOR_BOLD_SUFFIX;
-	public static final String EDITOR_ACTION_ITALIC = EDITOR_ACTION_COLOR + EDITOR_ITALIC_SUFFIX;
-	public static final String EDITOR_ACTION_STRIKETHROUGH = EDITOR_ACTION_COLOR + EDITOR_STRIKETHROUGH_SUFFIX;
-	public static final String EDITOR_ACTION_UNDERLINE = EDITOR_ACTION_COLOR + EDITOR_UNDERLINE_SUFFIX;
+	public static final String EDITOR_ACTION_BOLD = EDITOR_ACTION_COLOR + BOLD_SUFFIX;
+	public static final String EDITOR_ACTION_ITALIC = EDITOR_ACTION_COLOR + ITALIC_SUFFIX;
+	public static final String EDITOR_ACTION_STRIKETHROUGH = EDITOR_ACTION_COLOR + STRIKE_SUFFIX;
+	public static final String EDITOR_ACTION_UNDERLINE = EDITOR_ACTION_COLOR + UNDERLINE_SUFFIX;
 
 	public static final String EDITOR_ACTION_NAMED_COLOR = "{DSL_ID}" + ".actionNamed";
-	public static final String EDITOR_ACTION_NAMED_BOLD = EDITOR_ACTION_NAMED_COLOR + EDITOR_BOLD_SUFFIX;
-	public static final String EDITOR_ACTION_NAMED_ITALIC = EDITOR_ACTION_NAMED_COLOR + EDITOR_ITALIC_SUFFIX;
-	public static final String EDITOR_ACTION_NAMED_STRIKETHROUGH = EDITOR_ACTION_NAMED_COLOR  + EDITOR_STRIKETHROUGH_SUFFIX;
-	public static final String EDITOR_ACTION_NAMED_UNDERLINE = EDITOR_ACTION_NAMED_COLOR + EDITOR_UNDERLINE_SUFFIX;
+	public static final String EDITOR_ACTION_NAMED_BOLD = EDITOR_ACTION_NAMED_COLOR + BOLD_SUFFIX;
+	public static final String EDITOR_ACTION_NAMED_ITALIC = EDITOR_ACTION_NAMED_COLOR + ITALIC_SUFFIX;
+	public static final String EDITOR_ACTION_NAMED_STRIKETHROUGH = EDITOR_ACTION_NAMED_COLOR  + STRIKE_SUFFIX;
+	public static final String EDITOR_ACTION_NAMED_UNDERLINE = EDITOR_ACTION_NAMED_COLOR + UNDERLINE_SUFFIX;
 	// @formatter:on
 
 	public static final String EDITOR_FOLDING_COMMENT_ML = "{DSL_ID}" + ".editorFoldingCommentML";

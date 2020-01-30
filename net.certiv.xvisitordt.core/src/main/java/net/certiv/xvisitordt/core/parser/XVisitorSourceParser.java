@@ -14,16 +14,15 @@ import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.log.Log.LogLevel;
 import net.certiv.dsl.core.model.ICodeUnit;
 import net.certiv.dsl.core.model.IStatement;
-import net.certiv.dsl.core.model.builder.DslModelMaker;
+import net.certiv.dsl.core.model.builder.ModelBuilder;
 import net.certiv.dsl.core.parser.DslParseRecord;
 import net.certiv.dsl.core.parser.DslSourceParser;
-import net.certiv.dsl.core.util.Strings;
-import net.certiv.dsl.core.util.antlr.AntlrUtil;
+import net.certiv.dsl.core.util.Chars;
 import net.certiv.dsl.jdt.util.DynamicLoader;
 import net.certiv.xvisitordt.core.XVisitorCore;
-import net.certiv.xvisitordt.core.model.ModelData;
-import net.certiv.xvisitordt.core.model.ModelType;
 import net.certiv.xvisitordt.core.model.ModelUtil;
+import net.certiv.xvisitordt.core.model.Specialization;
+import net.certiv.xvisitordt.core.model.SpecializedType;
 import net.certiv.xvisitordt.core.parser.gen.StructureVisitor;
 import net.certiv.xvisitordt.core.parser.gen.ValidityVisitor;
 import net.certiv.xvisitordt.core.parser.gen.XVisitorLexer;
@@ -45,53 +44,71 @@ public class XVisitorSourceParser extends DslSourceParser {
 	}
 
 	@Override
-	public boolean modelContributor() {
+	public boolean doAnalysis() {
 		return true;
 	}
 
 	@Override
-	public void parse() {
-		record.cs = CharStreams.fromString(record.doc.get(), record.unit.getFile().getName());
-		Lexer lexer = new XVisitorLexer(record.cs);
-		lexer.setTokenFactory(TokenFactory);
-		lexer.removeErrorListeners();
-		lexer.addErrorListener(getDslErrorListener());
-
-		record.ts = new CommonTokenStream(lexer);
-		record.parser = new XVisitorParser(record.ts);
-		record.parser.setTokenFactory(TokenFactory);
-		record.parser.removeErrorListeners();
-		record.parser.addErrorListener(getDslErrorListener());
-		record.tree = ((XVisitorParser) record.parser).grammarSpec();
+	public boolean doValidate() {
+		return true;
 	}
 
 	@Override
-	public void analyzeStructure(DslModelMaker maker) {
+	public Throwable parse() {
 		try {
-			StructureVisitor visitor = new StructureVisitor(record.tree);
-			visitor.setMaker(maker);
-			visitor.setSourceName(record.unit.getFile().getName());
-			visitor.findAll();
-		} catch (IllegalArgumentException e) {
-			getDslErrorListener().generalError("Model analysis: %s @%s:%s", e);
-			return;
-		}
+			record.cs = CharStreams.fromString(getContent(), record.unit.getFile().getName());
+			Lexer lexer = new XVisitorLexer(record.cs);
+			lexer.setTokenFactory(TokenFactory);
+			lexer.removeErrorListeners();
+			lexer.addErrorListener(getDslErrorListener());
 
-		validate();
+			record.ts = new CommonTokenStream(lexer);
+			record.parser = new XVisitorParser(record.ts);
+			record.parser.setTokenFactory(TokenFactory);
+			record.parser.removeErrorListeners();
+			record.parser.addErrorListener(getDslErrorListener());
+			record.tree = ((XVisitorParser) record.parser).grammarSpec();
+			return null;
+
+		} catch (Exception | Error e) {
+			getDslErrorListener().generalError(ERR_PARSER, e);
+			return e;
+		}
 	}
 
-	private void validate() {
+	@Override
+	public Throwable analyze(ModelBuilder builder) {
+		try {
+			StructureVisitor visitor = new StructureVisitor(record.tree);
+			visitor.setBuilder(builder);
+			visitor.setSourceName(record.unit.getFile().getName());
+			builder.beginAnalysis();
+			visitor.findAll();
+			builder.endAnalysis();
+			return null;
+
+		} catch (Exception | Error e) {
+			getDslErrorListener().generalError(ERR_ANALYSIS, e);
+			return e;
+		}
+	}
+
+	@Override
+	public Throwable validate() {
 		try {
 			ValidityVisitor visitor = new ValidityVisitor(record.tree);
 			visitor.setHelper(record.parser, resolveRefParser(), getDslErrorListener());
 			visitor.findAll();
-		} catch (IOException e) {
-			Log.error(this, "Validation failed: " + e.getMessage());
+			return null;
+
+		} catch (Exception | Error e) {
+			getDslErrorListener().generalError(ERR_VALIDATE, e);
+			return e;
 		}
 	}
 
 	private Parser resolveRefParser() throws IOException {
-		String pkg = AntlrUtil.resolvePackageName(record.unit);
+		String pkg = getDslCore().getLangManager().resolveGrammarPackage(record.unit);
 		if (pkg == null) throw new IOException("Cannot determine package path.");
 
 		String name = resolveParserClassname(pkg, record.unit);
@@ -114,10 +131,10 @@ public class XVisitorSourceParser extends DslSourceParser {
 
 	private String resolveParserClassname(String pkg, ICodeUnit unit) {
 		for (IStatement stmt : unit.getStatements()) {
-			if (ModelUtil.getModelType(stmt) == ModelType.Option) {
-				ModelData data = (ModelData) stmt.getData();
-				if (data.key.equals("parserClass")) {
-					return pkg + Strings.DOT + data.value.getText().trim();
+			if (ModelUtil.getSpecializedType(stmt) == SpecializedType.Option) {
+				Specialization data = (Specialization) stmt.getData();
+				if (data.name.equals("parserClass")) {
+					return pkg + Chars.DOT + data.value.getText().trim();
 				}
 			}
 		}
