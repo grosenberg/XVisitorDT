@@ -14,7 +14,7 @@ import org.eclipse.ui.IActionBars;
 import net.certiv.dsl.core.model.ISourceUnit;
 import net.certiv.dsl.core.model.IStatement;
 import net.certiv.dsl.core.model.ModelType;
-import net.certiv.dsl.ui.editor.DslOutlinePage;
+import net.certiv.dsl.ui.editor.outline.OutlinePage;
 import net.certiv.dsl.ui.viewsupport.DslFilterAction;
 import net.certiv.dsl.ui.viewsupport.DslFilterActionGroup;
 import net.certiv.xvisitordt.ui.XVImageManager;
@@ -24,7 +24,7 @@ import net.certiv.xvisitordt.ui.editor.filter.OptionsFilter;
 import net.certiv.xvisitordt.ui.editor.filter.RuleFilter;
 import net.certiv.xvisitordt.ui.editor.filter.TokenFilter;
 
-public class XVisitorOutlinePage extends DslOutlinePage {
+public class XVisitorOutlinePage extends OutlinePage {
 
 	protected class GrammarDataProvider extends OutlineDataProvider {
 

@@ -16,7 +16,6 @@ import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.color.IColorManager;
@@ -27,9 +26,9 @@ import net.certiv.dsl.core.util.eclipse.TabStyle;
 import net.certiv.dsl.ui.DslImageManager;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.DoubleClickStrategy;
+import net.certiv.dsl.ui.editor.DslEditor;
 import net.certiv.dsl.ui.editor.DslSourceViewerConfiguration;
 import net.certiv.dsl.ui.editor.reconcile.PresentationReconciler;
-import net.certiv.dsl.ui.editor.reconcile.Reconciler;
 import net.certiv.dsl.ui.editor.text.completion.CompletionCategory;
 import net.certiv.dsl.ui.editor.text.completion.CompletionProcessor;
 import net.certiv.dsl.ui.editor.text.completion.engines.FieldEngine;
@@ -58,9 +57,9 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	private ScannerString stringScanner;
 	private ScannerAction actionScanner;
 
-	public XVisitorSourceViewerConfiguration(IColorManager colorManager, IDslPrefsManager store, ITextEditor editor,
+	public XVisitorSourceViewerConfiguration(IColorManager colorMgr, IDslPrefsManager store, DslEditor editor,
 			String partitioning) {
-		super(colorManager, store, editor, partitioning);
+		super(XVisitorCore.getDefault(), colorMgr, store, editor, partitioning);
 	}
 
 	@Override
@@ -177,16 +176,6 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 				|| commentJDScanner.affectsBehavior(event) //
 				|| commentMLScanner.affectsBehavior(event) //
 				|| commentSLScanner.affectsBehavior(event);
-	}
-
-	@Override
-	public Reconciler getReconciler(ISourceViewer viewer) {
-		Reconciler reconciler = super.getReconciler(viewer);
-
-		XVReconcilingStrategy antlr = new XVReconcilingStrategy(getEditor(), viewer);
-		reconciler.addReconcilingStrategy(antlr, IDocument.DEFAULT_CONTENT_TYPE);
-
-		return reconciler;
 	}
 
 	@Override

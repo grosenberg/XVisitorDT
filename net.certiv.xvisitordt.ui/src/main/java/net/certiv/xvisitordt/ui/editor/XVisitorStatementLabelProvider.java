@@ -3,12 +3,12 @@ package net.certiv.xvisitordt.ui.editor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 
-import net.certiv.dsl.ui.editor.StatementLabelProvider;
+import net.certiv.dsl.ui.editor.outline.OutlineLabelProvider;
 import net.certiv.xvisitordt.core.model.Specialization;
 import net.certiv.xvisitordt.ui.XVImageManager;
 import net.certiv.xvisitordt.ui.XVisitorUI;
 
-public class XVisitorStatementLabelProvider extends StatementLabelProvider {
+public class XVisitorStatementLabelProvider extends OutlineLabelProvider {
 
 	public XVisitorStatementLabelProvider() {
 		super(XVisitorUI.getDefault().getImageManager());

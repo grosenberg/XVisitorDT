@@ -79,12 +79,14 @@ public class XVisitorSourceParser extends DslSourceParser {
 	@Override
 	public Throwable analyze(ModelBuilder builder) {
 		try {
-			StructureVisitor visitor = new StructureVisitor(record.tree);
-			visitor.setBuilder(builder);
-			visitor.setSourceName(record.unit.getFile().getName());
-			builder.beginAnalysis();
-			visitor.findAll();
-			builder.endAnalysis();
+			if (record.hasTree()) {
+				StructureVisitor visitor = new StructureVisitor(record.tree);
+				visitor.setBuilder(builder);
+				visitor.setSourceName(record.unit.getFile().getName());
+				builder.beginAnalysis();
+				visitor.findAll();
+				builder.endAnalysis();
+			}
 			return null;
 
 		} catch (Exception | Error e) {
@@ -96,9 +98,12 @@ public class XVisitorSourceParser extends DslSourceParser {
 	@Override
 	public Throwable validate() {
 		try {
-			ValidityVisitor visitor = new ValidityVisitor(record.tree);
-			visitor.setHelper(record.parser, resolveRefParser(), getDslErrorListener());
-			visitor.findAll();
+			Parser ref = resolveRefParser();
+			if (ref != null) {
+				ValidityVisitor visitor = new ValidityVisitor(record.tree);
+				visitor.setHelper(record.parser, ref, getDslErrorListener());
+				visitor.findAll();
+			}
 			return null;
 
 		} catch (Exception | Error e) {
@@ -109,7 +114,10 @@ public class XVisitorSourceParser extends DslSourceParser {
 
 	private Parser resolveRefParser() throws IOException {
 		String pkg = getDslCore().getLangManager().resolveGrammarPackage(record.unit);
-		if (pkg == null) throw new IOException("Cannot determine package path.");
+		if (pkg == null) {
+			Log.warn(this, "Cannot determine package path for " + record.unit.getElementName());
+			return null;
+		}
 
 		String name = resolveParserClassname(pkg, record.unit);
 		if (name == null) throw new IOException("Cannot resolve reference parser class.");

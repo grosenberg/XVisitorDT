@@ -1,12 +1,12 @@
 package net.certiv.xvisitordt.ui.preferences.page;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.color.IColorManager;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
 import net.certiv.dsl.ui.DslUI;
+import net.certiv.dsl.ui.editor.DslEditor;
 import net.certiv.dsl.ui.editor.DslSourceViewerConfiguration;
 import net.certiv.dsl.ui.formatter.IDslFormatterFactory;
 import net.certiv.dsl.ui.preferences.pages.DslFormatterPreferencePage;
@@ -23,7 +23,7 @@ public class FormatterPage extends DslFormatterPreferencePage {
 
 	@Override
 	protected DslSourceViewerConfiguration createSimpleSourceViewerConfiguration(IColorManager colorManager,
-			IPreferenceStore preferenceStore, ITextEditor editor, boolean configureFormatter) {
+			IPreferenceStore preferenceStore, DslEditor editor, boolean configureFormatter) {
 
 		return new XVisitorSimpleSourceViewerConfiguration(colorManager, (IDslPrefsManager) preferenceStore, editor,
 				Partitions.PARTITIONING, configureFormatter);

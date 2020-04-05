@@ -9,20 +9,19 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 import net.certiv.dsl.core.color.IColorManager;
 import net.certiv.dsl.core.preferences.IDslPrefsManager;
-import net.certiv.dsl.ui.editor.reconcile.Reconciler;
+import net.certiv.dsl.ui.editor.DslEditor;
 
 public class XVisitorSimpleSourceViewerConfiguration extends XVisitorSourceViewerConfiguration {
 
-	public XVisitorSimpleSourceViewerConfiguration(IDslPrefsManager store, ITextEditor editor, String partitioning) {
+	public XVisitorSimpleSourceViewerConfiguration(IDslPrefsManager store, DslEditor editor, String partitioning) {
 		super(null, store, editor, partitioning);
 	}
 
-	public XVisitorSimpleSourceViewerConfiguration(IColorManager colorManager, IDslPrefsManager store,
-			ITextEditor editor, String partitioning, boolean configureFormatter) {
+	public XVisitorSimpleSourceViewerConfiguration(IColorManager colorManager, IDslPrefsManager store, DslEditor editor,
+			String partitioning, boolean configureFormatter) {
 		super(colorManager, store, editor, partitioning);
 	}
 
@@ -84,11 +83,6 @@ public class XVisitorSimpleSourceViewerConfiguration extends XVisitorSourceViewe
 
 	@Override
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
-		return null;
-	}
-
-	@Override
-	public Reconciler getReconciler(ISourceViewer viewer) {
 		return null;
 	}
 }
