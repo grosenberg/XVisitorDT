@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+
+	<template
+		autoinsert="false"
+		context="grammar"
+		description="Import statement"
+		enabled="true"
+		id="net.certiv.xvisitor.dt.ui.import"
+		name="import">import "${cursor}" ;</template>
+
+	<template
+		autoinsert="false"
+		context="grammar"
+		description="Header statement"
+		enabled="true"
+		id="net.certiv.xvisitor.dt.ui.package"
+		name="package">@header {
+	package ${cursor} ;
+} </template>
+
+	<template
+		autoinsert="true"
+		context="grammar"
+		deleted="false"
+		description="Options block"
+		enabled="true"
+		id="net.certiv.xvisitor.dt.ui.options"
+		name="options">options {
+	${cursor}
+}
+	</template>
+	<template
+		autoinsert="true"
+		context="grammar"
+		deleted="false"
+		description="Options: superClass"
+		enabled="true"
+		id="net.certiv.xvisitor.dt.ui.superClass"
+		name="superClass">superClass = ${cursor} ;
+	</template>
+	<template
+		autoinsert="true"
+		context="grammar"
+		deleted="false"
+		description="Options: parserClass"
+		enabled="true"
+		id="net.certiv.xvisitor.dt.ui.parserClass"
+		name="parserClass">parserClass = ${cursor} ;
+	</template>
+
+	<template
+		autoinsert="true"
+		context="grammar"
+		deleted="false"
+		description="Tokens block"
+		enabled="true"
+		id="net.certiv.xvisitor.dt.ui.tokens"
+		name="tokens">tokens {
+	${cursor}
+}
+	</template>
+
+	<template
+		autoinsert="true"
+		context="grammar"
+		deleted="false"
+		description="Members block"
+		enabled="true"
+		id="net.certiv.xvisitor.dt.ui.members"
+		name="@members">@members {
+	${cursor}
+}
+	</template>
+
+	<template
+		autoinsert="true"
+		context="grammar"
+		deleted="false"
+		description="Syntactic Predicate"
+		enabled="true"
+		id="net.certiv.xvisitor.dt.ui.predicate"
+		name="predicate">{ ${cursor} }?
+	</template>
+
+</templates>

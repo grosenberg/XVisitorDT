@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            base-type="org.eclipse.core.runtime.text"
+            describer="net.certiv.xvisitor.dt.core.ContentDescriber"
+            file-extensions="xv"
+            id="net.certiv.xvisitor.dt.core.contentType"
+            name="XVisitor Content Type"
+            priority="high">
+      </content-type>
+   </extension>
+   <extension
+         id="nature"
+         name="XVisitor Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="net.certiv.xvisitor.dt.core.XVisitorNature">
+         </run>
+      </runtime>
+      <builder
+            id="net.certiv.xvisitor.dt.core.builder">
+      </builder>
+   </extension>
+   <extension
+         id="net.certiv.xvisitor.dt.core.builder"
+         name="XVisitor Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="net.certiv.xvisitor.dt.core.builder.XVisitorBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="net.certiv.xvisitor.dt.core.problem"
+         name="XVisitor Problem"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="net.certiv.xvisitor.dt.core.preferences.PrefsInitializer">
+      </initializer>
+   </extension>
+
+</plugin>

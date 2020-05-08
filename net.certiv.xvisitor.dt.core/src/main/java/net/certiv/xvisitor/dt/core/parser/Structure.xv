@@ -1,0 +1,46 @@
+xvisitor grammar Structure ;
+
+options {
+	superClass  = StructureBuilder ;
+	parserClass = XVisitorParser ;
+}
+
+@header {
+	package net.certiv.xvisitor.dt.core.parser.gen ;
+	import net.certiv.xvisitor.dt.core.parser.StructureBuilder ;
+}
+
+structure
+	: grammarSpec
+	| optionsBlock
+	| optionStatement
+	| action
+	| groupRule
+	| pathRule
+	;
+
+grammarSpec			: /grammarSpec
+							{ grammarModule(); }
+					;
+
+optionsBlock		: //optionsSpec
+							{ onEntry: begOptionsBlock(); }
+							{ onExit:  endBlock(); }
+					;
+
+optionStatement		: //optionsSpec/option
+							{ processOptionStatement(); }
+					;
+
+action				: /grammarSpec/action
+							{ processAction(); }
+					;
+
+groupRule			: //xgroup
+							{ processGroupRule(); }
+					;
+
+pathRule			: //xpath
+							{ onEntry: processPathRule(); }
+							{ onExit:  endBlock(); }
+					;

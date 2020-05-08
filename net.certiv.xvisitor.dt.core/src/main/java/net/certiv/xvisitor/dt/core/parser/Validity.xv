@@ -1,0 +1,42 @@
+xvisitor grammar Validity;
+
+options {
+	superClass = ValidityAdaptor;
+	parserClass = XVisitorParser;
+}
+
+@header {
+	package net.certiv.xvisitor.dt.core.parser.gen;
+	import net.certiv.xvisitor.dt.core.parser.ValidityAdaptor;
+	import net.certiv.xvisitor.dt.core.parser.XVisitorSourceParser;
+}
+
+validity
+	: xmain
+	| xgroup
+	| xpath
+	| segment
+	| action
+	;
+
+xmain
+	: /grammarSpec
+		{ onEntry: checkXVisitor(); }
+		{ onExit: completeChecks(); }
+	;
+
+xgroup
+	: //xgroup			{ checkXGroup(); }
+	;
+
+xpath
+	: //xpath			{ checkXPath(); }
+	;
+
+segment
+	: //xpath//word		{ checkWord(); }
+	;
+
+action
+	: //reference		{ checkReference(); }
+	;
