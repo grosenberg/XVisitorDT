@@ -14,4 +14,9 @@ public class XVisitorHyperlinkDetector extends DslHyperlinkDetector {
 	public DslModel getDslModel() {
 		return XVisitorCore.getDefault().getDslModel();
 	}
+
+	@Override
+	protected boolean isDslLikeFilename(String name) {
+		return XVisitorCore.getDefault().getLangManager().isDslLikeFilename(name);
+	}
 }

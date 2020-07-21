@@ -13,9 +13,9 @@ import net.certiv.xvisitor.dt.core.XVisitorCore;
 public class ActionCodeFormattingStrategy extends JavaFormattingStrategy {
 
 	/**
-	 * ActionCodeFormattingStrategy indents relative to the beginning of the line if the open
-	 * brace follows text. If the open brace has no leading text, then indent is relative to
-	 * the indent level of the open brace.
+	 * ActionCodeFormattingStrategy indents relative to the beginning of the line if the
+	 * open brace follows text. If the open brace has no leading text, then indent is
+	 * relative to the indent level of the open brace.
 	 */
 	@Override
 	protected int determineIndentLevel(PrefsManager prefs, IDocument document, int offset) {

@@ -3,13 +3,13 @@ Automatic-Module-Name: net.certiv.xvisitor.dt.ui
 Bundle-ManifestVersion: 2
 Bundle-Name: XVisitor UI
 Bundle-SymbolicName: net.certiv.xvisitor.dt.ui;singleton:=true
-Bundle-Version: 4.10.0.qualifier
+Bundle-Version: 4.11.0.qualifier
 Bundle-Activator: net.certiv.xvisitor.dt.ui.XVisitorUI
-Require-Bundle: net.certiv.xvisitor.dt.core;bundle-version="4.10.0",
- net.certiv.dsl.jdt.plugin;bundle-version="0.10.0",
- net.certiv.dsl.core;bundle-version="0.10.0",
- net.certiv.dsl.lib;bundle-version="0.10.0",
- net.certiv.dsl.ui;bundle-version="0.10.0",
+Require-Bundle: net.certiv.xvisitor.dt.core;bundle-version="4.11.0",
+ net.certiv.dsl.jdt.plugin;bundle-version="0.11.0",
+ net.certiv.dsl.core;bundle-version="0.11.0",
+ net.certiv.dsl.lib;bundle-version="0.11.0",
+ net.certiv.dsl.ui;bundle-version="0.11.0",
  org.eclipse.core.resources;bundle-version="3.9.1",
  org.eclipse.core.runtime;bundle-version="3.10.0",
  org.eclipse.core.filesystem;bundle-version="1.4.100",
@@ -19,6 +19,7 @@ Require-Bundle: net.certiv.xvisitor.dt.core;bundle-version="4.10.0",
  org.eclipse.jface.text;bundle-version="3.9.1",
  org.eclipse.search;bundle-version="3.9.100",
  org.eclipse.ui;bundle-version="3.106.0",
+ org.eclipse.ui.console,
  org.eclipse.ui.editors;bundle-version="3.8.200",
  org.eclipse.ui.forms;bundle-version="3.6.200",
  org.eclipse.ui.ide;bundle-version="3.10.1",

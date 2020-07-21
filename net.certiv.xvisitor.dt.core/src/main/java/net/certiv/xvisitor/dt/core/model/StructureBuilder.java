@@ -10,7 +10,7 @@ import net.certiv.dsl.core.model.ModelType;
 import net.certiv.dsl.core.model.Statement;
 import net.certiv.dsl.core.model.builder.ModelBuilder;
 import net.certiv.dsl.core.util.Strings;
-import net.certiv.dsl.core.util.antlr.AntlrUtil;
+import net.certiv.dsl.core.util.antlr.GrammarUtil;
 import net.certiv.xvisitor.dt.core.parser.gen.XVisitorParser;
 import net.certiv.xvisitor.dt.core.parser.gen.XVisitorParser.ActionContext;
 import net.certiv.xvisitor.dt.core.parser.gen.XVisitorParser.GrammarSpecContext;
@@ -66,7 +66,7 @@ public abstract class StructureBuilder extends Processor {
 		Statement stmt = builder.statement(ModelType.NATIVE, ctx, ctx.ID(), data);
 
 		builder.pushParent(stmt);
-		String actionContent = AntlrUtil.getRuleText(ctx.actionBlock().text()).trim();
+		String actionContent = GrammarUtil.getRuleText(ctx.actionBlock().text()).trim();
 		actionContent = Strings.ellipsize(actionContent, 32);
 		builder.field(ctx, ctx, ModelType.NATIVE, new Specialization(SpecializedType.Value, name, ctx, actionContent));
 		builder.popParent();

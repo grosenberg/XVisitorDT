@@ -7,6 +7,7 @@ import net.certiv.dsl.ui.preferences.blocks.IPreferenceConfigBlock;
 import net.certiv.dsl.ui.preferences.pages.AbstractPreferencePage;
 import net.certiv.xvisitor.dt.core.XVisitorCore;
 import net.certiv.xvisitor.dt.ui.XVisitorUI;
+import net.certiv.xvisitor.dt.ui.preferences.blocks.SyntaxColorConfigBlock;
 
 public class SyntaxColorPage extends AbstractPreferencePage {
 
@@ -22,7 +23,7 @@ public class SyntaxColorPage extends AbstractPreferencePage {
 
 	@Override
 	protected IPreferenceConfigBlock createConfigurationBlock(PrefsDeltaManager delta) {
-		return new SyntaxColorConfigBlock(this, delta, getFormkit(), getColorMgr());
+		return new SyntaxColorConfigBlock(this, delta, getFormkit(), getColorRegistry());
 	}
 
 	@Override

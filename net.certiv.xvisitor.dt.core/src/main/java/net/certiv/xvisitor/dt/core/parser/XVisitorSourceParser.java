@@ -1,6 +1,5 @@
 package net.certiv.xvisitor.dt.core.parser;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 
 import org.antlr.v4.runtime.CharStreams;
@@ -9,16 +8,21 @@ import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.TokenStream;
 
+import org.eclipse.core.resources.IResourceStatus;
+
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.log.Log.LogLevel;
+import net.certiv.dsl.core.model.ModelException;
 import net.certiv.dsl.core.model.builder.ModelBuilder;
+import net.certiv.dsl.core.parser.DslErrorListener;
 import net.certiv.dsl.core.parser.DslParseRecord;
 import net.certiv.dsl.core.parser.DslSourceParser;
+import net.certiv.dsl.core.parser.Origin;
 import net.certiv.dsl.core.util.Strings;
-import net.certiv.dsl.core.util.antlr.AntlrUtil;
 import net.certiv.dsl.jdt.util.DynamicLoader;
 import net.certiv.xvisitor.dt.core.XVisitorCore;
+import net.certiv.xvisitor.dt.core.builder.BuildUtil;
 import net.certiv.xvisitor.dt.core.parser.gen.StructureVisitor;
 import net.certiv.xvisitor.dt.core.parser.gen.ValidityVisitor;
 import net.certiv.xvisitor.dt.core.parser.gen.XVisitorLexer;
@@ -51,23 +55,26 @@ public class XVisitorSourceParser extends DslSourceParser {
 
 	@Override
 	public Throwable parse() {
+		DslErrorListener auditor = getErrorListener();
 		try {
-			record.cs = CharStreams.fromString(getContent(), record.unit.getFile().getName());
-			Lexer lexer = new XVisitorLexer(record.cs);
+			record.setCharStream(CharStreams.fromString(getContent(), record.unit.getFile().getName()));
+			Lexer lexer = new XVisitorLexer(record.getCharStream());
 			lexer.setTokenFactory(TokenFactory);
 			lexer.removeErrorListeners();
-			lexer.addErrorListener(getErrorListener());
+			lexer.addErrorListener(auditor);
+			record.setTokenStream(new CommonTokenStream(lexer));
 
-			record.ts = new CommonTokenStream(lexer);
-			record.parser = new XVisitorParser(record.ts);
-			record.parser.setTokenFactory(TokenFactory);
-			record.parser.removeErrorListeners();
-			record.parser.addErrorListener(getErrorListener());
-			record.tree = ((XVisitorParser) record.parser).grammarSpec();
+			XVisitorParser parser = new XVisitorParser(record.getTokenStream());
+			parser.setTokenFactory(TokenFactory);
+			parser.removeErrorListeners();
+			parser.addErrorListener(auditor);
+			record.setParser(parser);
+			record.setTree(parser.grammarSpec());
+
 			return null;
 
 		} catch (Exception | Error e) {
-			getErrorListener().generalError(ERR_PARSER, e);
+			auditor.generalError(Origin.GENERAL, ERR_PARSER, e);
 			return e;
 		}
 	}
@@ -75,7 +82,7 @@ public class XVisitorSourceParser extends DslSourceParser {
 	@Override
 	public Throwable analyze(ModelBuilder builder) {
 		try {
-			StructureVisitor visitor = new StructureVisitor(record.tree);
+			StructureVisitor visitor = new StructureVisitor(record.getTree());
 			visitor.setSourceName(record.unit.getPackageName());
 			visitor.setBuilder(builder);
 			builder.beginAnalysis();
@@ -84,7 +91,7 @@ public class XVisitorSourceParser extends DslSourceParser {
 			return null;
 
 		} catch (Exception | Error e) {
-			getErrorListener().generalError(ERR_ANALYSIS, e);
+			getErrorListener().generalError(Origin.ANALYSIS, ERR_ANALYSIS, e);
 			return e;
 		}
 	}
@@ -94,43 +101,43 @@ public class XVisitorSourceParser extends DslSourceParser {
 		try {
 			Parser ref = resolveRefParser();
 			if (ref != null) {
-				ValidityVisitor visitor = new ValidityVisitor(record.tree);
-				visitor.setHelper(record.parser, ref, getErrorListener());
+				ValidityVisitor visitor = new ValidityVisitor(record.getTree());
+				visitor.setHelper(record.getParser(), ref, getErrorListener());
 				visitor.findAll();
 			}
 			return null;
 
 		} catch (Exception | Error e) {
-			getErrorListener().generalError(ERR_VALIDATE, e);
+			getErrorListener().generalError(Origin.VALIDATE, ERR_VALIDATE, e);
 			return e;
 		}
 	}
 
-	private Parser resolveRefParser() throws IOException {
-		String pkg = AntlrUtil.resolveGrammarPackage(record.unit);
+	private Parser resolveRefParser() throws ModelException {
+		String pkg = BuildUtil.grammarDefinedPackage(record);
 		if (pkg == null) {
 			String msg = "Cannot determine package path for " + record.unit.getElementName();
 			Log.warn(this, msg);
-			throw new IOException(msg);
+			throw new ModelException(IResourceStatus.INVALID_RESOURCE_NAME, msg);
 		}
 
-		String name = AntlrUtil.resolveOptionValue(record.unit, "parserClass");
-		if (name == null) {
+		String refName = BuildUtil.resolveGrammarDefinedOptionValue(record, "parserClass");
+		if (refName == null) {
 			String msg = "Cannot determine parserClassname for " + record.unit.getElementName();
 			Log.warn(this, msg);
-			throw new IOException(msg);
+			throw new ModelException(IResourceStatus.INVALID_RESOURCE_NAME, msg);
 		}
-		name = pkg + Strings.DOT + name;
+		refName = pkg + Strings.DOT + refName;
 
 		ClassLoader parent = Thread.currentThread().getContextClassLoader();
 		try (DynamicLoader loader = DynamicLoader.create(record.unit.getProject(), parent)) {
-			Class<?> pc = loader.loadClass(name);
+			Class<?> pc = loader.loadClass(refName);
 			Constructor<?> constructor = pc.getConstructor(parserParams);
 			return (Parser) constructor.newInstance((TokenStream) null);
 
 		} catch (Exception e) {
-			String msg = String.format("Cannot instantiate reference parser: %s (%s)", name, e.getMessage());
-			throw new IOException(msg);
+			String msg = String.format("Cannot instantiate reference parser: %s (%s)", refName, e.getMessage());
+			throw new ModelException(IResourceStatus.OPERATION_FAILED, msg);
 
 		} finally {
 			Thread.currentThread().setContextClassLoader(parent);

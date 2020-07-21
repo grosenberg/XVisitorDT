@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -33,32 +32,42 @@ import org.eclipse.jdt.core.manipulation.OrganizeImportsOperation.IChooseImportQ
 import org.eclipse.jdt.core.search.TypeNameMatch;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.text.edits.TextEdit;
 
 import net.certiv.antlr.xvisitor.Tool;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.builder.Cause;
 import net.certiv.dsl.core.builder.DslBuilder;
+import net.certiv.dsl.core.console.CS;
 import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.model.ICodeUnit;
+import net.certiv.dsl.core.model.ModelException;
 import net.certiv.dsl.core.parser.DslParseRecord;
+import net.certiv.dsl.core.parser.problems.ProblemCollector;
 import net.certiv.dsl.core.preferences.consts.Builder;
+import net.certiv.dsl.core.util.Chars;
 import net.certiv.dsl.core.util.CoreUtil;
-import net.certiv.dsl.core.util.antlr.AntlrUtil;
 import net.certiv.dsl.jdt.util.DynamicLoader;
 import net.certiv.xvisitor.dt.core.XVisitorCore;
+import net.certiv.xvisitor.dt.core.console.Aspect;
 
 public class XVisitorBuilder extends DslBuilder {
 
 	private static final String TASK = "XVisitor build";
-	private static final IStatus FAIL_STATUS = new Status(IStatus.CANCEL, XVisitorCore.PLUGIN_ID,
-			"XVisitor build failed.");
-
-	protected static final Comparator<URL> URLComp = new Comparator<URL>() {
+	private static final Comparator<URL> URLComp = new Comparator<URL>() {
 
 		@Override
 		public int compare(URL o1, URL o2) {
 			return o1.toString().compareToIgnoreCase(o1.toString());
+		}
+	};
+
+	public static final Comparator<ICodeUnit> NameComp = new Comparator<ICodeUnit>() {
+
+		@Override
+		public int compare(ICodeUnit u1, ICodeUnit u2) {
+			return u1.getElementName().compareTo(u2.getElementName());
 		}
 	};
 
@@ -81,6 +90,7 @@ public class XVisitorBuilder extends DslBuilder {
 		if (units.isEmpty()) return Status.OK_STATUS;
 		try {
 			monitor.beginTask(TASK, WORK_BUILD);
+			units.sort(NameComp);
 			for (ICodeUnit unit : units) {
 				compileGrammar(unit, CoreUtil.subMonitorFor(monitor, WORK_BUILD));
 			}
@@ -91,124 +101,132 @@ public class XVisitorBuilder extends DslBuilder {
 		}
 	}
 
-	private void compileGrammar(ICodeUnit unit, IProgressMonitor monitor) {
-		try {
-			String srcFile = unit.getLocation().toString();
-			IPath output = determineBuildPath(unit);
-			if (output == null) {
-				explain(Cause.PATH_ERR, unit.getPath().toString());
-				CoreUtil.showStatusLineMessage("Build failed " + unit.getPath().toString(), false);
-				return;
-			}
+	private class IsoBuilder implements Runnable {
 
-			IPath unitPath = unit.getPath();
-			IPath dest = output.makeRelativeTo(unitPath);
-			Log.info(this, "Building %s -> %s", unitPath.lastSegment(), dest);
+		private ICodeUnit unit;
+		private IProgressMonitor monitor;
 
-			List<String> srcFiles = new ArrayList<>();
-			srcFiles.add(srcFile);
-			monitor.worked(1);
+		public IsoBuilder(ICodeUnit unit, IProgressMonitor monitor) {
+			this.unit = unit;
+			this.monitor = monitor;
+		}
 
-			Job buildJob = new Job("XVisitor Builder") {
+		@Override
+		public void run() {
+			if (!lock(unit)) return;
 
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
+			try {
+				String displayname = srcName(unit, false);
+				IPath pathname = unit.getPath();
+				String location = unit.getLocation().toString();
 
-					// install a target specific project classloader
-					Thread thread = Thread.currentThread();
-					ClassLoader parent = thread.getContextClassLoader();
+				DslParseRecord record = unit.getDefaultParseRecord();
+				if (!record.hasTree()) {
+					report(CS.ERROR, Cause.UNIT_ERR, srcName(unit, false), "reconciler produced no parse tree");
+					CoreUtil.showStatusLineMessage("Skipped  %s", pathname);
+					return;
+				}
 
-					boolean ok = true;
-					DslParseRecord record = unit.getDefaultParseRecord();
-					try (DynamicLoader loader = DynamicLoader.create(unit.getProject(), parent)) {
+				IPath output = null;
+				try {
+					output = BuildUtil.resolveOutputPath(record);
+				} catch (ModelException ex) {
+					report(CS.ERROR, Cause.SRC_ERRS, ex.getMessage(), displayname);
+				}
+				monitor.worked(1);
 
-						thread.setContextClassLoader(loader);
-						record.getCollector().beginCollecting(unit.getResource(), record.markerId);
+				if (output == null) {
+					report(CS.ERROR, Cause.PATH_ERR, pathname);
+					CoreUtil.showStatusLineMessage("No output path for %s", pathname);
+					return;
+				}
 
-						Tool tool = new Tool();
-						tool.removeListeners();
-						tool.addListener(new ToolErrorListener(unit.getDefaultParseRecord()));
-						tool.setLevel("warn");
-						tool.setLibDirectory(output.toString());
-						tool.setOutputDirectory(output.toString());
-						tool.setGrammarFiles(srcFiles);
-						monitor.worked(1);
+				IPath dest = output.makeRelativeTo(pathname); // XXX: fix?
+				report(CS.INFO, Cause.BUILD, displayname, dest);
+				monitor.worked(1);
 
-						try {
-							tool.genModel();
-							monitor.worked(1);
+				Throwable err = null;
+				Thread thread = Thread.currentThread();
+				ClassLoader parent = thread.getContextClassLoader();
+				try (DynamicLoader loader = DynamicLoader.create(unit.getProject(), parent)) {
+					thread.setContextClassLoader(loader);
 
-						} catch (Exception | Error e) {
-							ok = false;
-							Log.error(this, "XVisitor build failed: " + e.getMessage());
-							Log.error(this, " - Src: " + srcFiles);
-							Log.error(this, " - Gen: " + output);
+					Tool tool = new Tool();
+					tool.removeListeners();
+					tool.addListener(new ToolErrorListener(unit.getDefaultParseRecord()));
+					tool.setGrammarFiles(location);
+					tool.setLevel("warn");
+					tool.setOutputDirectory(output.toString());
 
-							try (URLClassLoader urlLoader = (URLClassLoader) thread.getContextClassLoader()) {
-								URL[] urls = urlLoader.getURLs();
-								Arrays.sort(urls, URLComp);
-								Log.error(this, " - Classpath: " + urls);
-							} catch (IOException e1) {}
-						}
-
-					} catch (IOException e) {
-						Log.error(this, "Dynamic loader error: " + e.getMessage());
-
-					} finally {
-						record.getCollector().endCollecting();
-					}
-
-					thread.setContextClassLoader(parent);
-					postCompileCleanup(unit, output, monitor);
+					ProblemCollector collector = record.getCollector();
 					monitor.worked(1);
 
-					if (!ok) {
-						String failMsg = "Build error " + unitPath.toString();
-						CoreUtil.showStatusLineMessage(failMsg, true);
-						return FAIL_STATUS;
+					try {
+						collector.beginCollecting(unit.getResource(), record.markerId);
+						tool.genModel();
+
+					} catch (Exception | Error e) {
+						err = e;
+						report(CS.ERROR, Cause.BUILD_ERR, e.getMessage(), displayname, dest);
+						report(CS.INFO, Cause.BUILD_ERR, "dump", "Src", location);
+						report(CS.INFO, Cause.BUILD_ERR, "dump", "out", output);
+
+						try (URLClassLoader urlLoader = (URLClassLoader) thread.getContextClassLoader()) {
+							URL[] urls = urlLoader.getURLs();
+							Arrays.sort(urls, URLComp);
+							for (URL url : urls) {
+								report(CS.INFO, Cause.LOADER_URL, url);
+							}
+						} catch (IOException ex) {}
+
+					} finally {
+						collector.endCollecting();
+						monitor.worked(1);
 					}
 
-					String msg = "Built " + unitPath.toString();
-					CoreUtil.showStatusLineMessage(msg, false);
-					return Status.OK_STATUS;
+				} catch (Exception e) {
+					report(CS.ERROR, Cause.LOADER_ERR, e.getMessage());
+
+				} finally {
+					thread.setContextClassLoader(parent);
 				}
-			};
 
-			// finalize and schedule job
-			buildJob.setPriority(Job.BUILD);
-			buildJob.setSystem(true);
-			buildJob.schedule();
+				if (err != null || record.hasErrors()) {
+					CoreUtil.showStatusLineMessage("Build error %s", pathname);
+					int cnt = record.getErrorCnt() + record.getWarningCnt();
+					if (cnt > 0) report(CS.ERROR, Cause.SRC_PRBM, cnt, displayname);
+					if (err != null) report(CS.ERROR, Cause.SRC_ERRS, err.getMessage(), displayname);
 
-			postCompileCleanup(unit, output, monitor);
-			monitor.worked(1);
+				} else {
+					String msg = "Built " + pathname.toString();
+					CoreUtil.showStatusLineMessage(msg, false);
+					report(CS.INFO, Cause.BUILT, displayname, dest);
+					postCompileCleanup(unit, output, monitor);
+				}
 
-		} catch (Exception | Error e) {
-			explain(Cause.UNIT_ERR, unit.getPath().toString());
-			CoreUtil.showStatusLineMessage("Build failed " + unit.getPath().toString(), false);
+				monitor.worked(1);
+
+			} finally {
+				unit.unlock();
+			}
 		}
 	}
 
-	/**
-	 * Returns an output build path for the given grammar code unit. The build path
-	 * will be a filesystem absolute path or {@code null}. A {@code null} return
-	 * indicates that the given unit is not on a valid build path and, therefore, no
-	 * the unit should not be built.
-	 *
-	 * @param file the grammar IFile
-	 * @return a filesystem absolute path to the build folder or {@code null}
-	 */
-	private IPath determineBuildPath(ICodeUnit unit) {
-		if (!mgr.onSourceBuildPath(unit)) return null;
-
-		IPath buildPath = AntlrUtil.getGrammarInternalPackagePath(unit);
-		if (buildPath != null) {
-			buildPath = unit.getSourceRoot().append(buildPath);
-		} else {
-			buildPath = mgr.getBuildOutputPath(unit);
+	private void compileGrammar(ICodeUnit unit, IProgressMonitor monitor) throws ModelException {
+		Display display = CoreUtil.getStandardDisplay();
+		if (display != null) {
+			display.syncExec(new IsoBuilder(unit, monitor));
 		}
+	}
 
-		buildPath = unit.getProject().getLocation().append(buildPath);
-		return buildPath;
+	@Override
+	protected void report(CS kind, Cause cause, Object... args) {
+		getDslCore().consoleAppend(Aspect.BUILDER, kind, cause.toString(), args);
+	}
+
+	@Override
+	protected String destPackage(ICodeUnit unit) {
+		return BuildUtil.grammarDefinedPackage(unit.getDefaultParseRecord());
 	}
 
 	// ----
@@ -243,7 +261,7 @@ public class XVisitorBuilder extends DslBuilder {
 				if (markDerived) {
 					// and set generated files as derived resources
 					String name = unit.getElementName();
-					int dot = name.lastIndexOf('.');
+					int dot = name.lastIndexOf(Chars.DOT);
 					name = name.substring(0, dot);
 					String ext = name.substring(dot + 1);
 					for (IResource res : folder.members()) {
@@ -310,7 +328,7 @@ public class XVisitorBuilder extends DslBuilder {
 				op.run(monitor);
 			}
 		} catch (OperationCanceledException e) {
-			Log.warn(this, "Ambiguous imports, organization cancelled");
+			Log.debug(this, "Ambiguous imports, organization skipped");
 		} catch (Exception e) {
 			Log.warn(this, "Failed to Organize imports");
 		}

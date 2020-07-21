@@ -1,4 +1,4 @@
-package net.certiv.xvisitor.dt.ui;
+package net.certiv.xvisitor.dt.ui.editor;
 
 import org.eclipse.jface.text.IAutoEditStrategy;
 
@@ -9,33 +9,27 @@ import net.certiv.dsl.ui.templates.CompletionManager;
 
 public class XvCompletionManager extends CompletionManager {
 
-	private static final String GRAMMAR = "grammar";
-	private static final String OPTIONS = "options";
-	private static final String RULES = "rules";
+	public static final String GRAMMAR = "grammar";
+	public static final String OPTIONS = "options";
+	public static final String RULE = "rule";
 
 	public XvCompletionManager(DslUI ui, String editorId) {
-		super(ui, editorId, MODULE, IMPORT, GRAMMAR, OPTIONS, RULES);
+		super(ui, editorId, GRAMMAR, OPTIONS, RULE);
 	}
 
 	@Override
 	public String getContentAssistScope(IStatement stmt) {
 		switch (stmt.getModelType()) {
-			case MODULE:
-				return MODULE;
-
-			case IMPORT:
-				return IMPORT;
-
-			case DECLARATION:
-				return GRAMMAR;
-
 			case STATEMENT:
-				if (stmt.getElementName().equals(OPTIONS)) return OPTIONS;
-				return RULES;
+				switch (stmt.getElementName()) {
+					case OPTIONS:
+						return OPTIONS;
+					case RULE:
+						return RULE;
+					default:
+						return GRAMMAR;
+				}
 
-			case FIELD:
-			case BEG_BLOCK:
-			case END_BLOCK:
 			default:
 				return null;
 		}

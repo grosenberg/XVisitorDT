@@ -4,7 +4,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
-import net.certiv.dsl.core.color.IColorManager;
+import net.certiv.dsl.core.color.DslColorRegistry;
 import net.certiv.dsl.core.preferences.IPrefsManager;
 import net.certiv.dsl.ui.editor.DslEditor;
 import net.certiv.dsl.ui.editor.DslSourceViewerConfiguration;
@@ -66,8 +66,8 @@ public class XVisitorTextTools extends DslTextTools {
 		return new XVisitorSimpleSourceViewerConfiguration(store, null, partitioning);
 	}
 
-	private IColorManager getColorManager() {
-		return XVisitorCore.getDefault().getColorManager();
+	private DslColorRegistry getColorManager() {
+		return XVisitorCore.getDefault().getColorRegistry();
 	}
 
 	@Override

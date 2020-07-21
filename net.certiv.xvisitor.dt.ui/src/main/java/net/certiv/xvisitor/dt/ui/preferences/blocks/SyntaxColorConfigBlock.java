@@ -1,4 +1,4 @@
-package net.certiv.xvisitor.dt.ui.preferences.page;
+package net.certiv.xvisitor.dt.ui.preferences.blocks;
 
 import java.io.InputStream;
 import java.util.List;
@@ -10,10 +10,9 @@ import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-import net.certiv.dsl.core.color.DslColorManager;
-import net.certiv.dsl.core.color.IColorManager;
-import net.certiv.dsl.core.preferences.PrefsDeltaManager;
+import net.certiv.dsl.core.color.DslColorRegistry;
 import net.certiv.dsl.core.preferences.IPrefsManager;
+import net.certiv.dsl.core.preferences.PrefsDeltaManager;
 import net.certiv.dsl.core.preferences.consts.Editor;
 import net.certiv.dsl.ui.editor.DslEditor;
 import net.certiv.dsl.ui.editor.DslSourceViewer;
@@ -23,14 +22,15 @@ import net.certiv.xvisitor.dt.core.preferences.Prefs;
 import net.certiv.xvisitor.dt.ui.XVisitorUI;
 import net.certiv.xvisitor.dt.ui.editor.Partitions;
 import net.certiv.xvisitor.dt.ui.editor.XVisitorSimpleSourceViewerConfiguration;
+import net.certiv.xvisitor.dt.ui.preferences.page.SyntaxColorPage;
 
 public class SyntaxColorConfigBlock extends AbstractSyntaxColorConfigBlock {
 
 	private static final String PREVIEW_FILE_NAME = "Preview.xv";
 
 	public SyntaxColorConfigBlock(SyntaxColorPage page, PrefsDeltaManager delta, FormToolkit formkit,
-			DslColorManager colorMgr) {
-		super(page, delta, formkit, colorMgr);
+			DslColorRegistry reg) {
+		super(page, delta, formkit, reg);
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class SyntaxColorConfigBlock extends AbstractSyntaxColorConfigBlock {
 	}
 
 	@Override
-	protected DslSourceViewerConfiguration createSimpleSourceViewerConfiguration(IColorManager colorMgr,
+	protected DslSourceViewerConfiguration createSimpleSourceViewerConfiguration(DslColorRegistry colorMgr,
 			IPrefsManager store, DslEditor editor, boolean configFormatter) {
 		return new XVisitorSimpleSourceViewerConfiguration(colorMgr, store, editor, Partitions.PARTITIONING,
 				configFormatter);

@@ -3,7 +3,7 @@ package net.certiv.xvisitor.dt.ui.preferences.page;
 import org.eclipse.jface.text.IDocument;
 
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.color.IColorManager;
+import net.certiv.dsl.core.color.DslColorRegistry;
 import net.certiv.dsl.core.preferences.IPrefsManager;
 import net.certiv.dsl.core.preferences.PrefsManager;
 import net.certiv.dsl.ui.DslUI;
@@ -50,8 +50,8 @@ public class TemplatesPage extends DslTemplatePreferencePage {
 		return XVisitorUI.getDefault().getCompletionMgr();
 	}
 
-	private IColorManager getColorManager() {
-		return XVisitorCore.getDefault().getColorManager();
+	private DslColorRegistry getColorManager() {
+		return XVisitorCore.getDefault().getColorRegistry();
 	}
 
 	private DslTextTools getTextTools() {

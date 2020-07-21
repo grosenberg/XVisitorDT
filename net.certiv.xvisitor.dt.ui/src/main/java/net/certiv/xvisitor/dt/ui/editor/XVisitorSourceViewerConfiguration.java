@@ -18,7 +18,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Image;
 
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.color.IColorManager;
+import net.certiv.dsl.core.color.DslColorRegistry;
 import net.certiv.dsl.core.preferences.IPrefsManager;
 import net.certiv.dsl.core.util.Chars;
 import net.certiv.dsl.core.util.Strings;
@@ -29,6 +29,7 @@ import net.certiv.dsl.ui.editor.DoubleClickStrategy;
 import net.certiv.dsl.ui.editor.DslEditor;
 import net.certiv.dsl.ui.editor.DslSourceViewerConfiguration;
 import net.certiv.dsl.ui.editor.reconcile.PresentationReconciler;
+import net.certiv.dsl.ui.editor.semantic.StylesManager;
 import net.certiv.dsl.ui.editor.text.completion.CompletionCategory;
 import net.certiv.dsl.ui.editor.text.completion.CompletionProcessor;
 import net.certiv.dsl.ui.editor.text.completion.engines.FieldEngine;
@@ -57,9 +58,9 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	private ScannerString stringScanner;
 	private ScannerAction actionScanner;
 
-	public XVisitorSourceViewerConfiguration(IColorManager colorMgr, IPrefsManager store, DslEditor editor,
+	public XVisitorSourceViewerConfiguration(DslColorRegistry reg, IPrefsManager store, DslEditor editor,
 			String partitioning) {
-		super(XVisitorCore.getDefault(), colorMgr, store, editor, partitioning);
+		super(XVisitorCore.getDefault(), reg, store, editor, partitioning);
 	}
 
 	@Override
@@ -75,12 +76,14 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	@Override
 	protected void initializeScanners() {
 		IPrefsManager store = getPrefStore();
-		commentJDScanner = new ScannerCommentJD(store);
-		commentMLScanner = new ScannerCommentML(store);
-		commentSLScanner = new ScannerCommentSL(store);
-		stringScanner = new ScannerString(store);
-		actionScanner = new ScannerAction(store);
-		defaultScanner = new ScannerKeyword(store);
+		StylesManager mgr = getDslUI().getStylesManager();
+
+		commentJDScanner = new ScannerCommentJD(store, mgr);
+		commentMLScanner = new ScannerCommentML(store, mgr);
+		commentSLScanner = new ScannerCommentSL(store, mgr);
+		stringScanner = new ScannerString(store, mgr);
+		actionScanner = new ScannerAction(store, mgr);
+		defaultScanner = new ScannerKeyword(store, mgr);
 	}
 
 	@Override
@@ -146,8 +149,8 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	}
 
 	/**
-	 * Adapts the behavior of the contained components to the change encoded in the
-	 * given event.
+	 * Adapts the behavior of the contained components to the change encoded in the given
+	 * event.
 	 *
 	 * @param event the event to which to adapt
 	 */
@@ -162,8 +165,8 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	}
 
 	/**
-	 * Determines whether the preference change encoded by the given event changes
-	 * the behavior of one of its contained components.
+	 * Determines whether the preference change encoded by the given event changes the
+	 * behavior of one of its contained components.
 	 *
 	 * @param event the event to be investigated
 	 * @return {@code true} if event causes a behavioral change
@@ -197,16 +200,16 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	 * Loads content formatters into the SourceViewer for execution on receipt of a
 	 * ISourceViewer.FORMAT command.
 	 * <p>
-	 * The master strategy utilizes the DSL formatter tree grammar to drive
-	 * formatting of the default partition. The slave strategies are executed to
-	 * format particular non-default partitions.
+	 * The master strategy utilizes the DSL formatter tree grammar to drive formatting of
+	 * the default partition. The slave strategies are executed to format particular
+	 * non-default partitions.
 	 * <p>
 	 * Two built-in non-default partition strategies are provided:
-	 * {@code CommentFormattingStrategy()} and {@code JavaFormattingStrategy()} that
-	 * use the JDT formatter and global JDT formatting preferences. The comment
-	 * strategy can format stand-alone single-line, mutiple-line, and JavaDoc-style
-	 * comments. The JavaCode strategy can format discrete blocks of otherwise
-	 * standard Java code, including embedded comments.
+	 * {@code CommentFormattingStrategy()} and {@code JavaFormattingStrategy()} that use
+	 * the JDT formatter and global JDT formatting preferences. The comment strategy can
+	 * format stand-alone single-line, mutiple-line, and JavaDoc-style comments. The
+	 * JavaCode strategy can format discrete blocks of otherwise standard Java code,
+	 * including embedded comments.
 	 *
 	 * @param sourceViewer the viewer that will contain the content to format
 	 * @return the content formatter
@@ -215,6 +218,7 @@ public class XVisitorSourceViewerConfiguration extends DslSourceViewerConfigurat
 	public IContentFormatter getContentFormatter(ISourceViewer sourceViewer) {
 		MultiPassContentFormatter formatter = (MultiPassContentFormatter) super.getContentFormatter(sourceViewer);
 		formatter.setSlaveStrategy(new ActionCodeFormattingStrategy(), Partitions.ACTION);
+
 		// formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(),
 		// Partitions.COMMENT_JD);
 		// formatter.setSlaveStrategy(new GrammarCommentFormattingStrategy(),

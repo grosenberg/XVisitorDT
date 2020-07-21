@@ -7,7 +7,7 @@ import net.certiv.dsl.ui.editor.text.completion.DslTemplateContext;
 
 public class XVisitorTemplateContext extends DslTemplateContext {
 
-	protected XVisitorTemplateContext(XVisitorTemplateContextType type, CompletionContext context, IRegion region) {
+	protected XVisitorTemplateContext(XVisitorContextType type, CompletionContext context, IRegion region) {
 		super(type, context, region);
 	}
 }

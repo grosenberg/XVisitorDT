@@ -169,15 +169,21 @@
            translations="src/main/resources/templates/templates.properties">
      </include>
       <contextType
-            class="net.certiv.xvisitor.dt.ui.templates.XVisitorTemplateContextType"
+            class="net.certiv.xvisitor.dt.ui.templates.GrammarContextType"
             id="net.certiv.xvisitor.dt.ui.templates.grammar"
             name="Grammar"
             registryId="net.certiv.xvisitor.dt.ui.editor.XVisitorEditor">
       </contextType>
       <contextType
-            class="net.certiv.xvisitor.dt.ui.templates.XVisitorTemplateContextType"
+            class="net.certiv.xvisitor.dt.ui.templates.OptionsContextType"
             id="net.certiv.xvisitor.dt.ui.templates.options"
             name="Options"
+            registryId="net.certiv.xvisitor.dt.ui.editor.XVisitorEditor">
+      </contextType>
+      <contextType
+            class="net.certiv.xvisitor.dt.ui.templates.RuleContextType"
+            id="net.certiv.xvisitor.dt.ui.templates.rule"
+            name="Rule"
             registryId="net.certiv.xvisitor.dt.ui.editor.XVisitorEditor">
       </contextType>
       <resolver

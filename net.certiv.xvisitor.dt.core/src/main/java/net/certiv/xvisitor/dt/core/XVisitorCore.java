@@ -21,7 +21,7 @@ public class XVisitorCore extends DslCore {
 
 	@Override
 	public DslCore getDslCore() {
-		return getDefault();
+		return this;
 	}
 
 	@Override

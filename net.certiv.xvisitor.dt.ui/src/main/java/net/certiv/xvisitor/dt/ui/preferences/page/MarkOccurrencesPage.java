@@ -6,7 +6,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.color.DslColorManager;
+import net.certiv.dsl.core.color.DslColorRegistry;
 import net.certiv.dsl.core.preferences.PrefsDeltaManager;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.preferences.blocks.AbstractMarkOccurrencesConfigBlock;
@@ -34,14 +34,14 @@ public class MarkOccurrencesPage extends AbstractPreferencePage {
 
 	@Override
 	protected IPreferenceConfigBlock createConfigurationBlock(PrefsDeltaManager delta) {
-		return new MarkOccurrencesConfigBlock(this, delta, getFormkit(), getColorMgr());
+		return new MarkOccurrencesConfigBlock(this, delta, getFormkit(), getColorRegistry());
 	}
 
 	public class MarkOccurrencesConfigBlock extends AbstractMarkOccurrencesConfigBlock {
 
 		public MarkOccurrencesConfigBlock(IDslPreferencePage page, PrefsDeltaManager delta, FormToolkit formkit,
-				DslColorManager colorMgr) {
-			super(page, delta, formkit, colorMgr);
+				DslColorRegistry reg) {
+			super(page, delta, formkit, reg);
 		}
 
 		@Override

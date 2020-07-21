@@ -3,7 +3,7 @@ package net.certiv.xvisitor.dt.ui.preferences.page;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.color.IColorManager;
+import net.certiv.dsl.core.color.DslColorRegistry;
 import net.certiv.dsl.core.preferences.IPrefsManager;
 import net.certiv.dsl.ui.DslUI;
 import net.certiv.dsl.ui.editor.DslEditor;
@@ -22,7 +22,7 @@ public class FormatterPage extends DslFormatterPreferencePage {
 	private FormatterFactory factory;
 
 	@Override
-	protected DslSourceViewerConfiguration createSimpleSourceViewerConfiguration(IColorManager colorManager,
+	protected DslSourceViewerConfiguration createSimpleSourceViewerConfiguration(DslColorRegistry colorManager,
 			IPreferenceStore preferenceStore, DslEditor editor, boolean configureFormatter) {
 
 		return new XVisitorSimpleSourceViewerConfiguration(colorManager, (IPrefsManager) preferenceStore, editor,

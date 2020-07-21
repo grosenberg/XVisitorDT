@@ -7,11 +7,14 @@ import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.log.Log.LogLevel;
 import net.certiv.dsl.ui.DslImageManager;
 import net.certiv.dsl.ui.DslUI;
+import net.certiv.dsl.ui.console.StyledConsole;
 import net.certiv.dsl.ui.editor.text.DslTextTools;
 import net.certiv.dsl.ui.templates.CompletionManager;
 import net.certiv.xvisitor.dt.core.XVisitorCore;
+import net.certiv.xvisitor.dt.ui.console.XvConsoleFactory;
 import net.certiv.xvisitor.dt.ui.editor.XVisitorEditor;
 import net.certiv.xvisitor.dt.ui.editor.XVisitorTextTools;
+import net.certiv.xvisitor.dt.ui.editor.XvCompletionManager;
 
 public class XVisitorUI extends DslUI {
 
@@ -26,11 +29,6 @@ public class XVisitorUI extends DslUI {
 		Log.defLevel(LogLevel.Debug);
 	}
 
-	/**
-	 * Returns the shared instance of the plugin.
-	 *
-	 * @return the shared instance
-	 */
 	public static XVisitorUI getDefault() {
 		return plugin;
 	}
@@ -43,11 +41,6 @@ public class XVisitorUI extends DslUI {
 	@Override
 	public DslCore getDslCore() {
 		return XVisitorCore.getDefault();
-	}
-
-	@Override
-	public String getEditorId() {
-		return XVisitorEditor.EDITOR_ID;
 	}
 
 	@Override
@@ -66,6 +59,16 @@ public class XVisitorUI extends DslUI {
 	@Override
 	public String getPluginId() {
 		return getDefault().getBundle().getSymbolicName();
+	}
+
+	@Override
+	public String getEditorId() {
+		return XVisitorEditor.EDITOR_ID;
+	}
+
+	@Override
+	protected StyledConsole getConsole() {
+		return XvConsoleFactory.getFactory().getConsole();
 	}
 
 	@Override
