@@ -10,6 +10,8 @@
  *******************************************************************************/
 package net.certiv.xvisitor.dt.ui.wizards;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -17,20 +19,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 
-import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.ui.DslUI;
+import net.certiv.dsl.core.util.Chars;
 import net.certiv.dsl.ui.fields.ITextButtonAdapter;
 import net.certiv.dsl.ui.fields.TextButtonField;
-import net.certiv.dsl.ui.wizards.DslBaseWizard;
-import net.certiv.dsl.ui.wizards.DslContainerWizardPage;
-import net.certiv.xvisitor.dt.core.XVisitorCore;
-import net.certiv.xvisitor.dt.ui.XVisitorUI;
+import net.certiv.dsl.ui.wizard.DslFileWizard;
+import net.certiv.dsl.ui.wizard.DslFileWizardPage;
 
 /**
- * The class {@code NewXVisitorWizardPage} contains controls and validation routines
- * for a 'New DSL WizardPage'.
+ * The class {@code NewXVisitorWizardPage} contains controls and validation routines for a
+ * 'New DSL WizardPage'.
  */
-public class NewXVisitorWizardPage extends DslContainerWizardPage {
+public class NewXVisitorWizardPage extends DslFileWizardPage {
 
 	protected final static String PACKAGE = "package";	//$NON-NLS-1$
 	protected final static String PARSER = "parser";	//$NON-NLS-1$
@@ -46,39 +45,18 @@ public class NewXVisitorWizardPage extends DslContainerWizardPage {
 	 *
 	 * @param pageName the wizard page's name
 	 */
-	public NewXVisitorWizardPage(DslBaseWizard wizard, IStructuredSelection selection) {
+	public NewXVisitorWizardPage(DslFileWizard wizard, IStructuredSelection selection) {
 		super("XVNewWizardPage", wizard, selection);
-	}
 
-	@Override
-	public DslUI getDslUI() {
-		return XVisitorUI.getDefault();
-	}
-
-	@Override
-	public DslCore getDslCore() {
-		return XVisitorCore.getDefault();
-	}
-
-	@Override
-	public void createControl(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
-		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
-		GridLayoutFactory.fillDefaults().spacing(6, 9).margins(6, 6).applyTo(container);
-
-		setFileName("Visitor");
+		setTitle("Grammar");
+		setDescription("Create new XVisitor grammar");
+		setFilename("Visitor");
 		setFileExtension("xv");
-		createContainerControl(container);
-		createSubControls(container);
-
-		validatePage();
-		setErrorMessage(null);
-		setMessage(null);
-		setControl(container);
 	}
 
-	private void createSubControls(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
+	@Override
+	protected void createCustomGroup(Composite topLevel) {
+		Composite container = new Composite(topLevel, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(container);
 		GridLayoutFactory.fillDefaults().numColumns(3).margins(6, 6).applyTo(container);
 
@@ -112,7 +90,7 @@ public class NewXVisitorWizardPage extends DslContainerWizardPage {
 	}
 
 	/** Returns the text of the package input field. */
-	public String getPackageText() {
+	public String getPackageName() {
 		return pkgField.getText();
 	}
 
@@ -129,5 +107,26 @@ public class NewXVisitorWizardPage extends DslContainerWizardPage {
 	/** Returns the text of for the import */
 	public String getImportTxt() {
 		return importTxt;
+	}
+
+	@Override
+	public IFile createNewFile() {
+		IPath base = getContainerFullPath();
+		String filename = getFilename();
+		String packageName = getPackageName();
+		String parserName = getParserClass();
+		String superclass = getSuperClass();
+		String importTxt = getImportTxt();
+
+		int dot = filename.lastIndexOf(Chars.DOT);
+		String name = (dot != -1) ? filename.substring(0, dot) : filename;
+
+		String content = ContentGenerator.newVisitor(name, packageName, parserName, superclass, importTxt);
+		return createNewFile(base, filename, getInitialContentStream(content));
+	}
+
+	@Override
+	protected String getInitialContents() {
+		return null;
 	}
 }

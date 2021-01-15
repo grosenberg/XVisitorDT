@@ -78,7 +78,7 @@ public abstract class StructureBuilder extends Processor {
 		builder.pushParent(stmt);
 		String actionContent = GrammarUtil.getRuleText(ctx.actionBlock().text()).trim();
 		actionContent = Strings.ellipsize(actionContent, 32);
-		builder.field(ctx, ctx, ModelType.NATIVE, new Specialization(SpecializedType.Value, name, ctx, actionContent));
+		builder.field(ModelType.NATIVE, ctx, ctx, new Specialization(SpecializedType.Value, name, ctx, actionContent));
 		builder.popParent();
 	}
 
@@ -90,7 +90,7 @@ public abstract class StructureBuilder extends Processor {
 
 		builder.pushParent(stmt);
 		for (Token rule : ctx.rules) {
-			builder.field(ctx, rule, ModelType.FUNC,
+			builder.field(ModelType.FUNC, ctx, rule,
 					new Specialization(SpecializedType.PathRule, ruleName(ctx), ctx, rule.getText()));
 		}
 		builder.popParent();

@@ -17,12 +17,12 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.TokenStream;
+import org.apache.logging.log4j.Level;
 
 import org.eclipse.core.resources.IResourceStatus;
 
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.core.log.Log;
-import net.certiv.dsl.core.log.Log.LogLevel;
 import net.certiv.dsl.core.model.ModelException;
 import net.certiv.dsl.core.model.builder.ModelBuilder;
 import net.certiv.dsl.core.parser.DslErrorListener;
@@ -45,7 +45,7 @@ public class XVisitorSourceParser extends DslSourceParser {
 
 	public XVisitorSourceParser(DslParseRecord record) {
 		super(record);
-		Log.setLevel(this, LogLevel.Debug);
+		Log.setLevel(this, Level.DEBUG);
 	}
 
 	@Override

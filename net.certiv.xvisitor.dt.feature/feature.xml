@@ -2,7 +2,7 @@
 <feature
       id="net.certiv.xvisitor.dt.feature"
       label="XVisitorDT"
-      version="4.11.0.qualifier"
+      version="4.2.0.qualifier"
       provider-name="Certiv Analytics">
 
    <description url="http://www.certiv.net/">
@@ -10,7 +10,7 @@
    </description>
 
    <copyright url="http://www.certiv.net/">
-      Copyright 2008-2016 Certiv Analytics, all rights researved.
+      Copyright 2008-2020 Certiv Analytics, all rights researved.
    </copyright>
 
    <license url="http://www.certiv.net/">
@@ -232,26 +232,7 @@ litigation.
       <update label="Certiv Tools" url="http://www.certiv.net/updates"/>
    </url>
 
-   <includes
-         id="net.certiv.dsl.feature"
-         version="0.0.0"
-         search-location="both"/>
-
-   <includes
-         id="net.certiv.dsl.jdt.feature"
-         version="0.0.0"
-         search-location="both"/>
-
-   <includes
-         id="net.certiv.tools.feature"
-         version="0.0.0"
-         search-location="both"/>
-
    <requires>
-      <import plugin="net.certiv.dsl.jdt.plugin" version="0.10.0" match="greaterOrEqual"/>
-      <import plugin="net.certiv.dsl.ui" version="0.10.0" match="greaterOrEqual"/>
-      <import plugin="net.certiv.dsl.core" version="0.10.0" match="greaterOrEqual"/>
-      <import plugin="net.certiv.dsl.lib" version="0.10.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui" version="3.106.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.editors" version="3.8.200" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.ide" version="3.10.1" match="greaterOrEqual"/>
@@ -261,14 +242,19 @@ litigation.
       <import plugin="org.eclipse.jdt.core.manipulation" version="1.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jdt.ui" version="3.10.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.text" version="3.5.300" match="greaterOrEqual"/>
-      <import plugin="net.certiv.xvisitor.dt.core" version="4.10.0" match="greaterOrEqual"/>
+      <import plugin="net.certiv.xvisitor.dt.core" version="4.2.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.resources" version="3.9.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.filesystem" version="1.4.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.equinox.bidi"/>
       <import plugin="org.eclipse.jface.text" version="3.9.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.search" version="3.9.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.console"/>
       <import plugin="org.eclipse.ui.forms" version="3.6.200" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.workbench.texteditor" version="3.9.0" match="greaterOrEqual"/>
+      <import plugin="net.certiv.dsl.jdt.plugin" version="0.2.0" match="greaterOrEqual"/>
+      <import plugin="net.certiv.dsl.ui" version="0.2.0" match="greaterOrEqual"/>
+      <import plugin="net.certiv.dsl.core" version="0.2.0" match="greaterOrEqual"/>
+      <import plugin="net.certiv.dsl.lib" version="0.2.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
