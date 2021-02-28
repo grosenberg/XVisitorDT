@@ -18,18 +18,17 @@ import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.TokenStream;
 import org.apache.logging.log4j.Level;
-
 import org.eclipse.core.resources.IResourceStatus;
 
+import net.certiv.common.log.Log;
+import net.certiv.common.util.Strings;
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.model.ModelException;
 import net.certiv.dsl.core.model.builder.ModelBuilder;
 import net.certiv.dsl.core.parser.DslErrorListener;
 import net.certiv.dsl.core.parser.DslParseRecord;
 import net.certiv.dsl.core.parser.DslSourceParser;
 import net.certiv.dsl.core.parser.Origin;
-import net.certiv.dsl.core.util.Strings;
 import net.certiv.dsl.jdt.util.DynamicLoader;
 import net.certiv.xvisitor.dt.core.XVisitorCore;
 import net.certiv.xvisitor.dt.core.builder.BuildUtil;

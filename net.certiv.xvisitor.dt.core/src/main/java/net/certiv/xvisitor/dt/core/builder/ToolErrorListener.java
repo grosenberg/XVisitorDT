@@ -11,13 +11,12 @@
 package net.certiv.xvisitor.dt.core.builder;
 
 import org.antlr.v4.runtime.Token;
-
 import org.eclipse.core.resources.IMarker;
 
 import net.certiv.antlr.xvisitor.IToolListener;
 import net.certiv.antlr.xvisitor.tool.Messages;
 import net.certiv.antlr.xvisitor.tool.Messages.ToolMessage;
-import net.certiv.dsl.core.log.Log;
+import net.certiv.common.log.Log;
 import net.certiv.dsl.core.parser.DslParseRecord;
 import net.certiv.dsl.core.parser.problems.DslProblem;
 import net.certiv.v4.runtime.dsl.Antlr3Util;

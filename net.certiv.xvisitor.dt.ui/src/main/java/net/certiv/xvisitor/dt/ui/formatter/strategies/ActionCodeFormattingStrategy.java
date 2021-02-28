@@ -13,8 +13,8 @@ package net.certiv.xvisitor.dt.ui.formatter.strategies;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
+import net.certiv.common.log.Log;
 import net.certiv.dsl.core.formatter.IndentManipulation;
-import net.certiv.dsl.core.log.Log;
 import net.certiv.dsl.core.preferences.PrefsManager;
 import net.certiv.dsl.jdt.ui.formatter.strategies.JavaFormattingStrategy;
 import net.certiv.dsl.ui.editor.text.LineRegion;

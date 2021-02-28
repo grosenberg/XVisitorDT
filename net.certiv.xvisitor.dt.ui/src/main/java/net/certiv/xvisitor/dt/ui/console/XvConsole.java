@@ -12,8 +12,8 @@ package net.certiv.xvisitor.dt.ui.console;
 
 import java.util.List;
 
-import net.certiv.dsl.core.console.ConsoleRecordFactory.ConsoleRecord;
 import net.certiv.dsl.core.console.CS;
+import net.certiv.dsl.core.console.ConsoleRecordFactory.ConsoleRecord;
 import net.certiv.dsl.ui.console.StyledConsole;
 import net.certiv.xvisitor.dt.core.console.Aspect;
 import net.certiv.xvisitor.dt.ui.XVisitorUI;

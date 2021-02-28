@@ -15,8 +15,8 @@ import org.antlr.v4.runtime.CommonToken;
 import org.antlr.v4.runtime.TokenSource;
 import org.antlr.v4.runtime.misc.Pair;
 
+import net.certiv.common.util.Strings;
 import net.certiv.dsl.core.parser.IDslToken;
-import net.certiv.dsl.core.util.Strings;
 import net.certiv.xvisitor.dt.core.parser.gen.XVisitorLexer;
 
 public class XVisitorToken extends CommonToken implements IDslToken {

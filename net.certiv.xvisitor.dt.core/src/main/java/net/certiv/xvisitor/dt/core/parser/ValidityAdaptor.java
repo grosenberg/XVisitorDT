@@ -26,10 +26,10 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import net.certiv.antlr.runtime.xvisitor.Processor;
+import net.certiv.common.stores.TreeMultimap;
+import net.certiv.common.util.Reflect;
+import net.certiv.common.util.Strings;
 import net.certiv.dsl.core.parser.DslErrorListener;
-import net.certiv.dsl.core.util.Reflect;
-import net.certiv.dsl.core.util.Strings;
-import net.certiv.dsl.core.util.stores.TreeMultimap;
 import net.certiv.xvisitor.dt.core.parser.gen.XVisitorParser.GrammarSpecContext;
 import net.certiv.xvisitor.dt.core.parser.gen.XVisitorParser.ReferenceContext;
 import net.certiv.xvisitor.dt.core.parser.gen.XVisitorParser.WordContext;

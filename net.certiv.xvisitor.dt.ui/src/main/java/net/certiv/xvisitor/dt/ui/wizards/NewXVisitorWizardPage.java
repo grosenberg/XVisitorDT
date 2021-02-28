@@ -19,7 +19,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 
-import net.certiv.dsl.core.util.Chars;
+import net.certiv.common.util.Chars;
 import net.certiv.dsl.ui.fields.ITextButtonAdapter;
 import net.certiv.dsl.ui.fields.TextButtonField;
 import net.certiv.dsl.ui.wizard.DslFileWizard;

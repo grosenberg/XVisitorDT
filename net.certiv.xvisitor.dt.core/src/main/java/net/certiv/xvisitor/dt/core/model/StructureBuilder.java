@@ -16,10 +16,10 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import net.certiv.antlr.runtime.xvisitor.Processor;
+import net.certiv.common.util.Strings;
 import net.certiv.dsl.core.model.ModelType;
 import net.certiv.dsl.core.model.Statement;
 import net.certiv.dsl.core.model.builder.ModelBuilder;
-import net.certiv.dsl.core.util.Strings;
 import net.certiv.dsl.core.util.antlr.GrammarUtil;
 import net.certiv.xvisitor.dt.core.parser.gen.XVisitorParser;
 import net.certiv.xvisitor.dt.core.parser.gen.XVisitorParser.ActionContext;

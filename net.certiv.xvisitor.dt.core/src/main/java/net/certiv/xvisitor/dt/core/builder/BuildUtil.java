@@ -15,13 +15,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.antlr.v4.runtime.tree.RuleNode;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
+import net.certiv.common.util.Chars;
 import net.certiv.dsl.core.model.ModelException;
 import net.certiv.dsl.core.parser.DslParseRecord;
-import net.certiv.dsl.core.util.Chars;
 import net.certiv.dsl.core.util.antlr.GrammarUtil;
 import net.certiv.xvisitor.dt.core.parser.gen.XVisitorParser.ActionContext;
 import net.certiv.xvisitor.dt.core.parser.gen.XVisitorParser.OptionContext;
