@@ -3,7 +3,7 @@ Automatic-Module-Name: net.certiv.xvisitor.dt.core
 Bundle-ManifestVersion: 2
 Bundle-Name: XVisitor Core
 Bundle-SymbolicName: net.certiv.xvisitor.dt.core;singleton:=true
-Bundle-Version: 4.2.0.qualifier
+Bundle-Version: 4.2.1.qualifier
 Bundle-Activator: net.certiv.xvisitor.dt.core.XVisitorCore
 Require-Bundle: net.certiv.dsl.jdt.plugin;bundle-version="0.2.0",
  net.certiv.dsl.ui;bundle-version="0.2.0",

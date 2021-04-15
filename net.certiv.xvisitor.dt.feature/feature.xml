@@ -2,7 +2,7 @@
 <feature
       id="net.certiv.xvisitor.dt.feature"
       label="XVisitorDT"
-      version="4.2.0.qualifier"
+      version="4.2.1.qualifier"
       provider-name="Certiv Analytics">
 
    <description url="http://www.certiv.net/">
@@ -231,6 +231,15 @@ litigation.
    <url>
       <update label="Certiv Tools" url="http://www.certiv.net/updates"/>
    </url>
+
+   <includes
+         id="net.certiv.dsl.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="net.certiv.dsl.jdt.feature"
+         version="0.0.0"
+         optional="true"/>
 
    <requires>
       <import plugin="org.eclipse.ui" version="3.106.0" match="greaterOrEqual"/>
