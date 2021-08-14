@@ -26,6 +26,7 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import net.certiv.antlr.runtime.xvisitor.Processor;
+import net.certiv.common.stores.Result;
 import net.certiv.common.stores.TreeMultimap;
 import net.certiv.common.util.Reflect;
 import net.certiv.common.util.Strings;
@@ -45,13 +46,7 @@ public abstract class ValidityAdaptor extends Processor {
 	private List<String> ruleNames;
 	private List<String> termNames;
 
-	private static final Comparator<Token> comp = new Comparator<Token>() {
-
-		@Override
-		public int compare(Token o1, Token o2) {
-			return o1.getText().compareTo(o2.getText());
-		}
-	};
+	private static final Comparator<Token> comp = Comparator.comparing(Token::getText);
 
 	private final TreeMultimap<String, Token> xruleMap = new TreeMultimap<>(null, comp);
 	private final Set<String> xpaths = new HashSet<>();
@@ -151,31 +146,38 @@ public abstract class ValidityAdaptor extends Processor {
 		boolean lower = Character.isLowerCase(name.charAt(0));
 		if (lower && ruleNames.contains(name)) return;
 		if (!lower && termNames.contains(name)) return;
-		if (Reflect.hasField(ctx, name)) return;
+		Result<Boolean> hasField = Reflect.hasField(ctx, name);
+		if (hasField.valid() && hasField.result) return;
 
 		// no matching rule, terminal, or label found
 		String errType = !isReference ? "path element" : "or inaccessible reference";
 		String errMsg = String.format("Unknown %s: %s", errType, name);
-		errListener.syntaxError(parser, token, token.getLine(), token.getCharPositionInLine() + 1, errMsg, null);
+		errListener.syntaxError(parser, token, token.getLine(), token.getCharPositionInLine() + 1, errMsg,
+				null);
 	}
 
 	private void reportNameMismatch(Token token, String filename) {
-		String errMsg = String.format("Grammar name '%s' does not match file name '%s'", token.getText(), filename);
-		errListener.syntaxError(parser, token, token.getLine(), token.getCharPositionInLine() + 1, errMsg, null);
+		String errMsg = String.format("Grammar name '%s' does not match file name '%s'", token.getText(),
+				filename);
+		errListener.syntaxError(parser, token, token.getLine(), token.getCharPositionInLine() + 1, errMsg,
+				null);
 	}
 
 	private void reportDupXMain(Token token) {
 		String errMsg = String.format("Duplicate main rule: %s", token.getText());
-		errListener.syntaxError(parser, token, token.getLine(), token.getCharPositionInLine() + 1, errMsg, null);
+		errListener.syntaxError(parser, token, token.getLine(), token.getCharPositionInLine() + 1, errMsg,
+				null);
 	}
 
 	private void reportDupXPath(Token token) {
 		String errMsg = String.format("Duplicate xpath rule: %s", token.getText());
-		errListener.syntaxError(parser, token, token.getLine(), token.getCharPositionInLine() + 1, errMsg, null);
+		errListener.syntaxError(parser, token, token.getLine(), token.getCharPositionInLine() + 1, errMsg,
+				null);
 	}
 
 	private void reportMissingXPath(Token token) {
 		String errMsg = String.format("Missing XPath rule: %s", token.getText());
-		errListener.syntaxError(parser, token, token.getLine(), token.getCharPositionInLine() + 1, errMsg, null);
+		errListener.syntaxError(parser, token, token.getLine(), token.getCharPositionInLine() + 1, errMsg,
+				null);
 	}
 }

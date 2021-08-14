@@ -65,7 +65,7 @@ import net.certiv.xvisitor.dt.core.console.Aspect;
 public class XVisitorBuilder extends DslBuilder {
 
 	private static final String TASK = "XVisitor build";
-	private static final Comparator<URL> URLComp = new Comparator<URL>() {
+	private static final Comparator<URL> URLComp = new Comparator<>() {
 
 		@Override
 		public int compare(URL o1, URL o2) {
@@ -73,16 +73,9 @@ public class XVisitorBuilder extends DslBuilder {
 		}
 	};
 
-	public static final Comparator<ICodeUnit> NameComp = new Comparator<ICodeUnit>() {
-
-		@Override
-		public int compare(ICodeUnit u1, ICodeUnit u2) {
-			return u1.getElementName().compareTo(u2.getElementName());
-		}
-	};
+	public static final Comparator<ICodeUnit> NameComp = Comparator.comparing(ICodeUnit::getElementName);
 
 	public XVisitorBuilder() {
-		super();
 	}
 
 	@Override
@@ -96,7 +89,8 @@ public class XVisitorBuilder extends DslBuilder {
 	}
 
 	@Override
-	protected IStatus buildUnits(List<ICodeUnit> units, IProgressMonitor monitor, int ticks) throws CoreException {
+	protected IStatus buildUnits(List<ICodeUnit> units, IProgressMonitor monitor, int ticks)
+			throws CoreException {
 		if (units.isEmpty()) return Status.OK_STATUS;
 		try {
 			monitor.beginTask(TASK, WORK_BUILD);
@@ -132,7 +126,8 @@ public class XVisitorBuilder extends DslBuilder {
 
 				DslParseRecord record = unit.getDefaultParseRecord();
 				if (!record.hasTree()) {
-					report(CS.ERROR, Cause.UNIT_ERR, srcName(unit, false), "reconciler produced no parse tree");
+					report(CS.ERROR, Cause.UNIT_ERR, srcName(unit, false),
+							"reconciler produced no parse tree");
 					CoreUtil.showStatusLineMessage("Skipped  %s", pathname);
 					return;
 				}
@@ -152,7 +147,7 @@ public class XVisitorBuilder extends DslBuilder {
 				}
 
 				IPath dest = output.makeRelativeTo(pathname); // XXX: fix?
-				report(CS.INFO, Cause.BUILD, displayname, dest);
+				report(CS.INFO, Cause.BUILD, "Start", displayname, dest);
 				monitor.worked(1);
 
 				Throwable err = null;
@@ -195,7 +190,7 @@ public class XVisitorBuilder extends DslBuilder {
 					}
 
 				} catch (Exception e) {
-					report(CS.ERROR, Cause.LOADER_ERR, e.getMessage());
+					report(CS.ERROR, Cause.LOADER_ERR1, e.getMessage());
 
 				} finally {
 					thread.setContextClassLoader(parent);
@@ -264,7 +259,8 @@ public class XVisitorBuilder extends DslBuilder {
 		}
 	}
 
-	private void doBuilderRefresh(ICodeUnit unit, IContainer folder, boolean markDerived, IProgressMonitor monitor) {
+	private void doBuilderRefresh(ICodeUnit unit, IContainer folder, boolean markDerived,
+			IProgressMonitor monitor) {
 		try {
 			if (folder != null) {
 				folder.refreshLocal(IResource.DEPTH_ONE, monitor);
@@ -304,8 +300,8 @@ public class XVisitorBuilder extends DslBuilder {
 			for (ICompilationUnit cu : getCompilationUnits(unit.getResource(), folder)) {
 				monitor.worked(1);
 				String content = cu.getSource();
-				TextEdit textEdit = formatter.format(CodeFormatter.K_COMPILATION_UNIT, content, 0, content.length(), 0,
-						null);
+				TextEdit textEdit = formatter.format(CodeFormatter.K_COMPILATION_UNIT, content, 0,
+						content.length(), 0, null);
 
 				if (textEdit != null) {
 					IDocument document = new Document();
@@ -313,7 +309,8 @@ public class XVisitorBuilder extends DslBuilder {
 					textEdit.apply(document);
 					IPackageFragment pack = (IPackageFragment) cu.getParent();
 					String name = cu.getElementName();
-					ICompilationUnit cuFormatted = pack.createCompilationUnit(name, document.get(), true, monitor);
+					ICompilationUnit cuFormatted = pack.createCompilationUnit(name, document.get(), true,
+							monitor);
 					cuFormatted.save(monitor, true);
 				}
 			}
@@ -347,7 +344,7 @@ public class XVisitorBuilder extends DslBuilder {
 
 	private List<ICompilationUnit> getCompilationUnits(IResource resource, IContainer folder) {
 		List<ICompilationUnit> units = new ArrayList<>();
-		IResource[] resources = new IResource[0];
+		IResource[] resources = {};
 		try {
 			resources = folder.members();
 		} catch (CoreException e) {}
