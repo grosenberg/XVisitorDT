@@ -48,8 +48,8 @@ import org.eclipse.text.edits.TextEdit;
 import net.certiv.antlr.xvisitor.Tool;
 import net.certiv.common.log.Log;
 import net.certiv.common.util.Chars;
+import net.certiv.common.util.ExceptUtil;
 import net.certiv.dsl.core.DslCore;
-import net.certiv.dsl.core.builder.Cause;
 import net.certiv.dsl.core.builder.DslBuilder;
 import net.certiv.dsl.core.console.CS;
 import net.certiv.dsl.core.model.ICodeUnit;
@@ -75,8 +75,7 @@ public class XVisitorBuilder extends DslBuilder {
 
 	public static final Comparator<ICodeUnit> NameComp = Comparator.comparing(ICodeUnit::getElementName);
 
-	public XVisitorBuilder() {
-	}
+	public XVisitorBuilder() {}
 
 	@Override
 	public DslCore getDslCore() {
@@ -126,9 +125,8 @@ public class XVisitorBuilder extends DslBuilder {
 
 				DslParseRecord record = unit.getDefaultParseRecord();
 				if (!record.hasTree()) {
-					report(CS.ERROR, Cause.UNIT_ERR, srcName(unit, false),
-							"reconciler produced no parse tree");
-					CoreUtil.showStatusLineMessage("Skipped  %s", pathname);
+					reportError("Build: %s has no reconciler tree.", pathname);
+					CoreUtil.showStatusLineMessage("Skipped %s", pathname);
 					return;
 				}
 
@@ -136,18 +134,19 @@ public class XVisitorBuilder extends DslBuilder {
 				try {
 					output = BuildUtil.resolveOutputPath(record);
 				} catch (ModelException ex) {
-					report(CS.ERROR, Cause.SRC_ERRS, ex.getMessage(), displayname);
+					String cause = ExceptUtil.getMessage(ex);
+					reportError("Exception determining output path for %s (%s)", srcName(unit, true), cause);
 				}
 				monitor.worked(1);
 
 				if (output == null) {
-					report(CS.ERROR, Cause.PATH_ERR, pathname);
+					reportError("No output path for %s", pathname);
 					CoreUtil.showStatusLineMessage("No output path for %s", pathname);
 					return;
 				}
 
-				IPath dest = output.makeRelativeTo(pathname); // XXX: fix?
-				report(CS.INFO, Cause.BUILD, "Start", displayname, dest);
+				IPath dest = output.makeRelativeTo(pathname); // FIX?
+				reportInfo("Start build %s -> %s", displayname, dest);
 				monitor.worked(1);
 
 				Throwable err = null;
@@ -172,15 +171,15 @@ public class XVisitorBuilder extends DslBuilder {
 
 					} catch (Exception | Error e) {
 						err = e;
-						report(CS.ERROR, Cause.BUILD_ERR, e.getMessage(), displayname, dest);
-						report(CS.INFO, Cause.BUILD_ERR, "dump", "Src", location);
-						report(CS.INFO, Cause.BUILD_ERR, "dump", "out", output);
+						reportError("Build: exception (%s): %s -> %s", e.getMessage(), displayname, dest);
+						reportInfo("\tSource %s", location);
+						reportInfo("\tOutput %s", output);
 
 						try (URLClassLoader urlLoader = (URLClassLoader) thread.getContextClassLoader()) {
 							URL[] urls = urlLoader.getURLs();
 							Arrays.sort(urls, URLComp);
 							for (URL url : urls) {
-								report(CS.INFO, Cause.LOADER_URL, url);
+								reportInfo("\tLoader url: %s", url);
 							}
 						} catch (IOException ex) {}
 
@@ -189,23 +188,22 @@ public class XVisitorBuilder extends DslBuilder {
 						monitor.worked(1);
 					}
 
-				} catch (Exception e) {
-					report(CS.ERROR, Cause.LOADER_ERR1, e.getMessage());
+				} catch (Exception | Error e) {
+					err = e;
 
 				} finally {
 					thread.setContextClassLoader(parent);
 				}
 
-				if (err != null || record.hasErrors()) {
-					CoreUtil.showStatusLineMessage("Build error %s", pathname);
+				if (err != null || record.hasProblems()) {
+					CoreUtil.showStatusLineMessage("Build problem: %s", pathname);
 					int cnt = record.getErrorCnt() + record.getWarningCnt();
-					if (cnt > 0) report(CS.ERROR, Cause.SRC_PRBM, cnt, displayname);
-					if (err != null) report(CS.ERROR, Cause.SRC_ERRS, err.getMessage(), displayname);
+					if (cnt > 0) reportError("Build: source errors %s: %s", cnt, pathname);
+					if (err != null) reportError("Build: exception (%s): %s", err.getMessage(), pathname);
 
 				} else {
-					String msg = "Built " + pathname.toString();
-					CoreUtil.showStatusLineMessage(msg, false);
-					report(CS.INFO, Cause.BUILT, displayname, dest);
+					CoreUtil.showStatusLineMessage("Built %s -> %s", pathname, dest);
+					reportInfo("Built %s -> %s", pathname, dest);
 					postCompileCleanup(unit, output, monitor);
 				}
 
@@ -225,8 +223,9 @@ public class XVisitorBuilder extends DslBuilder {
 	}
 
 	@Override
-	protected void report(CS kind, Cause cause, Object... args) {
-		getDslCore().consoleAppend(Aspect.BUILDER, kind, cause.toString(), args);
+	protected void report(CS kind, String fmt, Object... args) {
+		getDslCore().consoleAppend(Aspect.BUILDER, kind, fmt, args);
+		Log.debug(this, fmt, args);
 	}
 
 	@Override
