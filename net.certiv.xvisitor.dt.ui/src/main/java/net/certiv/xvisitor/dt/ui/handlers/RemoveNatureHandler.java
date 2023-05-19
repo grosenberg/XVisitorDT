@@ -78,12 +78,12 @@ public class RemoveNatureHandler extends AbstractHandler {
 					System.arraycopy(natures, i + 1, newNatures, i, natures.length - i - 1);
 					description.setNatureIds(newNatures);
 					project.setDescription(description, null);
-					Log.info(this, "XVisitor builder nature removed [project=" + project.getName() + "]");
+					Log.info( "XVisitor builder nature removed [project=" + project.getName() + "]");
 					return;
 				}
 			}
 		} catch (CoreException e) {
-			Log.error(this, "Failed in removing nature", e);
+			Log.error( "Failed in removing nature", e);
 		}
 	}
 }

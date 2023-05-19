@@ -45,7 +45,7 @@ public class ToolErrorListener implements IToolListener {
 
 	@Override
 	public void info(String msg) {
-		Log.info(this, msg);
+		Log.info( msg);
 	}
 
 	private void report(int severity, Messages msg) {

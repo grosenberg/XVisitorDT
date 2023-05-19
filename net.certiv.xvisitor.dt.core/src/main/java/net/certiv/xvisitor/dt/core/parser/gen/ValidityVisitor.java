@@ -1,50 +1,43 @@
-/*******************************************************************************
- * Copyright (c) 2012, 2020 Certiv Analytics.
- *
- * This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License 2.0
- * which accompanies this distribution, and is available at
- * https://www.eclipse.org/legal/epl-2.0/
- *
- * SPDX-License-Identifier: EPL-2.0
- *******************************************************************************/
 //
-// Generated from D:\DevFiles\Eclipse\Tools\Editors\net.certiv.xvisitor.dt\net.certiv.xvisitor.dt.core\src\main\java\net\certiv\xvisitor.dt\core\parser\Validity.xv
-// by XVisitor 4.7
+// Generated from net.certiv.xvisitor.dt.core.parser.gen
+// by XVisitor 4.8.0
 //
 package net.certiv.xvisitor.dt.core.parser.gen;
-	import org.antlr.v4.runtime.tree.ParseTree;
+	import net.certiv.xvisitor.dt.core.parser.ValidityAdaptor;
+	import net.certiv.xvisitor.dt.core.parser.XVisitorSourceParser;
 
+import java.util.List;
+import org.antlr.v4.runtime.tree.ParseTree;
+import net.certiv.antlr.runtime.xvisitor.Processor;
 import net.certiv.antlr.runtime.xvisitor.xpath.EType;
-import net.certiv.xvisitor.dt.core.parser.ValidityAdaptor;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class ValidityVisitor extends ValidityAdaptor {
 
 	public static final String[] tokenNames = {
-		"<INVALID>", "INT", "RBRACE", "TEXT", "DOC_COMMENT", "BLOCK_COMMENT",
-		"LINE_COMMENT", "OPTIONS", "LBRACE", "GRAMMAR", "XVISITOR", "COLON", "COMMA",
-		"SEMI", "ASSIGN", "QUESTION", "STAR", "AT", "ANY", "SEP", "DOT", "OR",
-		"NOT", "ID", "LITERAL", "HORZ_WS", "VERT_WS", "ERRCHAR", "ABLOCK_RBRACE",
+		"<INVALID>", "INT", "RBRACE", "TEXT", "DOC_COMMENT", "BLOCK_COMMENT", 
+		"LINE_COMMENT", "OPTIONS", "LBRACE", "GRAMMAR", "XVISITOR", "COLON", "COMMA", 
+		"SEMI", "ASSIGN", "QUESTION", "STAR", "AT", "ANY", "SEP", "DOT", "OR", 
+		"NOT", "ID", "LITERAL", "HORZ_WS", "VERT_WS", "ERRCHAR", "ABLOCK_RBRACE", 
 		"ONENTRY", "ONEXIT", "REFERENCE"
 	};
 
 	public static final int
-		INT = 1, RBRACE = 2, TEXT = 3, DOC_COMMENT = 4, BLOCK_COMMENT = 5, LINE_COMMENT = 6,
-		OPTIONS = 7, LBRACE = 8, GRAMMAR = 9, XVISITOR = 10, COLON = 11, COMMA = 12,
-		SEMI = 13, ASSIGN = 14, QUESTION = 15, STAR = 16, AT = 17, ANY = 18, SEP = 19,
-		DOT = 20, OR = 21, NOT = 22, ID = 23, LITERAL = 24, HORZ_WS = 25, VERT_WS = 26,
+		INT = 1, RBRACE = 2, TEXT = 3, DOC_COMMENT = 4, BLOCK_COMMENT = 5, LINE_COMMENT = 6, 
+		OPTIONS = 7, LBRACE = 8, GRAMMAR = 9, XVISITOR = 10, COLON = 11, COMMA = 12, 
+		SEMI = 13, ASSIGN = 14, QUESTION = 15, STAR = 16, AT = 17, ANY = 18, SEP = 19, 
+		DOT = 20, OR = 21, NOT = 22, ID = 23, LITERAL = 24, HORZ_WS = 25, VERT_WS = 26, 
 		ERRCHAR = 27, ABLOCK_RBRACE = 28, ONENTRY = 29, ONEXIT = 30, REFERENCE = 31;
 
 	public static final String[] ruleNames = {
-		"grammarSpec", "optionsSpec", "option", "optionValue", "action", "xgroup",
-		"xpath", "xpathSpec", "actionBlock", "text", "reference", "separator",
+		"grammarSpec", "optionsSpec", "option", "optionValue", "action", "xgroup", 
+		"xpath", "xpathSpec", "actionBlock", "text", "reference", "separator", 
 		"word"
 	};
 
 	public static final int
-		grammarSpec = 1000, optionsSpec = 1001, option = 1002, optionValue = 1003,
-		action = 1004, xgroup = 1005, xpath = 1006, xpathSpec = 1007, actionBlock = 1008,
+		grammarSpec = 1000, optionsSpec = 1001, option = 1002, optionValue = 1003, 
+		action = 1004, xgroup = 1005, xpath = 1006, xpathSpec = 1007, actionBlock = 1008, 
 		text = 1009, reference = 1010, separator = 1011, word = 1012;
 
 	public ValidityVisitor(ParseTree tree) {
@@ -91,25 +84,25 @@ public class ValidityVisitor extends ValidityAdaptor {
 		mainRule("validity");
 
 					createPathSpec("xmain");
-						addElement(EType.Rule, false, false, "grammarSpec", 0);
-					completePathSpec();
+						addElement(EType.Rule, false, false, "grammarSpec", 0); 
+					completePathSpec(); 
 
 					createPathSpec("xgroup");
-						addElement(EType.Rule, true, false, "xgroup", 5);
-					completePathSpec();
+						addElement(EType.Rule, true, false, "xgroup", 5); 
+					completePathSpec(); 
 
 					createPathSpec("xpath");
-						addElement(EType.Rule, true, false, "xpath", 6);
-					completePathSpec();
+						addElement(EType.Rule, true, false, "xpath", 6); 
+					completePathSpec(); 
 
 					createPathSpec("segment");
-						addElement(EType.Rule, true, false, "xpath", 6);
-						addElement(EType.Rule, true, false, "word", 12);
-					completePathSpec();
+						addElement(EType.Rule, true, false, "xpath", 6); 
+						addElement(EType.Rule, true, false, "word", 12); 
+					completePathSpec(); 
 
 					createPathSpec("action");
-						addElement(EType.Rule, true, false, "reference", 10);
-					completePathSpec();
+						addElement(EType.Rule, true, false, "reference", 10); 
+					completePathSpec(); 
 	}
 
 

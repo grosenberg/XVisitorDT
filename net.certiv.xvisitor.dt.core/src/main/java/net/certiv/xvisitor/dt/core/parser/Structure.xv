@@ -7,7 +7,7 @@ options {
 
 @header {
 	package net.certiv.xvisitor.dt.core.parser.gen ;
-	import net.certiv.xvisitor.dt.core.parser.StructureBuilder ;
+	import net.certiv.xvisitor.dt.core.model.StructureBuilder ;
 }
 
 structure

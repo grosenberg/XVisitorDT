@@ -17,9 +17,9 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.TokenStream;
-import org.apache.logging.log4j.Level;
 import org.eclipse.core.resources.IResourceStatus;
 
+import net.certiv.common.log.Level;
 import net.certiv.common.log.Log;
 import net.certiv.common.util.Strings;
 import net.certiv.dsl.core.DslCore;
@@ -44,7 +44,7 @@ public class XVisitorSourceParser extends DslSourceParser {
 
 	public XVisitorSourceParser(DslParseRecord record) {
 		super(record);
-		Log.setLevel(this, Level.DEBUG);
+		Log.setLevel(Level.DEBUG);
 	}
 
 	@Override
@@ -126,14 +126,14 @@ public class XVisitorSourceParser extends DslSourceParser {
 		String pkg = BuildUtil.grammarDefinedPackage(record);
 		if (pkg == null) {
 			String msg = "Cannot determine package path for " + record.unit.getElementName();
-			Log.warn(this, msg);
+			Log.warn(msg);
 			throw new ModelException(IResourceStatus.INVALID_RESOURCE_NAME, msg);
 		}
 
 		String refName = BuildUtil.resolveGrammarDefinedOptionValue(record, "parserClass");
 		if (refName == null) {
 			String msg = "Cannot determine parserClassname for " + record.unit.getElementName();
-			Log.warn(this, msg);
+			Log.warn(msg);
 			throw new ModelException(IResourceStatus.INVALID_RESOURCE_NAME, msg);
 		}
 		refName = pkg + Strings.DOT + refName;
@@ -145,7 +145,8 @@ public class XVisitorSourceParser extends DslSourceParser {
 			return (Parser) constructor.newInstance((TokenStream) null);
 
 		} catch (Exception e) {
-			String msg = String.format("Cannot instantiate reference parser: %s (%s)", refName, e.getMessage());
+			String msg = String.format("Cannot instantiate reference parser: %s (%s)", refName,
+					e.getMessage());
 			throw new ModelException(IResourceStatus.OPERATION_FAILED, msg);
 
 		} finally {

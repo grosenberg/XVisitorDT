@@ -1,14 +1,4 @@
-/*******************************************************************************
- * Copyright (c) 2012, 2020 Certiv Analytics.
- *
- * This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License 2.0
- * which accompanies this distribution, and is available at
- * https://www.eclipse.org/legal/epl-2.0/
- *
- * SPDX-License-Identifier: EPL-2.0
- *******************************************************************************/
-// Generated from D:/DevFiles/Eclipse/Tools/Editors/net.certiv.xvisitor.dt/net.certiv.xvisitor.dt.core/src/main/java/net/certiv/xvisitor/dt/core/parser/XVisitorParser.g4 by ANTLR 4.8
+// Generated from java-escape by ANTLR 4.11.1
 
 	package net.certiv.xvisitor.dt.core.parser.gen;
 

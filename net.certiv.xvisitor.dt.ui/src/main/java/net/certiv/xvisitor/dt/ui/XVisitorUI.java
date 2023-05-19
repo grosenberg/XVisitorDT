@@ -10,9 +10,9 @@
  *******************************************************************************/
 package net.certiv.xvisitor.dt.ui;
 
-import org.apache.logging.log4j.Level;
 import org.osgi.framework.BundleContext;
 
+import net.certiv.common.log.Level;
 import net.certiv.common.log.Log;
 import net.certiv.dsl.core.DslCore;
 import net.certiv.dsl.ui.DslImageManager;
@@ -36,7 +36,6 @@ public class XVisitorUI extends DslUI {
 
 	public XVisitorUI() {
 		super();
-		Log.defLevel(Level.DEBUG);
 	}
 
 	public static XVisitorUI getDefault() {
@@ -58,6 +57,7 @@ public class XVisitorUI extends DslUI {
 		plugin = this;
 		super.start(context);
 		assert (XVisitorCore.getDefault().getPluginId() != null);
+		Log.defLevel(Level.DEBUG);
 	}
 
 	@Override
