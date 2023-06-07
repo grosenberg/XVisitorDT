@@ -147,7 +147,7 @@ public abstract class ValidityAdaptor extends Processor {
 		if (lower && ruleNames.contains(name)) return;
 		if (!lower && termNames.contains(name)) return;
 		Result<Boolean> hasField = Reflect.hasField(ctx, name);
-		if (hasField.valid() && hasField.result) return;
+		if (hasField.valid() && hasField.value) return;
 
 		// no matching rule, terminal, or label found
 		String errType = !isReference ? "path element" : "or inaccessible reference";

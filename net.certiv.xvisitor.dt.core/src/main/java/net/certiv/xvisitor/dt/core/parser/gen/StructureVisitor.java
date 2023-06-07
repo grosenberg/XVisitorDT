@@ -3,12 +3,10 @@
 // by XVisitor 4.8.0
 //
 package net.certiv.xvisitor.dt.core.parser.gen ;
-	import net.certiv.xvisitor.dt.core.model.StructureBuilder ;
+	import org.antlr.v4.runtime.tree.ParseTree;
 
-import java.util.List;
-import org.antlr.v4.runtime.tree.ParseTree;
-import net.certiv.antlr.runtime.xvisitor.Processor;
 import net.certiv.antlr.runtime.xvisitor.xpath.EType;
+import net.certiv.xvisitor.dt.core.model.StructureBuilder ;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class StructureVisitor extends StructureBuilder {

@@ -106,6 +106,7 @@ public class XVisitorBuilder extends DslBuilder {
 
 	private class IsoBuilder implements Runnable {
 
+		private static final String ERR_NO_TREE = "Build: %s has no reconciler tree.";
 		private ICodeUnit unit;
 		private IProgressMonitor monitor;
 
@@ -125,8 +126,9 @@ public class XVisitorBuilder extends DslBuilder {
 
 				DslParseRecord record = unit.getDefaultParseRecord();
 				if (!record.hasTree()) {
-					reportError("Build: %s has no reconciler tree.", pathname);
 					CoreUtil.showStatusLineMessage("Skipped %s", pathname);
+					reportError(ERR_NO_TREE, pathname);
+					Log.error(ERR_NO_TREE, pathname);
 					return;
 				}
 
@@ -225,7 +227,7 @@ public class XVisitorBuilder extends DslBuilder {
 	@Override
 	protected void report(CS kind, String fmt, Object... args) {
 		getDslCore().consoleAppend(Aspect.BUILDER, kind, fmt, args);
-		Log.debug( fmt, args);
+		Log.debug(fmt, args);
 	}
 
 	@Override
@@ -237,7 +239,7 @@ public class XVisitorBuilder extends DslBuilder {
 
 	private void postCompileCleanup(ICodeUnit unit, IPath output, IProgressMonitor monitor) {
 		if (!unit.exists()) {
-			Log.error( "Compile produced no file[file=" + unit.getPath() + "]");
+			Log.error("Compile produced no file[file=" + unit.getPath() + "]");
 			return;
 		}
 		IProject project = unit.getProject();
@@ -279,12 +281,12 @@ public class XVisitorBuilder extends DslBuilder {
 					}
 				}
 			} else {
-				Log.error( "Failed to determine build folder; refreshing all");
+				Log.error("Failed to determine build folder; refreshing all");
 				IProject project = unit.getProject();
 				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 			}
 		} catch (CoreException e) {
-			Log.error( "Failed to refresh");
+			Log.error("Failed to refresh");
 		}
 		monitor.worked(1);
 	}
@@ -314,7 +316,7 @@ public class XVisitorBuilder extends DslBuilder {
 				}
 			}
 		} catch (Exception e) {
-			Log.error( "Failed to Format");
+			Log.error("Failed to Format");
 		}
 		monitor.worked(1);
 	}
@@ -334,9 +336,9 @@ public class XVisitorBuilder extends DslBuilder {
 				op.run(monitor);
 			}
 		} catch (OperationCanceledException e) {
-			Log.debug( "Ambiguous imports, organization skipped");
+			Log.debug("Ambiguous imports, organization skipped");
 		} catch (Exception e) {
-			Log.warn( "Failed to Organize imports");
+			Log.warn("Failed to Organize imports");
 		}
 		monitor.worked(1);
 	}

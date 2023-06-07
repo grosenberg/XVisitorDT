@@ -6,8 +6,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="src" path="src/main/java"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/net.certiv.dsl.core"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/net.certiv.dsl.lib"/>
+	<classpathentry kind="src" path="src/main/java/"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

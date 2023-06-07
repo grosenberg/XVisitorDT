@@ -3,13 +3,10 @@
 // by XVisitor 4.8.0
 //
 package net.certiv.xvisitor.dt.core.parser.gen;
-	import net.certiv.xvisitor.dt.core.parser.ValidityAdaptor;
-	import net.certiv.xvisitor.dt.core.parser.XVisitorSourceParser;
+	import org.antlr.v4.runtime.tree.ParseTree;
 
-import java.util.List;
-import org.antlr.v4.runtime.tree.ParseTree;
-import net.certiv.antlr.runtime.xvisitor.Processor;
 import net.certiv.antlr.runtime.xvisitor.xpath.EType;
+import net.certiv.xvisitor.dt.core.parser.ValidityAdaptor;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class ValidityVisitor extends ValidityAdaptor {
