@@ -2,7 +2,7 @@
 <feature
       id="net.certiv.xvisitor.dt.feature"
       label="XVisitorDT"
-      version="4.2.5.qualifier"
+      version="4.3.0.qualifier"
       provider-name="Certiv Analytics">
 
    <description url="http://www.certiv.net/">
@@ -246,7 +246,7 @@ litigation.
       <import plugin="org.eclipse.jdt.core.manipulation" version="1.17.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jdt.ui" version="3.27.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.text" version="3.12.300" match="greaterOrEqual"/>
-      <import plugin="net.certiv.xvisitor.dt.core" version="4.2.5" match="greaterOrEqual"/>
+      <import plugin="net.certiv.xvisitor.dt.core" version="4.3.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.filesystem" version="1.4.100" match="greaterOrEqual"/>
       <import plugin="org.eclipse.equinox.bidi" version="1.4.200" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jface.text" version="3.22.0" match="greaterOrEqual"/>
