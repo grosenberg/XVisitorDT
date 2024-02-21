@@ -27,7 +27,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import net.certiv.antlr.runtime.xvisitor.Processor;
 import net.certiv.common.stores.Result;
-import net.certiv.common.stores.TreeMultimap;
+import net.certiv.common.stores.TreeMapSet;
 import net.certiv.common.util.Reflect;
 import net.certiv.common.util.Strings;
 import net.certiv.dsl.core.parser.DslErrorListener;
@@ -46,9 +46,9 @@ public abstract class ValidityAdaptor extends Processor {
 	private List<String> ruleNames;
 	private List<String> termNames;
 
-	private static final Comparator<Token> comp = Comparator.comparing(Token::getText);
+	private static final Comparator<Token> Comp = Comparator.comparing(Token::getText);
 
-	private final TreeMultimap<String, Token> xruleMap = new TreeMultimap<>(null, comp);
+	private final TreeMapSet<String, Token> xruleMap = new TreeMapSet<>(null, Comp);
 	private final Set<String> xpaths = new HashSet<>();
 
 	public ValidityAdaptor(ParseTree tree) {
@@ -122,7 +122,7 @@ public abstract class ValidityAdaptor extends Processor {
 	}
 
 	public void completeChecks() {
-		for (String xmain : xruleMap.keySet()) {
+		for (String xmain : xruleMap.keys()) {
 			for (Token xpathRef : xruleMap.get(xmain)) {
 				if (!xpaths.contains(xpathRef.getText())) {
 					reportMissingXPath(xpathRef);
@@ -147,7 +147,7 @@ public abstract class ValidityAdaptor extends Processor {
 		if (lower && ruleNames.contains(name)) return;
 		if (!lower && termNames.contains(name)) return;
 		Result<Boolean> hasField = Reflect.hasField(ctx, name);
-		if (hasField.valid() && hasField.value) return;
+		if (hasField.valid() && hasField.get()) return;
 
 		// no matching rule, terminal, or label found
 		String errType = !isReference ? "path element" : "or inaccessible reference";

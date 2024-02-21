@@ -1,31 +1,19 @@
-// Generated from java-escape by ANTLR 4.11.1
+// Generated from D:/DevFiles/Eclipse/Tools/Editors/net.certiv.xvisitor.dt/net.certiv.xvisitor.dt.core/src/main/java/net/certiv/xvisitor/dt/core/parser/XVisitorParser.g4 by ANTLR 4.13.1
 
 	package net.certiv.xvisitor.dt.core.parser.gen;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.antlr.v4.runtime.NoViableAltException;
-import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.RuntimeMetaData;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.TokenStream;
-import org.antlr.v4.runtime.Vocabulary;
-import org.antlr.v4.runtime.VocabularyImpl;
-import org.antlr.v4.runtime.atn.ATN;
-import org.antlr.v4.runtime.atn.ATNDeserializer;
-import org.antlr.v4.runtime.atn.ParserATNSimulator;
-import org.antlr.v4.runtime.atn.PredictionContextCache;
+import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
-import org.antlr.v4.runtime.tree.ParseTreeListener;
-import org.antlr.v4.runtime.tree.ParseTreeVisitor;
-import org.antlr.v4.runtime.tree.TerminalNode;
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.misc.*;
+import org.antlr.v4.runtime.tree.*;
+import java.util.List;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue"})
 public class XVisitorParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.11.1", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.13.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -52,8 +40,6 @@ public class XVisitorParser extends Parser {
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, null, null, null, null, null, null, "'options'", null, "'grammar'", 
-			"'xvisitor'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
@@ -101,7 +87,7 @@ public class XVisitorParser extends Parser {
 	}
 
 	@Override
-	public String getGrammarFileName() { return "java-escape"; }
+	public String getGrammarFileName() { return "XVisitorParser.g4"; }
 
 	@Override
 	public String[] getRuleNames() { return ruleNames; }
@@ -1041,7 +1027,7 @@ public class XVisitorParser extends Parser {
 			{
 			setState(135);
 			_la = _input.LA(1);
-			if ( !(((_la) & ~0x3f) == 0 && ((1L << _la) & 25231360L) != 0) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 25231360L) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
