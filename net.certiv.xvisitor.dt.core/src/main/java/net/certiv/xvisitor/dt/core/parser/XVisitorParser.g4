@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2017 Gerald Rosenberg & others. All rights reserved.
+ * Copyright (c) 2010-2024 Gerald Rosenberg. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the standard 3-clause BSD License.  A copy of the License
@@ -16,13 +16,17 @@ options {
 }
 
 grammarSpec 
-    :   XVISITOR GRAMMAR ID SEMI
+    :   declaration 
     	optionsSpec?
     	action*
     	xgroup*
     	xpath+
     	EOF
     ;
+
+declaration
+	: XVISITOR GRAMMAR ID SEMI
+	;
 
 optionsSpec
 	:	OPTIONS LBRACE option* RBRACE

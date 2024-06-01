@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010-2015 Gerald Rosenberg & others. All rights reserved.
+ * Copyright (c) 2010-2024 Gerald Rosenberg. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the standard 3-clause BSD License.  A copy of the License
@@ -22,7 +22,6 @@ tokens {
 	RBRACE,
 	TEXT
 }
-
 
 // ---------------------------------------------------------------------------------
 // default mode
@@ -73,7 +72,7 @@ XVISITOR	: 'xvisitor'	;
 COLON		: Colon		;
 COMMA		: Comma		;
 SEMI		: Semi		;
-ASSIGN		: Equal	;
+ASSIGN		: Assign	;
 QUESTION	: Question	;
 STAR		: Star		;
 AT			: At		;
@@ -142,8 +141,8 @@ mode ActionBlock;
 	ONENTRY			: ( Hws | Vws )* 'onEntry:' ;
 	ONEXIT			: ( Hws | Vws )* 'onExit:'  ;
 
-	ABLOCK_STRING	: DblQuoteLiteral 	->	type(TEXT)		;
-	ABLOCK_CHAR		: SglQuoteLiteral	->	type(TEXT)		;
+	ABLOCK_STRING	: DQLiteral 	->	type(TEXT)		;
+	ABLOCK_CHAR		: SQLiteral		->	type(TEXT)		;
 
 	REFERENCE		: Dollar NameChar+ ( Dot NameChar+ )?	;
 
@@ -157,7 +156,7 @@ mode ActionBlock;
 fragment Colon		: ':'	;
 fragment Comma		: ','	;
 fragment Semi		: ';'	;
-fragment Equal		: '='	;
+fragment Assign		: '='	;
 fragment Question	: '?'	;
 fragment Star		: '*'	;
 fragment At			: '@'	;
@@ -174,8 +173,8 @@ fragment Dollar		: '$'	;
 fragment Hws			:  [ \t\r]	;
 fragment Vws			:  [\n\f]	;
 
-fragment DocComment		: '/**' .*? '*/' ;
-fragment BlockComment	: '/#' .*? '#/' ;
+fragment DocComment		: '/**' .*? ( '*/'   | EOF )	;
+fragment BlockComment	: '/#'  .*? ( '#/'   | EOF )	;
 fragment LineComment	: '#' ~'\n'* ( '\n' Hws* '#' ~'\n'* )*	;
 
 fragment Id	: NameStartChar NameChar* ;
@@ -206,12 +205,10 @@ NameChar
 	|   '\u203F'..'\u2040'
 	;
 
+fragment Literal			: DQLiteral | SQLiteral ;
 
-
-fragment Literal			: DblQuoteLiteral | SglQuoteLiteral ;
-
-fragment SglQuoteLiteral	:	'\'' ( EscSeq | ~['\\] )* '\''	;
-fragment DblQuoteLiteral	:	'"'  ( EscSeq | ~["\\] )* '"'	;
+fragment SQLiteral	:	'\'' ( EscSeq | ~['\\] )* '\''	;
+fragment DQLiteral	:	'"'  ( EscSeq | ~["\\] )* '"'	;
 
 fragment Int		: [0-9]+		;
 fragment HexDigit	: [0-9a-fA-F]	;
